@@ -134,8 +134,12 @@ CONTAINS
                   tra(ji,jj,jk,jppo4) = tra(ji,jj,jk,jppo4) + zolimi (ji,jj,jk) + denitr(ji,jj,jk) + zoxyremc
                   tra(ji,jj,jk,jpnh4) = tra(ji,jj,jk,jpnh4) + zolimi (ji,jj,jk) + denitr(ji,jj,jk) + zoxyremc
                   tra(ji,jj,jk,jpno3) = tra(ji,jj,jk,jpno3) - denitr (ji,jj,jk) * rdenit
-                  tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zolimi (ji,jj,jk) + denitr(ji,jj,jk) + zoxyremc
-                  tra(ji,jj,jk,jp15no3) = tra(ji,jj,jk,jp15no3) - denitr (ji,jj,jk) * rdenit
+
+                  IF (ln_n15) THEN
+                     tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zolimi (ji,jj,jk) + denitr(ji,jj,jk) + zoxyremc
+                     tra(ji,jj,jk,jp15no3) = tra(ji,jj,jk,jp15no3) - denitr (ji,jj,jk) * rdenit
+                  ENDIF
+
                   tra(ji,jj,jk,jpdoc) = tra(ji,jj,jk,jpdoc) - zolimi (ji,jj,jk) - denitr(ji,jj,jk) - zoxyremc
                   tra(ji,jj,jk,jpoxy) = tra(ji,jj,jk,jpoxy) - zolimi (ji,jj,jk) * o2ut
                   tra(ji,jj,jk,jpdic) = tra(ji,jj,jk,jpdic) + zolimi (ji,jj,jk) + denitr(ji,jj,jk) + zoxyremc
@@ -180,8 +184,12 @@ CONTAINS
                   tra(ji,jj,jk,jppo4) = tra(ji,jj,jk,jppo4) + zolimip + zdenitrp + zoxyremp
                   tra(ji,jj,jk,jpnh4) = tra(ji,jj,jk,jpnh4) + zolimin + zdenitrn + zoxyremn
                   tra(ji,jj,jk,jpno3) = tra(ji,jj,jk,jpno3) - denitr(ji,jj,jk) * rdenit
-                  tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zolimin + zdenitrn + zoxyremn
-                  tra(ji,jj,jk,jp15no3) = tra(ji,jj,jk,jp15no3) - denitr(ji,jj,jk) * rdenit
+
+                  IF (ln_n15) THEN
+                     tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zolimin + zdenitrn + zoxyremn
+                     tra(ji,jj,jk,jp15no3) = tra(ji,jj,jk,jp15no3) - denitr(ji,jj,jk) * rdenit
+                  ENDIF
+
                   tra(ji,jj,jk,jpdoc) = tra(ji,jj,jk,jpdoc) - zolimic - denitr(ji,jj,jk) - zoxyremc
                   tra(ji,jj,jk,jpdon) = tra(ji,jj,jk,jpdon) - zolimin - zdenitrn - zoxyremn
                   tra(ji,jj,jk,jpdop) = tra(ji,jj,jk,jpdop) - zolimip - zdenitrp - zoxyremp
@@ -209,8 +217,12 @@ CONTAINS
                ! ----------------------------
                tra(ji,jj,jk,jpnh4) = tra(ji,jj,jk,jpnh4) - zonitr(ji,jj,jk) - zdenitnh4
                tra(ji,jj,jk,jpno3) = tra(ji,jj,jk,jpno3) + zonitr(ji,jj,jk) - rdenita * zdenitnh4
-               tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) - zonitr(ji,jj,jk) - zdenitnh4
-               tra(ji,jj,jk,jp15no3) = tra(ji,jj,jk,jp15no3) + zonitr(ji,jj,jk) - rdenita * zdenitnh4
+
+               IF (ln_n15) THEN
+                  tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) - zonitr(ji,jj,jk) - zdenitnh4
+                  tra(ji,jj,jk,jp15no3) = tra(ji,jj,jk,jp15no3) + zonitr(ji,jj,jk) - rdenita * zdenitnh4
+               ENDIF
+
                tra(ji,jj,jk,jpoxy) = tra(ji,jj,jk,jpoxy) - o2nit * zonitr(ji,jj,jk)
                tra(ji,jj,jk,jptal) = tra(ji,jj,jk,jptal) - 2 * rno3 * zonitr(ji,jj,jk) + rno3 * ( rdenita - 1. ) * zdenitnh4
             END DO

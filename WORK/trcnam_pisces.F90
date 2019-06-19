@@ -1,1 +1,1 @@
-/users/pearseb/NEMOv4.0/src/TOP/PISCES/trcnam_pisces.F90
+/users/pearseb/NEMOv4.0/cfgs/ORCA2_OFF_PISCESiso/MY_SRC/trcnam_pisces.F90

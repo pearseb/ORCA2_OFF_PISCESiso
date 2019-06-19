@@ -214,11 +214,16 @@ CONTAINS
          trn(:,:,:,jpdch) = bioma0 * 12. / 55.
          trn(:,:,:,jpno3) = no3
          trn(:,:,:,jpnh4) = bioma0
-         trn(:,:,:,jp15no3) = trn(:,:,:,jpno3)
-         trn(:,:,:,jp15nh4) = trn(:,:,:,jpnh4)
+         
+         IF ( ln_n15 ) THEN
+            trn(:,:,:,jp15no3) = trn(:,:,:,jpno3)
+            trn(:,:,:,jp15nh4) = trn(:,:,:,jpnh4)
+         ENDIF
+ 
          IF( ln_ligand) THEN
             trn(:,:,:,jplgw) = 0.6E-9
          ENDIF
+
          IF( ln_p5z ) THEN
             trn(:,:,:,jpdon) = bioma0
             trn(:,:,:,jpdop) = bioma0

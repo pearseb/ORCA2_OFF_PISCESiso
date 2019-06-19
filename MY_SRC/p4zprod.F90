@@ -302,8 +302,12 @@ CONTAINS
                  tra(ji,jj,jk,jppo4) = tra(ji,jj,jk,jppo4) - zprorcan(ji,jj,jk) - zprorcad(ji,jj,jk)
                  tra(ji,jj,jk,jpno3) = tra(ji,jj,jk,jpno3) - zpronewn(ji,jj,jk) - zpronewd(ji,jj,jk)
                  tra(ji,jj,jk,jpnh4) = tra(ji,jj,jk,jpnh4) - zproreg - zproreg2
-                 tra(ji,jj,jk,jp15no3) = tra(ji,jj,jk,jp15no3) - zpronewn(ji,jj,jk) - zpronewd(ji,jj,jk)
-                 tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) - zproreg - zproreg2
+
+                 IF (ln_n15) THEN
+                    tra(ji,jj,jk,jp15no3) = tra(ji,jj,jk,jp15no3) - zpronewn(ji,jj,jk) - zpronewd(ji,jj,jk)
+                    tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) - zproreg - zproreg2
+                 ENDIF
+
                  tra(ji,jj,jk,jpphy) = tra(ji,jj,jk,jpphy) + zprorcan(ji,jj,jk) * texcretn
                  tra(ji,jj,jk,jpnfe) = tra(ji,jj,jk,jpnfe) + zprofen(ji,jj,jk) * texcretn
                  tra(ji,jj,jk,jpdia) = tra(ji,jj,jk,jpdia) + zprorcad(ji,jj,jk) * texcretd

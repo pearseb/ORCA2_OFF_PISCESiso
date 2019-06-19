@@ -52,7 +52,11 @@ CONTAINS
          DO jn = jp_pcs0, jp_pcs1
             zfact = 1.0e+6 
             IF( jn == jpno3 .OR. jn == jpnh4 ) zfact = rno3 * 1.0e+6 
-            IF( jn == jp15no3 .OR. jn == jp15nh4 ) zfact = rno3 * 1.0e+6 
+            
+            IF ( ln_n15 ) THEN
+               IF( jn == jp15no3 .OR. jn == jp15nh4 ) zfact = rno3 * 1.0e+6 
+            ENDIF
+
             IF( jn == jppo4  )                 zfact = po4r * 1.0e+6
             cltra = TRIM( ctrcnm(jn) )                  ! short title for tracer
             IF( iom_use( cltra ) )  CALL iom_put( cltra, trn(:,:,:,jn) * zfact )
@@ -90,7 +94,7 @@ CONTAINS
       !
    END SUBROUTINE trc_wri_pisces
 
-# 98 "trcwri_pisces.F90"
+# 102 "trcwri_pisces.F90"
 
    !!----------------------------------------------------------------------
    !! NEMO/TOP 4.0 , NEMO Consortium (2018)

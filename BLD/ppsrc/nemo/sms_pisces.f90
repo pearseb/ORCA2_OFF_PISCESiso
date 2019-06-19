@@ -28,6 +28,7 @@ MODULE sms_pisces
    LOGICAL  ::  ln_p5z            !: Flag to use PISCES  quota model
    LOGICAL  ::  ln_ligand         !: Flag to enable organic ligands
    LOGICAL  ::  ln_sediment       !: Flag to enable sediment module
+   LOGICAL  ::  ln_n15            !: Flag to enable nitrogen isotope module
 
    !!*  Time variables
    INTEGER  ::   nrdttrc           !: ???

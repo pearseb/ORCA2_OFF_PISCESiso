@@ -186,7 +186,11 @@ CONTAINS
                zgrarsig  = zgrarem2 * sigma2
                tra(ji,jj,jk,jppo4) = tra(ji,jj,jk,jppo4) + zgrarsig
                tra(ji,jj,jk,jpnh4) = tra(ji,jj,jk,jpnh4) + zgrarsig
-               tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zgrarsig
+               
+               IF (ln_n15) THEN
+                  tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zgrarsig
+               ENDIF
+               
                tra(ji,jj,jk,jpdoc) = tra(ji,jj,jk,jpdoc) + zgrarem2 - zgrarsig
                !
                IF( ln_ligand ) THEN 

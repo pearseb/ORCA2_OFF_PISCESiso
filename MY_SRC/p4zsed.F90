@@ -162,7 +162,11 @@ CONTAINS
                DO jk = 1, nk_rnf(ji,jj)
                   tra(ji,jj,jk,jppo4) = tra(ji,jj,jk,jppo4) +  rivdip(ji,jj) * rfact2
                   tra(ji,jj,jk,jpno3) = tra(ji,jj,jk,jpno3) +  rivdin(ji,jj) * rfact2
-                  tra(ji,jj,jk,jp15no3) = tra(ji,jj,jk,jp15no3) +  rivdin(ji,jj) * rfact2
+
+                  IF (ln_n15) THEN
+                     tra(ji,jj,jk,jp15no3) = tra(ji,jj,jk,jp15no3) +  rivdin(ji,jj) * rfact2
+                  ENDIF 
+
                   tra(ji,jj,jk,jpfer) = tra(ji,jj,jk,jpfer) +  rivdic(ji,jj) * 5.e-5 * rfact2
                   tra(ji,jj,jk,jpsil) = tra(ji,jj,jk,jpsil) +  rivdsi(ji,jj) * rfact2
                   tra(ji,jj,jk,jpdic) = tra(ji,jj,jk,jpdic) +  rivdic(ji,jj) * rfact2
@@ -196,7 +200,11 @@ CONTAINS
       ! ----------------------------------------------------------
       IF( ln_ndepo ) THEN
          tra(:,:,1,jpno3) = tra(:,:,1,jpno3) + nitdep(:,:) * rfact2
-         tra(:,:,1,jp15no3) = tra(:,:,1,jp15no3) + nitdep(:,:) * rfact2
+         
+         IF (ln_n15) THEN
+            tra(:,:,1,jp15no3) = tra(:,:,1,jp15no3) + nitdep(:,:) * rfact2
+         ENDIF
+
          tra(:,:,1,jptal) = tra(:,:,1,jptal) - rno3 * nitdep(:,:) * rfact2
       ENDIF
 
@@ -345,8 +353,12 @@ CONTAINS
                tra(ji,jj,ikt,jppo4) = tra(ji,jj,ikt,jppo4) + zpdenit + zolimit
                tra(ji,jj,ikt,jpnh4) = tra(ji,jj,ikt,jpnh4) + zpdenit + zolimit
                tra(ji,jj,ikt,jpno3) = tra(ji,jj,ikt,jpno3) - rdenit * zpdenit
-               tra(ji,jj,ikt,jp15nh4) = tra(ji,jj,ikt,jp15nh4) + zpdenit + zolimit
-               tra(ji,jj,ikt,jp15no3) = tra(ji,jj,ikt,jp15no3) - rdenit * zpdenit
+          
+               IF (ln_n15) THEN
+                  tra(ji,jj,ikt,jp15nh4) = tra(ji,jj,ikt,jp15nh4) + zpdenit + zolimit
+                  tra(ji,jj,ikt,jp15no3) = tra(ji,jj,ikt,jp15no3) - rdenit * zpdenit
+               ENDIF 
+
                tra(ji,jj,ikt,jpoxy) = tra(ji,jj,ikt,jpoxy) - zolimit * o2ut
                tra(ji,jj,ikt,jptal) = tra(ji,jj,ikt,jptal) + rno3 * (zolimit + (1.+rdenit) * zpdenit )
                tra(ji,jj,ikt,jpdic) = tra(ji,jj,ikt,jpdic) + zpdenit + zolimit 
@@ -421,7 +433,11 @@ CONTAINS
                DO ji = 1, jpi
                   zfact = nitrpot(ji,jj,jk) * nitrfix
                   tra(ji,jj,jk,jpnh4) = tra(ji,jj,jk,jpnh4) + zfact / 3.0
-                  tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zfact / 3.0
+                   
+                  IF (ln_n15) THEN
+                     tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zfact / 3.0
+                  ENDIF
+
                   tra(ji,jj,jk,jptal) = tra(ji,jj,jk,jptal) + rno3 * zfact / 3.0
                   tra(ji,jj,jk,jppo4) = tra(ji,jj,jk,jppo4) - zfact * 2.0 / 3.0
                   tra(ji,jj,jk,jpdoc) = tra(ji,jj,jk,jpdoc) + zfact * 1.0 / 3.0
@@ -443,7 +459,11 @@ CONTAINS
                DO ji = 1, jpi
                   zfact = nitrpot(ji,jj,jk) * nitrfix
                   tra(ji,jj,jk,jpnh4) = tra(ji,jj,jk,jpnh4) + zfact / 3.0
-                  tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zfact / 3.0
+
+                  IF (ln_n15) THEN
+                     tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zfact / 3.0
+                  ENDIF
+
                   tra(ji,jj,jk,jptal) = tra(ji,jj,jk,jptal) + rno3 * zfact / 3.0
                   tra(ji,jj,jk,jppo4) = tra(ji,jj,jk,jppo4) - 16.0 / 46.0 * zfact * ( 1.0 - 1.0 / 3.0 ) &
                   &                     * ztrpo4(ji,jj,jk) / (ztrpo4(ji,jj,jk) + ztrdop(ji,jj,jk) + rtrn)
