@@ -4,12 +4,14 @@
 !-----------------------------------------------------------------------
 &namtrc_run      !   run information
 !-----------------------------------------------------------------------
+   ln_rsttr      = .true.   !  start from a restart file (T) or not (F)
    ln_top_euler  = .true.
+   cn_trcrst_out = "restart.trc"   !  suffix of pass. sn_tracer restart name (output)
 /
 !-----------------------------------------------------------------------
 &namtrc          !   tracers definition
 !-----------------------------------------------------------------------
-   jp_bgc        =  24
+   jp_bgc        =  27
 !
    ln_pisces     =  .true.
    ln_my_trc     =  .false.
@@ -18,7 +20,7 @@
    ln_cfc12      =  .false.
    ln_c14        =  .false.
 !
-   ln_trcdta     =  .true.  !  Initialisation from data input file (T) or not (F)
+   ln_trcdta     =  .false.  !  Initialisation from data input file (T) or not (F)
 !                !           !                                         !            !                               !
 !                !    name   !           title of the field            !   units    ! initial data from file or not ! 
    sn_tracer(1)   = 'DIC     ' , 'Dissolved inorganic Concentration      ',  'mol-C/L' ,  .true.
@@ -45,6 +47,9 @@
    sn_tracer(22)  = 'DCHL    ' , 'Diatoms chlorophyl Concentration       ',  'mol-C/L' ,  .false.
    sn_tracer(23)  = 'NO3     ' , 'Nitrates Concentration                 ',  'mol-C/L' ,  .true.
    sn_tracer(24)  = 'NH4     ' , 'Ammonium Concentration                 ',  'mol-C/L' ,  .false.
+   sn_tracer(25)  = 'LGW     ' , 'Ligand Concentration                   ',  'mol-C/L' ,  .false.    ,  .true.
+   sn_tracer(26)  = 'NO3_15  ' , '15N Nitrates Concentration             ',  'mol-C/L' ,  .false.
+   sn_tracer(27)  = 'NH4_15  ' , '15N Ammonium Concentration             ',  'mol-C/L' ,  .false.
 /
 !-----------------------------------------------------------------------
 &namage          !   AGE 

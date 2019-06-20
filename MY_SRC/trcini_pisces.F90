@@ -167,8 +167,15 @@ CONTAINS
         IF( cltra == 'PCHL'     )   jppch = jn      !: Diatoms Chlorophyll Concentration
         IF( cltra == 'PFe'      )   jppfe = jn      !: Picophytoplankton Fe biomass
         IF( cltra == 'LGW'      )   jplgw = jn      !: Weak ligands
-        IF( cltra == 'NO3_15'   )   jp15no3 = jn    !: 15N Nitrates Concentration
-        IF( cltra == 'NH4_15'   )   jp15nh4 = jn    !: 15N Ammonium Concentration
+        IF( cltra == 'POC_15'   )   jp15poc = jn    !: 15N small particulate organic concentration
+        IF( cltra == 'GOC_15'   )   jp15goc = jn    !: 15N large particulate organic concentration
+        IF( cltra == 'DOC_15'   )   jp15doc = jn    !: 15N dissolved ogranic carbon concentration
+        IF( cltra == 'PHY_15'   )   jp15phy = jn    !: 15N phytoplankton concentration
+        IF( cltra == 'PHY2_15'  )   jp15dia = jn    !: 15N diatom concentration
+        IF( cltra == 'ZOO_15'   )   jp15zoo = jn    !: 15N zooplankton concentration
+        IF( cltra == 'ZOO2_15'  )   jp15mes = jn    !: 15N mesozooplankton concentration
+        IF( cltra == 'NO3_15'   )   jp15no3 = jn    !: 15N nitrates concentration
+        IF( cltra == 'NH4_15'   )   jp15nh4 = jn    !: 15N ammonium concentration
       END DO
 
       CALL p4z_sms_init       !  Maint routine
@@ -216,6 +223,13 @@ CONTAINS
          trn(:,:,:,jpnh4) = bioma0
          
          IF ( ln_n15 ) THEN
+            trn(:,:,:,jp15poc) = trn(:,:,:,jppoc)
+            trn(:,:,:,jp15phy) = trn(:,:,:,jpphy)
+            trn(:,:,:,jp15zoo) = trn(:,:,:,jpzoo)
+            trn(:,:,:,jp15doc) = trn(:,:,:,jpdoc)
+            trn(:,:,:,jp15dia) = trn(:,:,:,jpdia)
+            trn(:,:,:,jp15mes) = trn(:,:,:,jpmes)
+            trn(:,:,:,jp15goc) = trn(:,:,:,jpgoc)
             trn(:,:,:,jp15no3) = trn(:,:,:,jpno3)
             trn(:,:,:,jp15nh4) = trn(:,:,:,jpnh4)
          ENDIF

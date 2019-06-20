@@ -37,6 +37,7 @@ MODULE p4zprod
    REAL(wp), PUBLIC ::   fecnm        !:
    REAL(wp), PUBLIC ::   fecdm        !:
    REAL(wp), PUBLIC ::   grosip       !:
+   REAL(wp), PUBLIC ::   e15n_prod    !:
 
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   quotan   !: proxy of N quota in Nanophyto
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   quotad   !: proxy of N quota in diatomee
@@ -71,6 +72,7 @@ CONTAINS
       REAL(wp) ::   zmxltst, zmxlday
       REAL(wp) ::   zrum, zcodel, zargu, zval, zfeup, chlcnm_n, chlcdm_n
       REAL(wp) ::   zfact
+      REAL(wp) ::   zu_15, zun_15, zr15_new, zr15_reg
       CHARACTER (len=25) :: charout
       REAL(wp), ALLOCATABLE, DIMENSION(:,:) :: zw2d
       REAL(wp), ALLOCATABLE, DIMENSION(:,:,:) :: zw3d
@@ -96,7 +98,7 @@ CONTAINS
       IF( ln_ligand ) THEN
            zpligprod1(:,:,:)  = 0.     ;      zpligprod2(:,:,:) = 0.
       ENDIF
-      ! Computation of the optimal production
+      ! Computation of the optimal production (function of temperature - Eppley curve)
       zprmaxn(:,:,:) = 0.8_wp * r1_rday * tgfunc(:,:,:)
       zprmaxd(:,:,:) = zprmaxn(:,:,:)
 
@@ -118,19 +120,29 @@ CONTAINS
       DO jk = 1, jpkm1
          DO jj = 1 ,jpj
             DO ji = 1, jpi
-               IF( etot_ndcy(ji,jj,jk) > 1.E-3 ) THEN
-                  zval = MAX( 1., zstrn(ji,jj) )
-                  IF( gdept_n(ji,jj,jk) <= hmld(ji,jj) ) THEN
+               IF( etot_ndcy(ji,jj,jk) > 1.E-3 ) THEN ! if PAR over 24h cycle > 0.001
+                  zval = MAX( 1., zstrn(ji,jj) )      ! at least 1 hour of photosynthesis
+                  IF( gdept_n(ji,jj,jk) <= hmld(ji,jj) ) THEN ! if depth <= mixed layer depth
                      zval = zval * MIN(1., heup_01(ji,jj) / ( hmld(ji,jj) + rtrn ))
+                     ! zval (temporary variable) returns effective hours of day
+                     ! by reducing the number of hours of light if the euphotic
+                     ! zone depth is less than the mixed layer, as deeper mixed
+                     ! layers will cause phytoplankton to see less light
                   ENDIF
                   zmxl_chl(ji,jj,jk) = zval / 24.
                   zmxl_fac(ji,jj,jk) = 1.5 * zval / ( 12. + zval )
+                  ! zmxl_fac [0,1] is the limitation of growth by light, and
+                  ! includes: day length (function of latitude and time of year) 
+                  !           depth of euphotic zone / mixed layer depth
+                  ! it solves for [0,1] range using Monod equation above
                ENDIF
             END DO
          END DO
       END DO
 
-      zprbio(:,:,:) = zprmaxn(:,:,:) * zmxl_fac(:,:,:)
+      ! nanophytoplankton
+      zprbio(:,:,:) = zprmaxn(:,:,:) * zmxl_fac(:,:,:) ! max growth (/s) * light lim [0,1]
+      ! diatoms
       zprdia(:,:,:) = zprmaxd(:,:,:) * zmxl_fac(:,:,:)
 
       ! Maximum light intensity
@@ -140,17 +152,22 @@ CONTAINS
       DO jk = 1, jpkm1
          DO jj = 1, jpj
             DO ji = 1, jpi
-               IF( etot_ndcy(ji,jj,jk) > 1.E-3 ) THEN
+               IF( etot_ndcy(ji,jj,jk) > 1.E-3 ) THEN  ! if PAR over 24h cycle > 0.001
                   ztn         = MAX( 0., tsn(ji,jj,jk,jp_tem) - 15. )
-                  zadap       = xadap * ztn / ( 2.+ ztn )
-                  zconctemp   = MAX( 0.e0 , trb(ji,jj,jk,jpdia) - xsizedia )
-                  zconctemp2  = trb(ji,jj,jk,jpdia) - zconctemp
-                  !
+                  zadap       = xadap * ztn / ( 2.+ ztn )  ! this is zero because xadap is zero in namelist
+                  zconctemp   = MAX( 0.e0 , trb(ji,jj,jk,jpdia) - xsizedia ) ! get concentration of diatoms above minimum amount
+                  zconctemp2  = trb(ji,jj,jk,jpdia) - zconctemp ! returns minimum diatom concentration (xsizedia above) (?) 
+                  ! nanophytoplankton
                   zpislopeadn(ji,jj,jk) = pislopen * ( 1.+ zadap  * EXP( -0.25 * enano(ji,jj,jk) ) )  &
-                  &                   * trb(ji,jj,jk,jpnch) /( trb(ji,jj,jk,jpphy) * 12. + rtrn)
-                  !
+                  &                   * trb(ji,jj,jk,jpnch) /( trb(ji,jj,jk,jpphy) * 12. + rtrn) 
+                                                                         ! the 12 is to convert mol C to g C
+                  ! diatoms
                   zpislopeadd(ji,jj,jk) = (pislopen * zconctemp2 + pisloped * zconctemp) / ( trb(ji,jj,jk,jpdia) + rtrn )   &
                   &                   * trb(ji,jj,jk,jpdch) /( trb(ji,jj,jk,jpdia) * 12. + rtrn)
+                  ! In these equations, the initial slope of the PI curve (2.0)
+                  ! is multiplied by the Chla:C ratio. I guess if there is more
+                  ! chlorophyll-a relative to C in the cell, then the slope
+                  ! should be steeper?
                ENDIF
             END DO
          END DO
@@ -162,11 +179,15 @@ CONTAINS
                IF( etot_ndcy(ji,jj,jk) > 1.E-3 ) THEN
                    ! Computation of production function for Carbon
                    !  ---------------------------------------------
+                   ! adding a basic respiration rate to both groups of phyto
+                   ! that is scaled by light limitation, as more respiration will accompany 
+                   ! production under high light conditions
                    zpislopen = zpislopeadn(ji,jj,jk) / ( ( r1_rday + bresp * r1_rday ) &
                    &            * zmxl_fac(ji,jj,jk) * rday + rtrn)
                    zpisloped = zpislopeadd(ji,jj,jk) / ( ( r1_rday + bresp * r1_rday ) &
                    &            * zmxl_fac(ji,jj,jk) * rday + rtrn)
-                   zprbio(ji,jj,jk) = zprbio(ji,jj,jk) * ( 1.- EXP( -zpislopen * enano(ji,jj,jk) )  )
+                   ! GROWTH RATE (/s) after light lim + respiration + PI slope (chl-a) + PAR
+                   zprbio(ji,jj,jk) = zprbio(ji,jj,jk) * ( 1.- EXP( -zpislopen * enano(ji,jj,jk) )  ) ! eq 2a (GMD paper)
                    zprdia(ji,jj,jk) = zprdia(ji,jj,jk) * ( 1.- EXP( -zpisloped * ediat(ji,jj,jk) )  )
                    !  Computation of production function for Chlorophyll
                    !--------------------------------------------------
@@ -184,12 +205,16 @@ CONTAINS
       DO jk = 1, jpkm1
          DO jj = 1, jpj
             DO ji = 1, jpi
+                ! nutrient limited production / light limited production
+                !  value > 1.0 means that light is more limiting
+                !  value < 1.0 means that nutrients (P, N) are more limiting
                 zval = MIN( xnanopo4(ji,jj,jk), ( xnanonh4(ji,jj,jk) + xnanono3(ji,jj,jk) ) )   &
                 &      * zprmaxn(ji,jj,jk) / ( zprbio(ji,jj,jk) + rtrn )
-                quotan(ji,jj,jk) = MIN( 1., 0.2 + 0.8 * zval )
+                quotan(ji,jj,jk) = MIN( 1., 0.2 + 0.8 * zval ) ! < 1 when nutrient limitation is stronger than light
                 zval = MIN( xdiatpo4(ji,jj,jk), ( xdiatnh4(ji,jj,jk) + xdiatno3(ji,jj,jk) ) )   &
                 &      * zprmaxd(ji,jj,jk) / ( zprdia(ji,jj,jk) + rtrn )
                 quotad(ji,jj,jk) = MIN( 1., 0.2 + 0.8 * zval )
+                ! lower values of N:C when nutrients are more limiting than light
             END DO
          END DO
       END DO
@@ -199,22 +224,33 @@ CONTAINS
          DO jj = 1, jpj
             DO ji = 1, jpi
 
-                IF( etot_ndcy(ji,jj,jk) > 1.E-3 ) THEN
+                IF( etot_ndcy(ji,jj,jk) > 1.E-3 ) THEN ! when light available
                    !    Si/C of diatoms
                    !    ------------------------
                    !    Si/C increases with iron stress and silicate availability
                    !    Si/C is arbitrariliy increased for very high Si concentrations
                    !    to mimic the very high ratios observed in the Southern Ocean (silpot2)
-                  zlim  = trb(ji,jj,jk,jpsil) / ( trb(ji,jj,jk,jpsil) + xksi1 )
+                  zlim  = trb(ji,jj,jk,jpsil) / ( trb(ji,jj,jk,jpsil) + xksi1 ) ! Monod lim function for Si
                   zsilim = MIN( zprdia(ji,jj,jk) / ( zprmaxd(ji,jj,jk) + rtrn ), xlimsi(ji,jj,jk) )
                   zsilfac = 4.4 * EXP( -4.23 * zsilim ) * MAX( 0.e0, MIN( 1., 2.2 * ( zlim - 0.5 ) )  ) + 1.e0
-                  zsiborn = trb(ji,jj,jk,jpsil) * trb(ji,jj,jk,jpsil) * trb(ji,jj,jk,jpsil)
-                  IF (gphit(ji,jj) < -30 ) THEN
-                    zsilfac2 = 1. + 2. * zsiborn / ( zsiborn + xksi2**3 )
+                  ! this value (zsilfac) varies between 1 and 4.4.
+                  ! If zlim (si limitation) is less than 0.5, meaning that Si is
+                  ! relatively limiting to growth, then zsilfac==1.0
+                  ! If zlim is nearer 1.0 and therefore not limiting to growth,
+                  ! then the value is dependent on zsilim, which measures
+                  ! the limitation of either light or other nutrients (N,P,Fe).
+                  ! If light/nutrient limitation is strong, then the value of
+                  ! zsilfac is closer to 4.4.
+                  zsiborn = trb(ji,jj,jk,jpsil) * trb(ji,jj,jk,jpsil) * trb(ji,jj,jk,jpsil) ! si**3
+                  IF (gphit(ji,jj) < -30 ) THEN ! if latitude less than 30S
+                    zsilfac2 = 1. + 2. * zsiborn / ( zsiborn + xksi2**3 ) !varies from 1 (si=0) to ~3 (si>40)
                   ELSE
-                    zsilfac2 = 1. +      zsiborn / ( zsiborn + xksi2**3 )
+                    zsilfac2 = 1. +      zsiborn / ( zsiborn + xksi2**3 ) !varies from 1 (si=0) to ~2 (si>40)
                   ENDIF
+                  ! Si:C ratio = mean Si:C ratio[0.159] * SiLim[0,1] * LightNutrientFactor[1,4.4] * SiExcessFactor[1,2/3]
                   zysopt(ji,jj,jk) = grosip * zlim * zsilfac * zsilfac2
+                  ! higher Si:C ratios when light and nutrients (N,P,Fe) are
+                  ! strongly limiting and when Si concentrations are very high
               ENDIF
             END DO
          END DO
@@ -225,9 +261,7 @@ CONTAINS
 
       DO jk = 1, jpkm1
          DO jj = 1, jpj
-            DO ji = 1, jpi
-               zprbio(ji,jj,jk) = zprbio(ji,jj,jk) * ( 1. - fr_i(ji,jj) )
-               zprdia(ji,jj,jk) = zprdia(ji,jj,jk) * ( 1. - fr_i(ji,jj) )
+            DO ji = 1, jpi  
                zprbio(ji,jj,jk) = zprbio(ji,jj,jk) * ( 1. - fr_i(ji,jj) )
                zprdia(ji,jj,jk) = zprdia(ji,jj,jk) * ( 1. - fr_i(ji,jj) )
             END DO
@@ -240,8 +274,18 @@ CONTAINS
             DO ji = 1, jpi
                IF( etot_ndcy(ji,jj,jk) > 1.E-3 ) THEN
                   !  production terms for nanophyto. (C)
+                  ! zprbio = growth rate (max * daylength/ice/light/respiration/PIslope factors)
+                  ! xlimphy = nutrient limitation factor (P,N,Fe) (Liebig law of the minimum)
+                  ! trb(ji,jj,jk,jpphy) = concentration of phytoplankton
+                  ! rfact = number of seconds per timestep (21600 secs, or 6 hours)
                   zprorcan(ji,jj,jk) = zprbio(ji,jj,jk)  * xlimphy(ji,jj,jk) * trb(ji,jj,jk,jpphy) * rfact2
+                  ! zprorcan = production of C per timestep (growth rate * molC/L nanophytoplankton)
+                  ! xnanono3 = nutrient limitation due to NO3
+                  ! xnanonh4 = nutrient limitation due to NH4 
                   zpronewn(ji,jj,jk)  = zprorcan(ji,jj,jk)* xnanono3(ji,jj,jk) / ( xnanono3(ji,jj,jk) + xnanonh4(ji,jj,jk) + rtrn )
+                  ! Ahh... so new production here is amount of total production
+                  ! (zprorcan) that is due solely to NO3
+                  !
                   !
                   zratio = trb(ji,jj,jk,jpnfe) / ( trb(ji,jj,jk,jpphy) * fecnm + rtrn )
                   zmax   = MAX( 0., ( 1. - zratio ) / ABS( 1.05 - zratio ) ) 
@@ -302,12 +346,6 @@ CONTAINS
                  tra(ji,jj,jk,jppo4) = tra(ji,jj,jk,jppo4) - zprorcan(ji,jj,jk) - zprorcad(ji,jj,jk)
                  tra(ji,jj,jk,jpno3) = tra(ji,jj,jk,jpno3) - zpronewn(ji,jj,jk) - zpronewd(ji,jj,jk)
                  tra(ji,jj,jk,jpnh4) = tra(ji,jj,jk,jpnh4) - zproreg - zproreg2
-
-                 IF (ln_n15) THEN
-                    tra(ji,jj,jk,jp15no3) = tra(ji,jj,jk,jp15no3) - zpronewn(ji,jj,jk) - zpronewd(ji,jj,jk)
-                    tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) - zproreg - zproreg2
-                 ENDIF
-
                  tra(ji,jj,jk,jpphy) = tra(ji,jj,jk,jpphy) + zprorcan(ji,jj,jk) * texcretn
                  tra(ji,jj,jk,jpnfe) = tra(ji,jj,jk,jpnfe) + zprofen(ji,jj,jk) * texcretn
                  tra(ji,jj,jk,jpdia) = tra(ji,jj,jk,jpdia) + zprorcad(ji,jj,jk) * texcretd
@@ -323,6 +361,32 @@ CONTAINS
                  tra(ji,jj,jk,jpdic) = tra(ji,jj,jk,jpdic) - zprorcan(ji,jj,jk) - zprorcad(ji,jj,jk)
                  tra(ji,jj,jk,jptal) = tra(ji,jj,jk,jptal) + rno3 * ( zpronewn(ji,jj,jk) + zpronewd(ji,jj,jk) ) &
                  &                                         - rno3 * ( zproreg + zproreg2 )
+
+                 IF (ln_n15) THEN
+                    ! First, calculate utilisation factors [0,1] for new and
+                    ! regenerated production.
+                    zu_15 = min(1.0, max(0.0, 1.0 - (zpronewn(ji,jj,jk)+zpronewd(ji,jj,jk)) &
+                    &                         / (rtrn + trb(ji,jj,jk,jp15no3)) ) )
+                    zun_15 = min(1.0, max(0.0, 1.0 - (zproreg(ji,jj,jk)+zproreg2(ji,jj,jk)) &
+                    &                          / (rtrn + trb(ji,jj,jk,jp15nh4)) ) )
+                    ! Second, apply utilisation factors to fractionation factors
+                    ! for new and regenerated production (same for now) and
+                    ! multiply by the current ratio of 15Nno3 to total no3
+                    zr15_new = (1.0 - e15n_prod*1e-3*zu_15) * trb(ji,jj,jk,jp15no3)/(trb(ji,jj,jk,jpno3) + rtrn)
+                    zr15_reg = (1.0 - e15n_prod*1e-3*zun_15) * trb(ji,jj,jk,jp15nh4)/(trb(ji,jj,jk,jpnh4) + rtrn)
+                    ! Third, apply the fractionation factors to the state variables
+                    tra(ji,jj,jk,jp15phy) = tra(ji,jj,jk,jp15phy) + zr15_new * zpronewn(ji,jj,jk) * texcretn &
+                    &                                             + zr15_reg * zproreg * texcretn
+                    tra(ji,jj,jk,jp15dia) = tra(ji,jj,jk,jp15dia) + zr15_new * zpronewd(ji,jj,jk) * texcretd &
+                    &                                             + zr15_reg * zproreg2 * texcretd
+                    tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) + zr15_new * zpronewn(ji,jj,jk) * excretn &
+                    &                                             + zr15_reg * zproreg * excretn &
+                    &                                             + zr15_new * zpronewd(ji,jj,jk) * excretd &
+                    &                                             + zr15_reg * zproreg2 * excretd 
+                    tra(ji,jj,jk,jp15no3) = tra(ji,jj,jk,jp15no3) - zr15_new * ( zpronewn(ji,jj,jk) - zpronewd(ji,jj,jk) )
+                    tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) - zr15_reg * ( zproreg - zproreg2 )
+                 ENDIF
+
               ENDIF
            END DO
         END DO
@@ -490,7 +554,8 @@ CONTAINS
       INTEGER ::   ios   ! Local integer
       !
       NAMELIST/namp4zprod/ pislopen, pisloped, xadap, bresp, excretn, excretd,  &
-         &                 chlcnm, chlcdm, chlcmin, fecnm, fecdm, grosip
+         &                 chlcnm, chlcdm, chlcmin, fecnm, fecdm, grosip,       &
+         &                 e15n_prod
       !!----------------------------------------------------------------------
       !
       IF(lwp) THEN                         ! control print
@@ -521,6 +586,7 @@ CONTAINS
          WRITE(numout,*) '      Minimum Chl/C in diatoms                  chlcdm       =', chlcdm
          WRITE(numout,*) '      Maximum Fe/C in nanophytoplankton         fecnm        =', fecnm
          WRITE(numout,*) '      Minimum Fe/C in diatoms                   fecdm        =', fecdm
+         WRITE(numout,*) '      N15 fractionation by assimilation         e15n_prod    =', e15n_prod
       ENDIF
       !
       r1_rday   = 1._wp / rday 

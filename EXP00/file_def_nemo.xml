@@ -7,7 +7,7 @@
 ============================================================================================================
     -->
 
-   <file_definition type="one_file" name="@expname@_@freq@_@startdate@_@enddate@" sync_freq="10d" min_digits="4">
+   <file_definition type="multiple_file" name="@expname@_@freq@_@startdate@_@enddate@" sync_freq="10d" min_digits="4">
     
       <file_group id="1ts" output_freq="1ts"  output_level="10" enabled=".TRUE."/> <!-- 1 time step files -->
       <file_group id="1h" output_freq="1h"  output_level="10" enabled=".TRUE."/> <!-- 1h files -->
@@ -35,7 +35,7 @@
       <file_group id="3d" output_freq="3d"  output_level="10" enabled=".TRUE."/> <!-- 3d files -->    
       <file_group id="5d" output_freq="5d"  output_level="10" enabled=".TRUE."/>  <!-- 5d files -->   
 
-      <file_group id="1m" output_freq="1mo" output_level="10" enabled=".TRUE."> <!-- real monthly files -->
+      <file_group id="1m" output_freq="1mo" output_level="10" enabled=".FALSE."> <!-- real monthly files -->
 
 	<file id="file2" name_suffix="_ptrc_T" description="pisces sms variables" >
           <field field_ref="DIC"      />
@@ -47,6 +47,9 @@
           <field field_ref="NCHL"     />
           <field field_ref="DCHL"     />
           <field field_ref="NO3"      />
+          <field field_ref="NH4"      />
+          <field field_ref="NO3_15"   />
+          <field field_ref="NH4_15"   />
 	</file>
 	
 	<file id="file3" name_suffix="_diad_T" description="additional pisces diagnostics" >
@@ -87,6 +90,9 @@
           <field field_ref="DCHL"     />
           <field field_ref="NO3"      />
           <field field_ref="NH4"      />
+          <field field_ref="LGW"      />
+          <field field_ref="NO3_15"   />
+          <field field_ref="NH4_15"   />
 	</file>
 
 	<file id="file5" name_suffix="_diad_T" description="additional pisces diagnostics" >
@@ -134,6 +140,27 @@
           <field field_ref="TL1"      />
           <field field_ref="Sdenit"   />
           <field field_ref="Totlig"   />
+          <field field_ref="FESCAV"   />
+          <field field_ref="FECOLL"   />
+          <field field_ref="LGWCOLL"   />
+          <field field_ref="LPRODP"   />
+          <field field_ref="LDETP"    />
+          <field field_ref="LPRODZ"   />
+          <field field_ref="LPRODZ2"   />
+          <field field_ref="LPRODR"   />
+          <field field_ref="LIGREM"   />
+          <field field_ref="LIGPR"   />
+          <field field_ref="FEZOO"   />
+          <field field_ref="FEZOO2"   />
+          <field field_ref="BACT" />
+          <field field_ref="REMIN"    />
+          <field field_ref="REMINP"    />
+          <field field_ref="REMING"    />
+          <field field_ref="REMINF"    />
+          <field field_ref="EXPC" />
+          <field field_ref="EXPFE" />
+          <field field_ref="DENIT" />
+          <field field_ref="NITR" />
 	</file>
 
       </file_group>
