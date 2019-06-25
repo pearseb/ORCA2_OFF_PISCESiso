@@ -168,9 +168,9 @@ CONTAINS
                   tra(ji,jj,jk,jptal) = tra(ji,jj,jk,jptal) +  ( rivalk(ji,jj) - rno3 * rivdin(ji,jj) ) * rfact2
                   tra(ji,jj,jk,jpdoc) = tra(ji,jj,jk,jpdoc) +  rivdoc(ji,jj) * rfact2
 
-                  IF ( ln_n15 ) THEN
-                     tra(ji,jj,jk,jp15no3) = tra(ji,jj,jk,jp15no3) +  rivdin(ji,jj) * rfact2
-                     tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) +  rivdoc(ji,jj) * rfact2
+                  IF( ln_n15 ) THEN
+                     tra(ji,jj,jk,jp15no3) = tra(ji,jj,jk,jp15no3) + (1. + d15n_riv*1e-3)*rivdin(ji,jj) * rfact2
+                     tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) + (1. + d15n_riv*1e-3)*rivdoc(ji,jj) * rfact2
                   ENDIF 
 
                ENDDO
@@ -204,7 +204,7 @@ CONTAINS
          tra(:,:,1,jptal) = tra(:,:,1,jptal) - rno3 * nitdep(:,:) * rfact2
 
          IF ( ln_n15 ) THEN
-            tra(:,:,1,jp15no3) = tra(:,:,1,jp15no3) + nitdep(:,:) * rfact2
+            tra(:,:,1,jp15no3) = tra(:,:,1,jp15no3) + (1. + d15n_dep*1e-3)*nitdep(:,:) * rfact2
          ENDIF
 
       ENDIF
@@ -483,10 +483,10 @@ CONTAINS
                     !   one sixths to GOC 
 
                   IF ( ln_n15 ) THEN
-                     tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zfact / 3.0  
-                     tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) + zfact * 1.0 / 3.0
-                     tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) + zfact * 1.0 / 3.0 * 2.0 / 3.0
-                     tra(ji,jj,jk,jp15goc) = tra(ji,jj,jk,jp15goc) + zfact * 1.0 / 3.0 * 1.0 / 3.0
+                     tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zfact * (1. + d15n_fix*1e-3) * 1./3.  
+                     tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) + zfact * (1. + d15n_fix*1e-3) * 1./3.
+                     tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) + zfact * (1. + d15n_fix*1e-3) * 2./6.
+                     tra(ji,jj,jk,jp15goc) = tra(ji,jj,jk,jp15goc) + zfact * (1. + d15n_fix*1e-3) * 1./6.
                   ENDIF
 
               END DO
@@ -498,11 +498,6 @@ CONTAINS
                DO ji = 1, jpi
                   zfact = nitrpot(ji,jj,jk) * nitrfix
                   tra(ji,jj,jk,jpnh4) = tra(ji,jj,jk,jpnh4) + zfact / 3.0
-
-                  IF (ln_n15) THEN
-                     tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zfact / 3.0
-                  ENDIF
-
                   tra(ji,jj,jk,jptal) = tra(ji,jj,jk,jptal) + rno3 * zfact / 3.0
                   tra(ji,jj,jk,jppo4) = tra(ji,jj,jk,jppo4) - 16.0 / 46.0 * zfact * ( 1.0 - 1.0 / 3.0 ) &
                   &                     * ztrpo4(ji,jj,jk) / (ztrpo4(ji,jj,jk) + ztrdop(ji,jj,jk) + rtrn)

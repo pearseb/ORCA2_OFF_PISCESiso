@@ -37,6 +37,7 @@ STEPS TAKEN...
 		- jp15poc	Small particulate organic carbon
 		- jp15goc	Large particulate organic carbon
 		- jp15doc	Dissolved organic carbon
+        4. add d15n signatures of external sources (rivers + atmospheric deposition + n2fixation)
 	
 
 

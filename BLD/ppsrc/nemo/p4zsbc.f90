@@ -282,9 +282,9 @@ CONTAINS
             WRITE(numout,*) '      Weak ligand ratio from sed hydro sources  lgw_rath   = ', lgw_rath
          ENDIF
           WRITE(numout,*) '    N15 Benthic denitrification fractionation    e15n_ben = ', e15n_ben
-          WRITE(numout,*) '    delta15N signature of N2 fixation            e15n_ben = ', d15n_fix
-          WRITE(numout,*) '    delta15N signature of river input            e15n_ben = ', d15n_riv
-          WRITE(numout,*) '    delta15N signature of atmospheric deposition e15n_ben = ', d15n_dep
+          WRITE(numout,*) '    delta15N signature of N2 fixation            d15n_fix = ', d15n_fix
+          WRITE(numout,*) '    delta15N signature of river input            d15n_riv = ', d15n_riv
+          WRITE(numout,*) '    delta15N signature of atmospheric deposition d15n_dep = ', d15n_dep
       END IF
 
       IF( ln_dust .OR. ln_river .OR. ln_ndepo ) THEN   ;   ll_sbc = .TRUE.
