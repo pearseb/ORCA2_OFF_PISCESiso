@@ -84,14 +84,63 @@ CONTAINS
       CALL p4z_sink    ( kt, knt )     ! vertical flux of particulate organic matter
       CALL p4z_fechem  ( kt, knt )     ! Iron chemistry/scavenging
       !
+      !IF( ln_n15 ) THEN
+      !  print*, " " 
+      !  print*, rtrn
+      !  print*, " before calls to biological routines " 
+      !  print*, trb(60,60,1,jppoc),trb(60,60,1,jp15poc),trb(60,60,1,jppoc)-trb(60,60,1,jp15poc)
+      !  print*, trn(60,60,1,jppoc),trn(60,60,1,jp15poc),trn(60,60,1,jppoc)-trn(60,60,1,jp15poc)
+      !  print*, tra(60,60,1,jppoc),tra(60,60,1,jp15poc),tra(60,60,1,jppoc)-tra(60,60,1,jp15poc)
+      !  print*, " "
+      !ENDIF
       IF( ln_p4z ) THEN
          CALL p4z_lim  ( kt, knt )     ! co-limitations by the various nutrients
+      !IF( ln_n15 ) THEN
+      !  print*, " " 
+      !  print*, " after call to p4zlim routines " 
+      !  print*, trb(60,60,1,jppoc), trb(60,60,1,jp15poc),trb(60,60,1,jppoc)-trb(60,60,1,jp15poc)
+      !  print*, trn(60,60,1,jppoc), trn(60,60,1,jp15poc),trn(60,60,1,jppoc)-trn(60,60,1,jp15poc)
+      !  print*, tra(60,60,1,jppoc), tra(60,60,1,jp15poc),tra(60,60,1,jppoc)-tra(60,60,1,jp15poc)
+      !  print*, " "
+      !ENDIF
          CALL p4z_prod ( kt, knt )     ! phytoplankton growth rate over the global ocean. 
+      !IF( ln_n15 ) THEN
+      !  print*, " " 
+      !  print*, " after calls to p4zprod routines " 
+      !  print*, trb(60,60,1,jppoc), trb(60,60,1,jp15poc),trb(60,60,1,jppoc)-trb(60,60,1,jp15poc)
+      !  print*, trn(60,60,1,jppoc), trn(60,60,1,jp15poc),trn(60,60,1,jppoc)-trn(60,60,1,jp15poc)
+      !  print*, tra(60,60,1,jppoc), tra(60,60,1,jp15poc),tra(60,60,1,jppoc)-tra(60,60,1,jp15poc)
+      !  print*, " "
+      !ENDIF
          !                             ! (for each element : C, Si, Fe, Chl )
          CALL p4z_mort ( kt      )     ! phytoplankton mortality
+      !IF( ln_n15 ) THEN
+      !  print*, " " 
+      !  print*, " after calls to p4zmort routines " 
+      !  print*, trb(60,60,1,jppoc), trb(60,60,1,jp15poc),trb(60,60,1,jppoc)-trb(60,60,1,jp15poc)
+      !  print*, trn(60,60,1,jppoc), trn(60,60,1,jp15poc),trn(60,60,1,jppoc)-trn(60,60,1,jp15poc)
+      !  print*, tra(60,60,1,jppoc), tra(60,60,1,jp15poc),tra(60,60,1,jppoc)-tra(60,60,1,jp15poc)
+      !  print*, " "
+      !ENDIF
          !                             ! zooplankton sources/sinks routines 
          CALL p4z_micro( kt, knt )           ! microzooplankton
+      !IF( ln_n15 ) THEN
+      !  print*, " " 
+      !  print*, " after calls to p4zmicro routines " 
+      !  print*, trb(60,60,1,jppoc), trb(60,60,1,jp15poc),trb(60,60,1,jppoc)-trb(60,60,1,jp15poc)
+      !  print*, trn(60,60,1,jppoc), trn(60,60,1,jp15poc),trn(60,60,1,jppoc)-trn(60,60,1,jp15poc)
+      !  print*, tra(60,60,1,jppoc), tra(60,60,1,jp15poc),tra(60,60,1,jppoc)-tra(60,60,1,jp15poc)
+      !  print*, " "
+      !ENDIF
          CALL p4z_meso ( kt, knt )           ! mesozooplankton
+      !IF( ln_n15 ) THEN
+      !  print*, " " 
+      !  print*, " after calls to p4zmeso routines " 
+      !  print*, trb(60,60,1,jppoc), trb(60,60,1,jp15poc),trb(60,60,1,jppoc)-trb(60,60,1,jp15poc)
+      !  print*, trn(60,60,1,jppoc), trn(60,60,1,jp15poc),trn(60,60,1,jppoc)-trn(60,60,1,jp15poc)
+      !  print*, tra(60,60,1,jppoc), tra(60,60,1,jp15poc),tra(60,60,1,jppoc)-tra(60,60,1,jp15poc)
+      !  print*, " "
+      !ENDIF
       ELSE
          CALL p5z_lim  ( kt, knt )     ! co-limitations by the various nutrients
          CALL p5z_prod ( kt, knt )     ! phytoplankton growth rate over the global ocean. 
@@ -101,10 +150,26 @@ CONTAINS
          CALL p5z_micro( kt, knt )           ! microzooplankton
          CALL p5z_meso ( kt, knt )           ! mesozooplankton
       ENDIF
+      !IF( ln_n15 ) THEN
+      !  print*, " " 
+      !  print*, " after calls to biological routines " 
+      !  print*, trb(60,60,1,jppoc), trb(60,60,1,jp15poc),trb(60,60,1,jppoc)-trb(60,60,1,jp15poc)
+      !  print*, trn(60,60,1,jppoc), trn(60,60,1,jp15poc),trn(60,60,1,jppoc)-trn(60,60,1,jp15poc)
+      !  print*, tra(60,60,1,jppoc), tra(60,60,1,jp15poc),tra(60,60,1,jppoc)-tra(60,60,1,jp15poc)
+      !  print*, " "
+      !ENDIF
       !
       CALL p4z_agg     ( kt, knt )     ! Aggregation of particles
       CALL p4z_rem     ( kt, knt )     ! remineralization terms of organic matter+scavenging of Fe
       CALL p4z_poc     ( kt, knt )     ! Remineralization of organic particles
+      !IF( ln_n15 ) THEN
+      !  print*, " " 
+      !  print*, " after calls to remineralisation routines " 
+      !  print*, trb(60,60,1,jppoc), trb(60,60,1,jp15poc),trb(60,60,1,jppoc)-trb(60,60,1,jp15poc)
+      !  print*, trn(60,60,1,jppoc), trn(60,60,1,jp15poc),trn(60,60,1,jppoc)-trn(60,60,1,jp15poc)
+      !  print*, tra(60,60,1,jppoc), tra(60,60,1,jp15poc),tra(60,60,1,jppoc)-tra(60,60,1,jp15poc)
+      !  print*, " "
+      !ENDIF
       !
       IF( ln_ligand )  &
       & CALL p4z_ligand( kt, knt )

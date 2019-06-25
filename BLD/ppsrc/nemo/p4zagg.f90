@@ -51,6 +51,7 @@ CONTAINS
       REAL(wp) ::   zaggpon , zaggdon, zaggdon2, zaggdon3
       REAL(wp) ::   zaggpop, zaggdop, zaggdop2, zaggdop3
       REAL(wp) ::   zaggtmp, zfact, zmax
+      REAL(wp) ::   zagg_15, zratdoc_15
       CHARACTER (len=25) :: charout
       !!---------------------------------------------------------------------
       !
@@ -97,6 +98,17 @@ CONTAINS
                   tra(ji,jj,jk,jpsfe) = tra(ji,jj,jk,jpsfe) - zaggfe
                   tra(ji,jj,jk,jpbfe) = tra(ji,jj,jk,jpbfe) + zaggfe
                   tra(ji,jj,jk,jpdoc) = tra(ji,jj,jk,jpdoc) - zaggdoc - zaggdoc2 - zaggdoc3
+                  !
+                  IF ( ln_n15 ) THEN
+                     !zagg_15 = zagg * trb(ji,jj,jk,jp15poc) / ( trb(ji,jj,jk,jppoc) + rtrn )
+                     !zratdoc_15 = trb(ji,jj,jk,jp15doc)/ ( trb(ji,jj,jk,jpdoc) + rtrn )
+                     zagg_15 = zagg * 1.0
+                     zratdoc_15 = 1.0
+                     tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) - zagg_15 + ( zaggdoc + zaggdoc3 ) * zratdoc_15
+                     tra(ji,jj,jk,jp15goc) = tra(ji,jj,jk,jp15goc) + zagg_15 + zaggdoc2 * zratdoc_15
+                     tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) - ( zaggdoc + zaggdoc2 + zaggdoc3 )   &
+                  &                          * zratdoc_15
+                  ENDIF
                   !
                   conspoc(ji,jj,jk) = conspoc(ji,jj,jk) - zagg + zaggdoc + zaggdoc3
                   prodgoc(ji,jj,jk) = prodgoc(ji,jj,jk) + zagg + zaggdoc2

@@ -42,6 +42,8 @@ MODULE p4zmeso
    REAL(wp), PUBLIC ::  epsher2      !: growth efficiency
    REAL(wp), PUBLIC ::  epsher2min   !: minimum growth efficiency at high food for grazing 2
    REAL(wp), PUBLIC ::  grazflux     !: mesozoo flux feeding rate
+   REAL(wp), PUBLIC ::  e15n_ex2     !: N15 mesozoo excretion fractionation
+   REAL(wp), PUBLIC ::  e15n_in2     !: N15 mesozoo ingestion fractionation
 
    !!----------------------------------------------------------------------
    !! NEMO/TOP 4.0 , NEMO Consortium (2018)
@@ -132,15 +134,25 @@ CONTAINS
                zgrazffeg = grazflux  * xstep * wsbio4(ji,jj,jk)      &
                &           * tgfunc2(ji,jj,jk) * trb(ji,jj,jk,jpgoc) * trb(ji,jj,jk,jpmes) &
                &           * (1. - nitrfac(ji,jj,jk))
+               ! grazflux = flux feeding rate (per m molC/L)
+               ! wsbio4(ji,jj,jk) * trb(ji,jj,jk,jpgoc) * xstep = rate of GOC flux (m molC/L)
+               ! tgfunc2(ji,jj,jk) * trb(ji,jj,jk,jpmes) = growth rate of zooplankton (molC/L)
+               ! (1. - nitrfac(ji,jj,jk)) = no grazing without oxygen
+               ! zgrazffeg = assimilation of big particles by flux feeding (molC/L)
+
                zgrazfffg = zgrazffeg * trb(ji,jj,jk,jpbfe) / (trb(ji,jj,jk,jpgoc) + rtrn)
                zgrazffep = grazflux  * xstep *  wsbio3(ji,jj,jk)     &
                &           * tgfunc2(ji,jj,jk) * trb(ji,jj,jk,jppoc) * trb(ji,jj,jk,jpmes) &
                &           * (1. - nitrfac(ji,jj,jk))
+               ! zgrazffep = assimilation of small particles by flux feeding (molC/L)
+
                zgrazfffp = zgrazffep * trb(ji,jj,jk,jpsfe) / (trb(ji,jj,jk,jppoc) + rtrn)
                !
-               zgraztotc = zgrazd + zgrazz + zgrazn + zgrazpoc + zgrazffep + zgrazffeg
-               ! Compute the proportion of filter feeders
-               zproport  = (zgrazffep + zgrazffeg)/(rtrn + zgraztotc)
+               zgraztotc = zgrazd + zgrazz + zgrazn + zgrazpoc + zgrazffep + zgrazffeg ! total feeding
+               
+
+               ! compute the proportion of filter feeders
+               zproport  = (zgrazffep + zgrazffeg)/(rtrn + zgraztotc) ! filter feeders assumed to be flux feeders
                ! Compute fractionation of aggregates. It is assumed that 
                ! diatoms based aggregates are more prone to fractionation
                ! since they are more porous (marine snow instead of fecal pellets)
@@ -150,7 +162,7 @@ CONTAINS
                &          * trb(ji,jj,jk,jpgoc) * trb(ji,jj,jk,jpmes)          &
                &          * ( 0.2 + 3.8 * zratio2 / ( 1.**2 + zratio2 ) )
                zfracfe   = zfrac * trb(ji,jj,jk,jpbfe) / (trb(ji,jj,jk,jpgoc) + rtrn)
-
+               
                zgrazffep = zproport * zgrazffep
                zgrazffeg = zproport * zgrazffeg
                zgrazfffp = zproport * zgrazfffp
@@ -182,12 +194,12 @@ CONTAINS
                zgrarsig  = zgrarem2 * sigma2
                tra(ji,jj,jk,jppo4) = tra(ji,jj,jk,jppo4) + zgrarsig
                tra(ji,jj,jk,jpnh4) = tra(ji,jj,jk,jpnh4) + zgrarsig
+               tra(ji,jj,jk,jpdoc) = tra(ji,jj,jk,jpdoc) + zgrarem2 - zgrarsig
                
                IF (ln_n15) THEN
                   tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zgrarsig
+                  tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) + zgrarem2 - zgrarsig
                ENDIF
-               
-               tra(ji,jj,jk,jpdoc) = tra(ji,jj,jk,jpdoc) + zgrarem2 - zgrarsig
                !
                IF( ln_ligand ) THEN 
                   tra(ji,jj,jk,jplgw) = tra(ji,jj,jk,jplgw) + (zgrarem2 - zgrarsig) * ldocz
@@ -232,6 +244,16 @@ CONTAINS
                tra(ji,jj,jk,jpdic) = tra(ji,jj,jk,jpdic) + zgrazcal - zprcaca
                tra(ji,jj,jk,jptal) = tra(ji,jj,jk,jptal) - 2. * ( zgrazcal + zprcaca )
                tra(ji,jj,jk,jpcal) = tra(ji,jj,jk,jpcal) - zgrazcal + zprcaca
+
+               IF (ln_n15) THEN
+                  tra(ji,jj,jk,jp15mes) = tra(ji,jj,jk,jp15mes) - zmortz + zepsherv * zgraztotc 
+                  tra(ji,jj,jk,jp15dia) = tra(ji,jj,jk,jp15dia) - zgrazd
+                  tra(ji,jj,jk,jp15zoo) = tra(ji,jj,jk,jp15zoo) - zgrazz
+                  tra(ji,jj,jk,jp15phy) = tra(ji,jj,jk,jp15phy) - zgrazn
+                  tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) - zgrazpoc - zgrazffep + zfrac
+                  tra(ji,jj,jk,jp15goc) = tra(ji,jj,jk,jp15goc) + zmortzgoc - zgrazffeg + zgrapoc2 - zfrac
+               ENDIF
+
             END DO
          END DO
       END DO
@@ -285,7 +307,8 @@ CONTAINS
       !
       NAMELIST/namp4zmes/ part2, grazrat2, resrat2, mzrat2, xpref2n, xpref2d, xpref2z,   &
          &                xpref2c, xthresh2dia, xthresh2phy, xthresh2zoo, xthresh2poc, &
-         &                xthresh2, xkgraz2, epsher2, epsher2min, sigma2, unass2, grazflux
+         &                xthresh2, xkgraz2, epsher2, epsher2min, sigma2, unass2, grazflux, &
+         &                e15n_ex2, e15n_in2
       !!----------------------------------------------------------------------
       !
       IF(lwp) THEN
@@ -323,6 +346,8 @@ CONTAINS
          WRITE(numout,*) '      Minimum Efficiency of Mesozoo growth           epsher2min  =', epsher2min
          WRITE(numout,*) '      Fraction of mesozoo excretion as DOM           sigma2       =', sigma2
          WRITE(numout,*) '      half sturation constant for grazing 2          xkgraz2      =', xkgraz2
+         WRITE(numout,*) '      N15 mesozoo excretion fractionation            e15n_ex2     =', e15n_ex2
+         WRITE(numout,*) '      N15 mesozoo ingestion fractionation            e15n_in2     =', e15n_in2
       ENDIF
       !
    END SUBROUTINE p4z_meso_init

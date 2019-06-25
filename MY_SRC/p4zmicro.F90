@@ -40,6 +40,8 @@ MODULE p4zmicro
    REAL(wp), PUBLIC ::   sigma1      !: Fraction of microzoo excretion as DOM 
    REAL(wp), PUBLIC ::   epsher      !: growth efficiency for grazing 1 
    REAL(wp), PUBLIC ::   epshermin   !: minimum growth efficiency for grazing 1
+   REAL(wp), PUBLIC ::   e15n_ex     !: N15 microzoo excretion fractionation
+   REAL(wp), PUBLIC ::   e15n_in     !: N15 microzoo ingestion fractionation
 
    !!----------------------------------------------------------------------
    !! NEMO/TOP 4.0 , NEMO Consortium (2018)
@@ -85,39 +87,51 @@ CONTAINS
             DO ji = 1, jpi
                zcompaz = MAX( ( trb(ji,jj,jk,jpzoo) - 1.e-9 ), 0.e0 )
                zfact   = xstep * tgfunc2(ji,jj,jk) * zcompaz
+               ! zfact = maximum temp-dependent growth rate of microzoo (Q10=2.14)
 
                !  Respiration rates of both zooplankton
                !  -------------------------------------
                zrespz = resrat * zfact * trb(ji,jj,jk,jpzoo) / ( xkmort + trb(ji,jj,jk,jpzoo) )  &
                   &   + resrat * zfact * 3. * nitrfac(ji,jj,jk)
+               ! resrat = 0.03 (/d) fraction of material exuded
+               ! zfact = growth rate (/d) 
+               ! trb(ji,jj,jk,jpzoo) / ( xkmort + trb(ji,jj,jk,jpzoo) ) = factor [0,1] mortality of zooplankton
+               ! nitrfac(ji,jj,jk) = factor [0,1] control of suboxic remin, 3x exudation (0.03) in suboxic zone
 
                !  Zooplankton mortality. A square function has been selected with
                !  no real reason except that it seems to be more stable and may mimic predation.
                !  ---------------------------------------------------------------
                ztortz = mzrat * 1.e6 * zfact * trb(ji,jj,jk,jpzoo) * (1. - nitrfac(ji,jj,jk))
+               ! (1. - nitrfac(ji,jj,jk)) = no mortality in suboxic conditions
 
-               zcompadi  = MIN( MAX( ( trb(ji,jj,jk,jpdia) - xthreshdia ), 0.e0 ), xsizedia )
+               zcompadi  = MIN( MAX( ( trb(ji,jj,jk,jpdia) - xthreshdia ), 0.e0 ), xsizedia ) ! [1e-8,1e-6]
                zcompaph  = MAX( ( trb(ji,jj,jk,jpphy) - xthreshphy ), 0.e0 )
                zcompapoc = MAX( ( trb(ji,jj,jk,jppoc) - xthreshpoc ), 0.e0 )
+               ! these are concentrations of diatoms, nanos and poc in molC/L above threshold required for grazing to occur
                
                !     Microzooplankton grazing
                !     ------------------------
-               zfood     = xprefn * zcompaph + xprefc * zcompapoc + xprefd * zcompadi
-               zfoodlim  = MAX( 0. , zfood - min(xthresh,0.5*zfood) )
-               zdenom    = zfoodlim / ( xkgraz + zfoodlim )
+               zfood     = xprefn * zcompaph + xprefc * zcompapoc + xprefd * zcompadi ! molC/L total food available
+               zfoodlim  = MAX( 0. , zfood - min(xthresh,0.5*zfood) ) !Flim increases as food availability inceases 
+               zdenom    = zfoodlim / ( xkgraz + zfoodlim )  ! [0,1] , closer to when food availability greater 
                zdenom2   = zdenom / ( zfood + rtrn )
-               zgraze    = grazrat * xstep * tgfunc2(ji,jj,jk) * trb(ji,jj,jk,jpzoo) * (1. - nitrfac(ji,jj,jk))
+               zgraze    = grazrat * xstep * tgfunc2(ji,jj,jk) * trb(ji,jj,jk,jpzoo) * (1. - nitrfac(ji,jj,jk)) 
 
                zgrazp    = zgraze  * xprefn * zcompaph  * zdenom2 
                zgrazm    = zgraze  * xprefc * zcompapoc * zdenom2 
-               zgrazsd   = zgraze  * xprefd * zcompadi  * zdenom2 
+               zgrazsd   = zgraze  * xprefd * zcompadi  * zdenom2
+               ! zgraze = grazing rate determined by temperature, oxygen and zooplankton concentration (molC/L)
+               ! xprefn = preference for food type [0,1]
+               ! zcompaph = concentration of food type (molC/L)
+               ! zdenom2 = the fraction of food that can be consumed at this timestep, given thresholds
+               ! zgrazp/zgrazm/zgrazsd = the concentration (molC/L) of food type consumed by microzooplankton
 
                zgrazpf   = zgrazp  * trb(ji,jj,jk,jpnfe) / (trb(ji,jj,jk,jpphy) + rtrn)
                zgrazmf   = zgrazm  * trb(ji,jj,jk,jpsfe) / (trb(ji,jj,jk,jppoc) + rtrn)
                zgrazsf   = zgrazsd * trb(ji,jj,jk,jpdfe) / (trb(ji,jj,jk,jpdia) + rtrn)
                !
-               zgraztotc = zgrazp  + zgrazm  + zgrazsd 
-               zgraztotf = zgrazpf + zgrazsf + zgrazmf 
+               zgraztotc = zgrazp  + zgrazm  + zgrazsd ! total molC/L consumed by microzooplankton
+               zgraztotf = zgrazpf + zgrazsf + zgrazmf ! total molFe/L
                zgraztotn = zgrazp * quotan(ji,jj,jk) + zgrazm + zgrazsd * quotad(ji,jj,jk)
 
                ! Grazing by microzooplankton
@@ -134,18 +148,13 @@ CONTAINS
 
                zgrafer   = zgraztotc * MAX( 0. , ( 1. - unass ) * zgrasrat - ferat3 * zepsherv ) 
                zgrarem   = zgraztotc * ( 1. - zepsherv - unass )
-               zgrapoc   = zgraztotc * unass
+               zgrapoc   = zgraztotc * unass  ! amount of carbon not assimilated (messy feeding?)
 
                !  Update of the TRA arrays
                !  ------------------------
                zgrarsig  = zgrarem * sigma1
                tra(ji,jj,jk,jppo4) = tra(ji,jj,jk,jppo4) + zgrarsig
                tra(ji,jj,jk,jpnh4) = tra(ji,jj,jk,jpnh4) + zgrarsig
-
-               IF (ln_n15) THEN
-                  tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zgrarsig
-               ENDIF
-
                tra(ji,jj,jk,jpdoc) = tra(ji,jj,jk,jpdoc) + zgrarem - zgrarsig
                !
                IF( ln_ligand ) THEN
@@ -161,9 +170,16 @@ CONTAINS
                tra(ji,jj,jk,jpsfe) = tra(ji,jj,jk,jpsfe) + zgraztotf * unass
                tra(ji,jj,jk,jpdic) = tra(ji,jj,jk,jpdic) + zgrarsig
                tra(ji,jj,jk,jptal) = tra(ji,jj,jk,jptal) + rno3 * zgrarsig
+               !
+               IF ( ln_n15 ) THEN
+                  tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zgrarsig ! food immediately excreted to NH4
+                  tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) + zgrarem - zgrarsig ! food immediately excreted to DOC
+                  tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) + zgrapoc  ! messy feeding routed directly to POC
+               ENDIF
+               !
                !   Update the arrays TRA which contain the biological sources and sinks
                !   --------------------------------------------------------------------
-               zmortz = ztortz + zrespz
+               zmortz = ztortz + zrespz  ! combined linear and quadratic mortality terms
                tra(ji,jj,jk,jpzoo) = tra(ji,jj,jk,jpzoo) - zmortz + zepsherv * zgraztotc 
                tra(ji,jj,jk,jpphy) = tra(ji,jj,jk,jpphy) - zgrazp
                tra(ji,jj,jk,jpdia) = tra(ji,jj,jk,jpdia) - zgrazsd
@@ -186,6 +202,14 @@ CONTAINS
                tra(ji,jj,jk,jpdic) = tra(ji,jj,jk,jpdic) - zprcaca
                tra(ji,jj,jk,jptal) = tra(ji,jj,jk,jptal) - 2. * zprcaca
                tra(ji,jj,jk,jpcal) = tra(ji,jj,jk,jpcal) + zprcaca
+               !
+               IF ( ln_n15 ) THEN
+                  tra(ji,jj,jk,jp15zoo) = tra(ji,jj,jk,jp15zoo) - zmortz + zepsherv * zgraztotc
+                  tra(ji,jj,jk,jp15phy) = tra(ji,jj,jk,jp15phy) - zgrazp
+                  tra(ji,jj,jk,jp15dia) = tra(ji,jj,jk,jp15dia) - zgrazsd
+                  tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) + zmortz - zgrazm
+               ENDIF
+               !
             END DO
          END DO
       END DO
@@ -238,7 +262,8 @@ CONTAINS
       !
       NAMELIST/namp4zzoo/ part, grazrat, resrat, mzrat, xprefn, xprefc, &
          &                xprefd,  xthreshdia,  xthreshphy,  xthreshpoc, &
-         &                xthresh, xkgraz, epsher, epshermin, sigma1, unass
+         &                xthresh, xkgraz, epsher, epshermin, sigma1, unass, &
+         &                e15n_ex, e15n_in
       !!----------------------------------------------------------------------
       !
       IF(lwp) THEN
@@ -273,6 +298,8 @@ CONTAINS
          WRITE(numout,*) '      Minimum efficicency of microzoo growth          epshermin   =', epshermin
          WRITE(numout,*) '      Fraction of microzoo excretion as DOM           sigma1      =', sigma1
          WRITE(numout,*) '      half sturation constant for grazing 1           xkgraz      =', xkgraz
+         WRITE(numout,*) '      N15 microzoo excretion fractionation            e15n_ex     =', e15n_ex
+         WRITE(numout,*) '      N15 microzoo ingestion fractionation            e15n_in     =', e15n_in
       ENDIF
       !
    END SUBROUTINE p4z_micro_init

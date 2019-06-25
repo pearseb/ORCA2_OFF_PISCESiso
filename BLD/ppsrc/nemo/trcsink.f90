@@ -50,7 +50,7 @@ CONTAINS
       INTEGER , INTENT(in)  :: kt
       INTEGER , INTENT(in)  :: jp_tra    ! tracer index index      
       REAL(wp), INTENT(in)  :: rsfact    ! time step duration
-      REAL(wp), INTENT(in)   , DIMENSION(jpi,jpj,jpk) :: pwsink
+      REAL(wp), INTENT(in)   , DIMENSION(jpi,jpj,jpk) :: pwsink  ! sinking speed (m/day)
       REAL(wp), INTENT(inout), DIMENSION(jpi,jpj,jpk) :: psinkflx
       INTEGER  ::   ji, jj, jk
       INTEGER, DIMENSION(jpi, jpj) ::   iiter
@@ -78,8 +78,13 @@ CONTAINS
                iiter(ji,jj) = 1
                DO jk = 1, jpkm1
                   IF( tmask(ji,jj,jk) == 1.0 ) THEN
-                      zwsmax =  0.5 * e3t_n(ji,jj,jk) * rday / rsfact
+                      zwsmax =  0.5 * e3t_n(ji,jj,jk) * rday / rsfact  ! e3t_n = grid level thickness
                       iiter(ji,jj) =  MAX( iiter(ji,jj), INT( pwsink(ji,jj,jk) / zwsmax ) )
+                      ! zwsmax = the maximum sinking speed in m/timestep to
+                      !  allow for at least one computation of sinking of tracers
+                      !  through the given grid level
+                      ! iiter = the number of timesteps that sinking matter (POC/GOC)
+                      !  has to reside in one grid cell
                   ENDIF
                END DO
             END DO
@@ -91,8 +96,10 @@ CONTAINS
          DO jj = 1, jpj
             DO ji = 1, jpi
                IF( tmask(ji,jj,jk) == 1 ) THEN
-                 zwsmax = 0.5 * e3t_n(ji,jj,jk) * rday / rsfact
+                 zwsmax = 0.5 * e3t_n(ji,jj,jk) * rday / rsfact 
+                 ! again finds the maximum sinking speed to allow for at least one timestep in the grid box
                  zwsink(ji,jj,jk) = MIN( pwsink(ji,jj,jk), zwsmax * REAL( iiter(ji,jj), wp ) )
+                 ! 
                ENDIF
             END DO
          END DO
@@ -140,6 +147,7 @@ CONTAINS
 
       DO jk = 1, jpkm1
          zwsink2(:,:,jk+1) = -pwsink(:,:,jk) / rday * tmask(:,:,jk+1) 
+         ! negative sinking rate at current depth level held at next depth level
       END DO
       zwsink2(:,:,1) = 0.e0
 
@@ -150,31 +158,53 @@ CONTAINS
          DO jj = 1, jpj
             DO ji = 1, jpi
                !
-               zstep = rsfact / REAL( kiter(ji,jj), wp ) / 2.
+               zstep = rsfact / REAL( kiter(ji,jj), wp ) / 2.  ! I think this is the time splitting routine
                !              
+               ! get differences in tracer between depth levels
                DO jk = 2, jpkm1
                   ztraz(ji,jj,jk) = ( trb(ji,jj,jk-1,jp_tra) - trb(ji,jj,jk,jp_tra) ) * tmask(ji,jj,jk)
                END DO
-               ztraz(ji,jj,1  ) = 0.0
-               ztraz(ji,jj,jpk) = 0.0
+               ztraz(ji,jj,1  ) = 0.0  ! sets slope to zero at surface
+               ztraz(ji,jj,jpk) = 0.0  ! sets slope to zero at bottom
 
                ! slopes
                DO jk = 2, jpkm1
-                  zign = 0.25 + SIGN( 0.25, ztraz(ji,jj,jk) * ztraz(ji,jj,jk+1) )
-                  zakz(ji,jj,jk) = ( ztraz(ji,jj,jk) + ztraz(ji,jj,jk+1) ) * zign
+                  zign = 0.25 + SIGN( 0.25, ztraz(ji,jj,jk) * ztraz(ji,jj,jk+1) )  
+                  ! is slope positive or negative from deep to surface ocean? 
+                  ! if +, zsign = 0.5
+                  ! if -, zsign = 0.0
+                  zakz(ji,jj,jk) = ( ztraz(ji,jj,jk) + ztraz(ji,jj,jk+1) ) * zign  
+                  ! add differences between depth levels to get the slope per
+                  ! level (zero if POC at depth > than nearer surface)
                END DO
          
-               ! Slopes limitation
+               ! Slopes limitation [>=1.0]
                DO jk = 2, jpkm1
                   zakz(ji,jj,jk) = SIGN( 1., zakz(ji,jj,jk) ) *        &
                      &             MIN( ABS( zakz(ji,jj,jk) ), 2. * ABS(ztraz(ji,jj,jk+1)), 2. * ABS(ztraz(ji,jj,jk) ) )
                END DO
          
+               ! We now have the slopes at every depth level through the water
+               ! column, always positive with lower concentrations downwards,
+               ! and the number of interations over which we will compute new
+               ! values within each depth level.
+
                ! vertical advective flux
                DO jk = 1, jpkm1
-                  zigma = zwsink2(ji,jj,jk+1) * zstep / e3w_n(ji,jj,jk+1)
-                  zew   = zwsink2(ji,jj,jk+1)
+                  ! zwsink2 = negative sinking rate (m/s) at next depth level
+                  ! zstep = number of seconds in this interation (time split)
+                  ! e3w_n = depth (m) of next depth level
+                  ! zsigma = fraction of NEXT depth level that sinking rate of CURRENT depth level 
+                  !          encompasses in one timestep of timesplitting 
+                  zigma = zwsink2(ji,jj,jk+1) * zstep / e3w_n(ji,jj,jk+1) ! negative fraction [0,-1]
+                  zew   = zwsink2(ji,jj,jk+1)  ! negative sinking speed of current depth level (-m/s)
                   psinkflx(ji,jj,jk+1) = -zew * ( trb(ji,jj,jk,jp_tra) - 0.5 * ( 1 + zigma ) * zakz(ji,jj,jk) ) * zstep
+                  ! psinkflx = flux of tracer sinking into next depth level (molC/L/m/timestep)
+                  ! -zew = positive sinking speed (m/s) at current depth level
+                  ! trb(ji,jj,jk,jp_tra) = tracer concentration (molC/L) at current depth level 
+                  ! zsigma = fraction of NEXT depth level that sinking rate of CURRENT depth level 
+                  !          encompasses in one timestep of timesplitting 
+                  ! zakz = slope of change in concentration of tracer (molC/L/k) between CURRENT and NEXT depth [>=1]
                END DO
                !
                ! Boundary conditions
@@ -182,7 +212,9 @@ CONTAINS
                psinkflx(ji,jj,jpk) = 0.e0
          
                DO jk=1,jpkm1
+                  ! molC/L/m sinking out here - molC/L/m sinking out below (should be positive) / thickness of depth level  
                   zflx = ( psinkflx(ji,jj,jk) - psinkflx(ji,jj,jk+1) ) / e3t_n(ji,jj,jk)
+                  ! zflx = net gain in tracer here (molC/L) (?)
                   trb(ji,jj,jk,jp_tra) = trb(ji,jj,jk,jp_tra) + zflx
                END DO
             END DO
@@ -194,6 +226,9 @@ CONTAINS
             DO ji = 1, jpi
                zflx = ( psinkflx(ji,jj,jk) - psinkflx(ji,jj,jk+1) ) / e3t_n(ji,jj,jk)
                ztrb(ji,jj,jk) = ztrb(ji,jj,jk) + 2. * zflx
+               ! tracer concentration overwritten (?) with 2*zflx this time (???)
+               ! multiplied by 2 because of the 0.5 factor previously... but
+               ! why have an additional multiplication here? Seems arbitrary.
             END DO
          END DO
       END DO

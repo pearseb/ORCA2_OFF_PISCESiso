@@ -41,6 +41,11 @@ MODULE p4zsbc
    REAL(wp)         ::   hratio       !: Fe:3He ratio assumed for vent iron supply
    REAL(wp)         ::   distcoast    !: Distance off the coast for Iron from sediments
    REAL(wp), PUBLIC ::   lgw_rath     !: Weak ligand ratio from hydro sources
+   
+   REAL(wp), PUBLIC ::   e15n_ben     !: N15 Benthic denitrification fractionation
+   REAL(wp), PUBLIC ::   d15n_fix     !: delta15N signature of N2 fixation
+   REAL(wp), PUBLIC ::   d15n_riv     !: delta15N signature of river input
+   REAL(wp), PUBLIC ::   d15n_dep     !: delta15N signature of atmospheric deposition
 
    LOGICAL , PUBLIC ::   ll_sbc
    LOGICAL          ::   ll_solub
@@ -93,7 +98,7 @@ MODULE p4zsbc
    !! $Id: vectopt_loop_substitute.h90 10068 2018-08-28 14:09:04Z nicolasmartin $ 
    !! Software governed by the CeCILL license (see ./LICENSE)
    !!----------------------------------------------------------------------
-# 80 "p4zsbc.F90" 2
+# 85 "p4zsbc.F90" 2
    !!----------------------------------------------------------------------
    !! NEMO/TOP 4.0 , NEMO Consortium (2018)
    !! $Id: p4zsbc.F90 10868 2019-04-15 10:32:56Z cetlod $ 
@@ -237,7 +242,7 @@ CONTAINS
         &                sn_riverdip, sn_riverdop, sn_riverdsi, sn_ndepo, sn_ironsed, sn_hydrofe, &
         &                ln_dust, ln_solub, ln_river, ln_ndepo, ln_ironsed, ln_ironice, ln_hydrofe,    &
         &                sedfeinput, distcoast, dustsolub, icefeinput, wdust, mfrac, nitrfix, diazolight, concfediaz, &
-        &                hratio, lgw_rath
+        &                hratio, lgw_rath, e15n_ben, d15n_fix, d15n_riv, d15n_dep
       !!----------------------------------------------------------------------
       !
       IF(lwp) THEN
@@ -276,6 +281,10 @@ CONTAINS
          IF( ln_ligand ) THEN
             WRITE(numout,*) '      Weak ligand ratio from sed hydro sources  lgw_rath   = ', lgw_rath
          ENDIF
+          WRITE(numout,*) '    N15 Benthic denitrification fractionation    e15n_ben = ', e15n_ben
+          WRITE(numout,*) '    delta15N signature of N2 fixation            e15n_ben = ', d15n_fix
+          WRITE(numout,*) '    delta15N signature of river input            e15n_ben = ', d15n_riv
+          WRITE(numout,*) '    delta15N signature of atmospheric deposition e15n_ben = ', d15n_dep
       END IF
 
       IF( ln_dust .OR. ln_river .OR. ln_ndepo ) THEN   ;   ll_sbc = .TRUE.

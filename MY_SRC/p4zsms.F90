@@ -111,7 +111,23 @@ CONTAINS
          !
          CALL p4z_bio( kt, jnt )   ! Biology
          CALL p4z_lys( kt, jnt )   ! Compute CaCO3 saturation
+         !IF( ln_n15 ) THEN
+         !   print*, " "
+         !   print*, " before call to sediment routine "
+         !   print*, trb(60,60,1,jpno3),trb(60,60,1,jp15no3),trb(60,60,1,jpno3)-trb(60,60,1,jp15no3)
+         !   print*, trn(60,60,1,jpno3),trn(60,60,1,jp15no3),trn(60,60,1,jpno3)-trn(60,60,1,jp15no3)
+         !   print*, tra(60,60,1,jpno3),tra(60,60,1,jp15no3),tra(60,60,1,jpno3)-tra(60,60,1,jp15no3)
+         !   print*, " "
+         !ENDIF
          CALL p4z_sed( kt, jnt )   ! Surface and Bottom boundary conditions
+         !IF( ln_n15 ) THEN
+         !   print*, " "
+         !   print*, " after call to sediment routine "
+         !   print*, trb(60,60,1,jpno3),trb(60,60,1,jp15no3),trb(60,60,1,jpno3)-trb(60,60,1,jp15no3)
+         !   print*, trn(60,60,1,jpno3),trn(60,60,1,jp15no3),trn(60,60,1,jpno3)-trn(60,60,1,jp15no3)
+         !   print*, tra(60,60,1,jpno3),tra(60,60,1,jp15no3),tra(60,60,1,jpno3)-tra(60,60,1,jp15no3)
+         !   print*, " "
+         !ENDIF
          CALL p4z_flx( kt, jnt )   ! Compute surface fluxes
          !
          xnegtr(:,:,:) = 1.e0

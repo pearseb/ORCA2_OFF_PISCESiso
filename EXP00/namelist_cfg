@@ -22,9 +22,9 @@
    cn_exp      =  "PISCES"   !  experience name
    nn_it000    =       1     !  first time step
    nn_itend    =    1460     !  last  time step (std 5475)
-   nn_date0    =  00010101   !  date at nit_0000 (format yyyymmdd) used if ln_rstart=F or (ln_rstart=T and nn_rstctl=0 or 1)
+   nn_date0    =  19600101   !  date at nit_0000 (format yyyymmdd) used if ln_rstart=F or (ln_rstart=T and nn_rstctl=0 or 1)
    nn_stock    =    1460     !  frequency of creation of a restart file (modulo referenced to 1)
-   ln_mskland  = .false.      !  mask land points in NetCDF outputs (costly: + ~15%)
+   ln_mskland  = .true.      !  mask land points in NetCDF outputs (costly: + ~15%)
    ln_cfmeta   = .true.      !  output additional data to netCDF files required for compliance with the CF metadata standard
    ln_clobber  = .true.      !  clobber (overwrite) an existing file
 /

@@ -34,6 +34,7 @@ MODULE p4zsink
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   sinkcal, sinksil   !: CaCO3 and BSi sinking fluxes
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   sinkfer            !: Small BFe sinking fluxes
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   sinkfer2           !: Big iron sinking fluxes
+   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   sink15n, sink15n2  !: N15 POC sinking fluxes
 
    INTEGER  :: ik100
 
@@ -81,19 +82,15 @@ CONTAINS
       DO jk = 1, jpkm1
          DO jj = 1, jpj
             DO ji = 1,jpi
-               zmax  = MAX( heup_01(ji,jj), hmld(ji,jj) ) ! euphotic or mixed layer depth
-               zfact = MAX( 0., gdepw_n(ji,jj,jk+1) - zmax ) / wsbio2scale ! [0,1] as depth increases towards bottom of ocean
-               ! wsbio2 = 2 m/day
-               ! wsbio2max = 50 m/day
+               zmax  = MAX( heup_01(ji,jj), hmld(ji,jj) )
+               zfact = MAX( 0., gdepw_n(ji,jj,jk+1) - zmax ) / wsbio2scale
                wsbio4(ji,jj,jk) = wsbio2 + MAX(0., ( wsbio2max - wsbio2 )) * zfact
-               ! sinking speed (m/day) increases from 2 to 50 m/day from depth
-               ! of mixedlayer/euphotic zone to bottom of ocean
             END DO
          END DO
       END DO
 
       ! limit the values of the sinking speeds to avoid numerical instabilities  
-      wsbio3(:,:,:) = wsbio  ! 2 m/day everywhere
+      wsbio3(:,:,:) = wsbio
 
       !
       !  Initializa to zero all the sinking arrays 
@@ -104,15 +101,31 @@ CONTAINS
       sinkfer (:,:,:) = 0.e0
       sinksil (:,:,:) = 0.e0
       sinkfer2(:,:,:) = 0.e0
+   
+      IF ( ln_n15 ) THEN
+         sink15n (:,:,:) = 0.e0
+         sink15n2(:,:,:) = 0.e0
+      ENDIF
 
       !   Compute the sedimentation term using p4zsink2 for all the sinking particles
       !   -----------------------------------------------------
+      ! so effectively we have:
+      !         kt = number of depth levels in water column
+      !         wsbio3 = slow sinking (2 m/day) 
+      !         wsbio4 = fast sinking (2-50 m/day) 
+      !         sinking = array to save concentration of tracers to after sinking 
+      !         rfact2 = number of seconds in a timestep 
       CALL trc_sink( kt, wsbio3, sinking , jppoc, rfact2 )
       CALL trc_sink( kt, wsbio3, sinkfer , jpsfe, rfact2 )
       CALL trc_sink( kt, wsbio4, sinking2, jpgoc, rfact2 )
       CALL trc_sink( kt, wsbio4, sinkfer2, jpbfe, rfact2 )
       CALL trc_sink( kt, wsbio4, sinksil , jpgsi, rfact2 )
       CALL trc_sink( kt, wsbio4, sinkcal , jpcal, rfact2 )
+
+      IF ( ln_n15 ) THEN
+         CALL trc_sink( kt, wsbio3, sink15n , jp15poc, rfact2 )
+         CALL trc_sink( kt, wsbio4, sink15n2 , jp15goc, rfact2 )
+      ENDIF
 
       IF( ln_p5z ) THEN
          sinkingn (:,:,:) = 0.e0
@@ -219,6 +232,8 @@ CONTAINS
          &      sinkfer2(jpi,jpj,jpk)                                           ,     &                
          &      sinkfer(jpi,jpj,jpk)                                            , STAT=ierr(1) )                
          !
+      IF( ln_n15    ) ALLOCATE( sink15n(jpi,jpj,jpk), sink15n2(jpi,jpj,jpk)     , STAT=ierr(2) )
+      !
       IF( ln_p5z    ) ALLOCATE( sinkingn(jpi,jpj,jpk), sinking2n(jpi,jpj,jpk)   ,     &
          &                      sinkingp(jpi,jpj,jpk), sinking2p(jpi,jpj,jpk)   , STAT=ierr(2) )
       !

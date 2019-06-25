@@ -42,6 +42,8 @@ MODULE p4zrem
    REAL(wp), PUBLIC ::   xsilab     !: fraction of labile biogenic silica 
    REAL(wp), PUBLIC ::   feratb     !: Fe/C quota in bacteria
    REAL(wp), PUBLIC ::   xkferb     !: Half-saturation constant for bacteria Fe/C
+   REAL(wp), PUBLIC ::   e15n_den   !: N15 denitrification fractionation
+   REAL(wp), PUBLIC ::   e15n_nit   !: N15 nitrification fractionation
 
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   denitr   !: denitrification array
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   zonitr   !: nitrification array
@@ -93,15 +95,15 @@ CONTAINS
       DO jk = 1, jpkm1
          DO jj = 1, jpj
             DO ji = 1, jpi
-               zdep = MAX( hmld(ji,jj), heup(ji,jj) )
-               IF( gdept_n(ji,jj,jk) < zdep ) THEN
+               zdep = MAX( hmld(ji,jj), heup(ji,jj) ) 
+               IF( gdept_n(ji,jj,jk) < zdep ) THEN  ! if depth is less than mixedlayer and euphotic zone
                   zdepbac(ji,jj,jk) = MIN( 0.7 * ( trb(ji,jj,jk,jpzoo) + 2.* trb(ji,jj,jk,jpmes) ), 4.e-6 )
                   ztempbac(ji,jj)   = zdepbac(ji,jj,jk)
-               ELSE
-                  zdepmin = MIN( 1., zdep / gdept_n(ji,jj,jk) )
-                  zdepbac (ji,jj,jk) = zdepmin**0.683 * ztempbac(ji,jj)
+               ELSE  ! if deeper than euphotic zone and mixed layer
+                  zdepmin = MIN( 1., zdep / gdept_n(ji,jj,jk) ) ! fraction [0,1] (deeper --> 0)
+                  zdepbac (ji,jj,jk) = zdepmin**0.683 * ztempbac(ji,jj) ! power law increase in bacteria with depth 
                   zdepprod(ji,jj,jk) = zdepmin**0.273
-                  zdepeff (ji,jj,jk) = zdepeff(ji,jj,jk) * zdepmin**0.3
+                  zdepeff (ji,jj,jk) = zdepeff(ji,jj,jk) * zdepmin**0.3 ! [0,0.3] (deeper --> 0)
                ENDIF
             END DO
          END DO
@@ -113,38 +115,46 @@ CONTAINS
                DO ji = 1, jpi
                   ! DOC ammonification. Depends on depth, phytoplankton biomass
                   ! and a limitation term which is supposed to be a parameterization of the bacterial activity. 
-                  zremik = xremik * xstep / 1.e-6 * xlimbac(ji,jj,jk) * zdepbac(ji,jj,jk) 
-                  zremik = MAX( zremik, 2.74e-4 * xstep )
+                  zremik = xremik * xstep / 1.e-6 * xlimbac(ji,jj,jk) * zdepbac(ji,jj,jk)  
+                  zremik = MAX( zremik, 2.74e-4 * xstep )  ! basic remineralisation rate
                   ! Ammonification in oxic waters with oxygen consumption
                   ! -----------------------------------------------------
                   zolimit = zremik * ( 1.- nitrfac(ji,jj,jk) ) * trb(ji,jj,jk,jpdoc) 
+                    ! apply oxygen limitation and multiply rate by amount of DOC available
                   zolimi(ji,jj,jk) = MIN( ( trb(ji,jj,jk,jpoxy) - rtrn ) / o2ut, zolimit ) 
+                    ! don't remove more O2 than is available
                   ! Ammonification in suboxic waters with denitrification
                   ! -------------------------------------------------------
-                  zammonic = zremik * nitrfac(ji,jj,jk) * trb(ji,jj,jk,jpdoc)
-                  denitr(ji,jj,jk)  = zammonic * ( 1. - nitrfac2(ji,jj,jk) )
-                  denitr(ji,jj,jk)  = MIN( ( trb(ji,jj,jk,jpno3) - rtrn ) / rdenit, denitr(ji,jj,jk) )
-                  zoxyremc          = zammonic - denitr(ji,jj,jk)
+                  zammonic = zremik * nitrfac(ji,jj,jk) * trb(ji,jj,jk,jpdoc) !DOC remineralised by denitrifiers
+                  denitr(ji,jj,jk)  = zammonic * ( 1. - nitrfac2(ji,jj,jk) ) !apply NO3 limitation to denitrification too
+                  denitr(ji,jj,jk)  = MIN( ( trb(ji,jj,jk,jpno3) - rtrn ) / rdenit, denitr(ji,jj,jk) ) 
+                    ! don't remove more NO3 than is available
+                  zoxyremc          = zammonic - denitr(ji,jj,jk) 
+                    ! reallocate material that can't be remineralised using NO3 to oxygen
                   !
-                  zolimi (ji,jj,jk) = MAX( 0.e0, zolimi (ji,jj,jk) )
+                  zolimi (ji,jj,jk) = MAX( 0.e0, zolimi (ji,jj,jk) )  ! make sure all arrays are positive
                   denitr (ji,jj,jk) = MAX( 0.e0, denitr (ji,jj,jk) )
                   zoxyremc          = MAX( 0.e0, zoxyremc )
-
+                    ! zolimi = oxic remineralisation of DOC --> NH4 using oxygen
+                    ! denitr = suboxic remineralisation of DOC --> NH4 using nitrate
+                    ! zoxyremc = suboxic remineralisation of DOC --> NH4 not using nitrate 
+ 
                   !
                   tra(ji,jj,jk,jppo4) = tra(ji,jj,jk,jppo4) + zolimi (ji,jj,jk) + denitr(ji,jj,jk) + zoxyremc
                   tra(ji,jj,jk,jpnh4) = tra(ji,jj,jk,jpnh4) + zolimi (ji,jj,jk) + denitr(ji,jj,jk) + zoxyremc
                   tra(ji,jj,jk,jpno3) = tra(ji,jj,jk,jpno3) - denitr (ji,jj,jk) * rdenit
-
-                  IF (ln_n15) THEN
-                     tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zolimi (ji,jj,jk) + denitr(ji,jj,jk) + zoxyremc
-                     tra(ji,jj,jk,jp15no3) = tra(ji,jj,jk,jp15no3) - denitr (ji,jj,jk) * rdenit
-                  ENDIF
-
                   tra(ji,jj,jk,jpdoc) = tra(ji,jj,jk,jpdoc) - zolimi (ji,jj,jk) - denitr(ji,jj,jk) - zoxyremc
                   tra(ji,jj,jk,jpoxy) = tra(ji,jj,jk,jpoxy) - zolimi (ji,jj,jk) * o2ut
                   tra(ji,jj,jk,jpdic) = tra(ji,jj,jk,jpdic) + zolimi (ji,jj,jk) + denitr(ji,jj,jk) + zoxyremc
                   tra(ji,jj,jk,jptal) = tra(ji,jj,jk,jptal) + rno3 * ( zolimi(ji,jj,jk) + zoxyremc    &
                   &                     + ( rdenit + 1.) * denitr(ji,jj,jk) )
+
+                  IF (ln_n15) THEN
+                     tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zolimi (ji,jj,jk) + denitr(ji,jj,jk) + zoxyremc
+                     tra(ji,jj,jk,jp15no3) = tra(ji,jj,jk,jp15no3) - denitr (ji,jj,jk) * rdenit
+                     tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) - zolimi (ji,jj,jk) - denitr(ji,jj,jk) - zoxyremc
+                  ENDIF
+
                END DO
             END DO
          END DO
@@ -184,12 +194,6 @@ CONTAINS
                   tra(ji,jj,jk,jppo4) = tra(ji,jj,jk,jppo4) + zolimip + zdenitrp + zoxyremp
                   tra(ji,jj,jk,jpnh4) = tra(ji,jj,jk,jpnh4) + zolimin + zdenitrn + zoxyremn
                   tra(ji,jj,jk,jpno3) = tra(ji,jj,jk,jpno3) - denitr(ji,jj,jk) * rdenit
-
-                  IF (ln_n15) THEN
-                     tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zolimin + zdenitrn + zoxyremn
-                     tra(ji,jj,jk,jp15no3) = tra(ji,jj,jk,jp15no3) - denitr(ji,jj,jk) * rdenit
-                  ENDIF
-
                   tra(ji,jj,jk,jpdoc) = tra(ji,jj,jk,jpdoc) - zolimic - denitr(ji,jj,jk) - zoxyremc
                   tra(ji,jj,jk,jpdon) = tra(ji,jj,jk,jpdon) - zolimin - zdenitrn - zoxyremn
                   tra(ji,jj,jk,jpdop) = tra(ji,jj,jk,jpdop) - zolimip - zdenitrp - zoxyremp
@@ -217,14 +221,14 @@ CONTAINS
                ! ----------------------------
                tra(ji,jj,jk,jpnh4) = tra(ji,jj,jk,jpnh4) - zonitr(ji,jj,jk) - zdenitnh4
                tra(ji,jj,jk,jpno3) = tra(ji,jj,jk,jpno3) + zonitr(ji,jj,jk) - rdenita * zdenitnh4
+               tra(ji,jj,jk,jpoxy) = tra(ji,jj,jk,jpoxy) - o2nit * zonitr(ji,jj,jk)
+               tra(ji,jj,jk,jptal) = tra(ji,jj,jk,jptal) - 2 * rno3 * zonitr(ji,jj,jk) + rno3 * ( rdenita - 1. ) * zdenitnh4
 
-               IF (ln_n15) THEN
+               IF ( ln_n15 ) THEN
                   tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) - zonitr(ji,jj,jk) - zdenitnh4
                   tra(ji,jj,jk,jp15no3) = tra(ji,jj,jk,jp15no3) + zonitr(ji,jj,jk) - rdenita * zdenitnh4
                ENDIF
 
-               tra(ji,jj,jk,jpoxy) = tra(ji,jj,jk,jpoxy) - o2nit * zonitr(ji,jj,jk)
-               tra(ji,jj,jk,jptal) = tra(ji,jj,jk,jptal) - 2 * rno3 * zonitr(ji,jj,jk) + rno3 * ( rdenita - 1. ) * zdenitnh4
             END DO
          END DO
       END DO
@@ -343,7 +347,7 @@ CONTAINS
       !!
       !!----------------------------------------------------------------------
       NAMELIST/nampisrem/ xremik, nitrif, xsirem, xsiremlab, xsilab, feratb, xkferb, & 
-         &                xremikc, xremikn, xremikp
+         &                xremikc, xremikn, xremikp, e15n_den, e15n_nit
       INTEGER :: ios                 ! Local integer output status for namelist read
       !!----------------------------------------------------------------------
       !
@@ -375,7 +379,8 @@ CONTAINS
          WRITE(numout,*) '      fraction of labile biogenic silica        xsilab    =', xsilab
          WRITE(numout,*) '      NH4 nitrification rate                    nitrif    =', nitrif
          WRITE(numout,*) '      Bacterial Fe/C ratio                      feratb    =', feratb
-         WRITE(numout,*) '      Half-saturation constant for bact. Fe/C   xkferb    =', xkferb
+         WRITE(numout,*) '      N15 denitrification fractionation         e15n_den  =', e15n_den
+         WRITE(numout,*) '      N15 nitrification fractionation           e15n_nit  =', e15n_nit
       ENDIF
       !
       denitr(:,:,:) = 0._wp

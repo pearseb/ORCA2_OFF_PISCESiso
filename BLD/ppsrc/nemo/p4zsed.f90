@@ -166,16 +166,17 @@ CONTAINS
                DO jk = 1, nk_rnf(ji,jj)
                   tra(ji,jj,jk,jppo4) = tra(ji,jj,jk,jppo4) +  rivdip(ji,jj) * rfact2
                   tra(ji,jj,jk,jpno3) = tra(ji,jj,jk,jpno3) +  rivdin(ji,jj) * rfact2
-
-                  IF (ln_n15) THEN
-                     tra(ji,jj,jk,jp15no3) = tra(ji,jj,jk,jp15no3) +  rivdin(ji,jj) * rfact2
-                  ENDIF 
-
                   tra(ji,jj,jk,jpfer) = tra(ji,jj,jk,jpfer) +  rivdic(ji,jj) * 5.e-5 * rfact2
                   tra(ji,jj,jk,jpsil) = tra(ji,jj,jk,jpsil) +  rivdsi(ji,jj) * rfact2
                   tra(ji,jj,jk,jpdic) = tra(ji,jj,jk,jpdic) +  rivdic(ji,jj) * rfact2
                   tra(ji,jj,jk,jptal) = tra(ji,jj,jk,jptal) +  ( rivalk(ji,jj) - rno3 * rivdin(ji,jj) ) * rfact2
                   tra(ji,jj,jk,jpdoc) = tra(ji,jj,jk,jpdoc) +  rivdoc(ji,jj) * rfact2
+
+                  IF ( ln_n15 ) THEN
+                     tra(ji,jj,jk,jp15no3) = tra(ji,jj,jk,jp15no3) +  rivdin(ji,jj) * rfact2
+                     tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) +  rivdoc(ji,jj) * rfact2
+                  ENDIF 
+
                ENDDO
             ENDDO
          ENDDO
@@ -204,12 +205,12 @@ CONTAINS
       ! ----------------------------------------------------------
       IF( ln_ndepo ) THEN
          tra(:,:,1,jpno3) = tra(:,:,1,jpno3) + nitdep(:,:) * rfact2
-         
-         IF (ln_n15) THEN
+         tra(:,:,1,jptal) = tra(:,:,1,jptal) - rno3 * nitdep(:,:) * rfact2
+
+         IF ( ln_n15 ) THEN
             tra(:,:,1,jp15no3) = tra(:,:,1,jp15no3) + nitdep(:,:) * rfact2
          ENDIF
 
-         tra(:,:,1,jptal) = tra(:,:,1,jptal) - rno3 * nitdep(:,:) * rfact2
       ENDIF
 
       ! Add the external input of iron from hydrothermal vents
@@ -230,7 +231,7 @@ CONTAINS
          DO ji = 1, jpi
             ikt  = mbkt(ji,jj)
             zdep = e3t_n(ji,jj,ikt) / xstep
-            zwsbio4(ji,jj) = MIN( 0.99 * zdep, wsbio4(ji,jj,ikt) )
+            zwsbio4(ji,jj) = MIN( 0.99 * zdep, wsbio4(ji,jj,ikt) ) ! final sinking rate 
             zwsbio3(ji,jj) = MIN( 0.99 * zdep, wsbio3(ji,jj,ikt) )
          END DO
       END DO
@@ -252,19 +253,25 @@ CONTAINS
          DO jj = 1, jpj
             DO ji = 1, jpi
               IF( tmask(ji,jj,1) == 1 ) THEN
-                 ikt = mbkt(ji,jj)
+                 ikt = mbkt(ji,jj) ! final k level of i,j grid
                  zflx = (  trb(ji,jj,ikt,jpgoc) * zwsbio4(ji,jj)   &
                    &     + trb(ji,jj,ikt,jppoc) * zwsbio3(ji,jj) )  * 1E3 * 1E6 / 1E4
-                 zflx  = LOG10( MAX( 1E-3, zflx ) )
+                   ! zflx = incident POM to sediments (umol C / cm2 / s) 
+                   !        (molC/L * m/s) * 1e3 * 1e6 = (umolC/m2/s)
+                   !        (umolC/m2/s) / 1e4 = umolC/cm2/s
+                 zflx  = LOG10( MAX( 1E-3, zflx ) )  ! minimum rate of 0.001 umol C / cm2 / s 
                  zo2   = LOG10( MAX( 10. , trb(ji,jj,ikt,jpoxy) * 1E6 ) )
                  zno3  = LOG10( MAX( 1.  , trb(ji,jj,ikt,jpno3) * 1E6 * rno3 ) )
                  zdep  = LOG10( gdepw_n(ji,jj,ikt+1) )
                  zdenit2d(ji,jj) = -2.2567 - 1.185 * zflx - 0.221 * zflx**2 - 0.3995 * zno3 * zo2 + 1.25 * zno3    &
                    &                + 0.4721 * zo2 - 0.0996 * zdep + 0.4256 * zflx * zo2
-                 zdenit2d(ji,jj) = 10.0**( zdenit2d(ji,jj) )
+                 zdenit2d(ji,jj) = 10.0**( zdenit2d(ji,jj) ) ! proportion of POM denitrified in the sediments
                    !
                  zflx = (  trb(ji,jj,ikt,jpgoc) * zwsbio4(ji,jj)   &
                    &     + trb(ji,jj,ikt,jppoc) * zwsbio3(ji,jj) ) * 1E6
+                   ! zflx = incident POM to sediments (mmol C / m2 / s) 
+                   !        (molC/L * m/s) * 1e6 = (mmol C / m2 / s)
+
                  zbureff(ji,jj) = 0.013 + 0.53 * zflx**2 / ( 7.0 + zflx )**2
               ENDIF
             END DO
@@ -310,17 +317,23 @@ CONTAINS
             END DO
          END DO
       ENDIF
-      !
+      ! remove the POC and GOC that hits sediments from the POC and GOC pools
       DO jj = 1, jpj
          DO ji = 1, jpi
             ikt  = mbkt(ji,jj)
-            zdep = xstep / e3t_n(ji,jj,ikt) 
-            zws4 = zwsbio4(ji,jj) * zdep
+            zdep = xstep / e3t_n(ji,jj,ikt) ! timesteps per metre
+            zws4 = zwsbio4(ji,jj) * zdep ! m/s / thickness * day/timestep = number of seconds needed
             zws3 = zwsbio3(ji,jj) * zdep
             tra(ji,jj,ikt,jpgoc) = tra(ji,jj,ikt,jpgoc) - trb(ji,jj,ikt,jpgoc) * zws4 
             tra(ji,jj,ikt,jppoc) = tra(ji,jj,ikt,jppoc) - trb(ji,jj,ikt,jppoc) * zws3
             tra(ji,jj,ikt,jpbfe) = tra(ji,jj,ikt,jpbfe) - trb(ji,jj,ikt,jpbfe) * zws4
             tra(ji,jj,ikt,jpsfe) = tra(ji,jj,ikt,jpsfe) - trb(ji,jj,ikt,jpsfe) * zws3
+
+            IF ( ln_n15 ) THEN
+               tra(ji,jj,ikt,jp15goc) = tra(ji,jj,ikt,jp15goc) - trb(ji,jj,ikt,jp15goc) * zws4 
+               tra(ji,jj,ikt,jp15poc) = tra(ji,jj,ikt,jp15poc) - trb(ji,jj,ikt,jp15poc) * zws3
+            ENDIF
+
          END DO
       END DO
       !
@@ -344,7 +357,7 @@ CONTAINS
          ! denitrification in the sediments. Not very clever, but simpliest option.
          DO jj = 1, jpj
             DO ji = 1, jpi
-               ikt  = mbkt(ji,jj)
+               ikt  = mbkt(ji,jj) ! we are in deepest grid cell of ocean
                zdep = xstep / e3t_n(ji,jj,ikt) 
                zws4 = zwsbio4(ji,jj) * zdep
                zws3 = zwsbio3(ji,jj) * zdep
@@ -352,13 +365,21 @@ CONTAINS
                zwstpoc = trb(ji,jj,ikt,jpgoc) * zws4 + trb(ji,jj,ikt,jppoc) * zws3
                zpdenit  = MIN( 0.5 * ( trb(ji,jj,ikt,jpno3) - rtrn ) / rdenit, zdenit2d(ji,jj) * zwstpoc * zrivno3 )
                z1pdenit = zwstpoc * zrivno3 - zpdenit
+                 ! zrivno3 = proportion POM buried
+                 ! zpdenit = denitrification rate
+                 ! z1pdenit = remineralisation rate via oxygen
                zolimit = MIN( ( trb(ji,jj,ikt,jpoxy) - rtrn ) / o2ut, z1pdenit * ( 1.- nitrfac(ji,jj,ikt) ) )
+                 ! zolimit = adjusted z1pdenit to include oxic remineralisation
+                 ! in water column above sediment and to limit oxic
+                 ! remineralisation if O2 not present
                tra(ji,jj,ikt,jpdoc) = tra(ji,jj,ikt,jpdoc) + z1pdenit - zolimit
+                 ! DOC used during oxic remineralisation (zolimit)
                tra(ji,jj,ikt,jppo4) = tra(ji,jj,ikt,jppo4) + zpdenit + zolimit
                tra(ji,jj,ikt,jpnh4) = tra(ji,jj,ikt,jpnh4) + zpdenit + zolimit
                tra(ji,jj,ikt,jpno3) = tra(ji,jj,ikt,jpno3) - rdenit * zpdenit
           
-               IF (ln_n15) THEN
+               IF ( ln_n15 ) THEN
+                  tra(ji,jj,ikt,jp15doc) = tra(ji,jj,ikt,jp15doc) + z1pdenit - zolimit
                   tra(ji,jj,ikt,jp15nh4) = tra(ji,jj,ikt,jp15nh4) + zpdenit + zolimit
                   tra(ji,jj,ikt,jp15no3) = tra(ji,jj,ikt,jp15no3) - rdenit * zpdenit
                ENDIF 
@@ -390,19 +411,27 @@ CONTAINS
          DO jk = 1, jpkm1
             DO jj = 1, jpj
                DO ji = 1, jpi
-                  !                      ! Potential nitrogen fixation dependant on temperature and iron
-                  ztemp = tsn(ji,jj,jk,jp_tem)
-                  zmudia = MAX( 0.,-0.001096*ztemp**2 + 0.057*ztemp -0.637 ) * 7.625
-                  !       Potential nitrogen fixation dependant on temperature and iron
+                  ! Potential nitrogen fixation dependant on temperature and iron
+                  ztemp = tsn(ji,jj,jk,jp_tem) ! in situ temperature
+                  zmudia = MAX( 0.,-0.001096*ztemp**2 + 0.057*ztemp -0.637 ) * 7.625 ! growth rate (T)
+                  ! Potential nitrogen fixation dependant on temperature and iron
                   xdianh4 = trb(ji,jj,jk,jpnh4) / ( concnnh4 + trb(ji,jj,jk,jpnh4) )
                   xdiano3 = trb(ji,jj,jk,jpno3) / ( concnno3 + trb(ji,jj,jk,jpno3) ) * (1. - xdianh4)
                   zlim = ( 1.- xdiano3 - xdianh4 )
-                  IF( zlim <= 0.1 )   zlim = 0.01
-                  zfact = zlim * rfact2
+                  IF( zlim <= 0.1 )   zlim = 0.01   ! too much NH4 and NO3 and so N2fixation is minimal 
+                  zfact = zlim * rfact2 
+                    ! rfact2 = seconds per timestep (21600 secs)
+                    ! zlim = limitation of N2 fixation [0,1] (zlim --> when NO3 and NH4 are very low )
                   ztrfer = biron(ji,jj,jk) / ( concfediaz + biron(ji,jj,jk) )
+                    ! biron = bioavailble iron
                   ztrpo4(ji,jj,jk) = trb(ji,jj,jk,jppo4) / ( 1E-6 + trb(ji,jj,jk,jppo4) )
                   ztrdp = ztrpo4(ji,jj,jk)
                   nitrpot(ji,jj,jk) =  zmudia * r1_rday * zfact * MIN( ztrfer, ztrdp ) * zlight(ji,jj,jk)
+                    ! r1_rday = seconds per day (1/86400)
+                    ! zmudia = max growth rate set by temperature * r1_rday = growth rate per sec
+                    ! zfact = nitrogen limitation multiplied by number of seconds per timestep
+                    ! MIN( ztrfer, ztrdp ) = leibig law of minimum nutrient limitation
+                    ! zlight(ji,jj,jk) = dependence on light [0,1] (low light --> 0)
                END DO
             END DO
          END DO
@@ -437,11 +466,6 @@ CONTAINS
                DO ji = 1, jpi
                   zfact = nitrpot(ji,jj,jk) * nitrfix
                   tra(ji,jj,jk,jpnh4) = tra(ji,jj,jk,jpnh4) + zfact / 3.0
-                   
-                  IF (ln_n15) THEN
-                     tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zfact / 3.0
-                  ENDIF
-
                   tra(ji,jj,jk,jptal) = tra(ji,jj,jk,jptal) + rno3 * zfact / 3.0
                   tra(ji,jj,jk,jppo4) = tra(ji,jj,jk,jppo4) - zfact * 2.0 / 3.0
                   tra(ji,jj,jk,jpdoc) = tra(ji,jj,jk,jpdoc) + zfact * 1.0 / 3.0
@@ -454,6 +478,21 @@ CONTAINS
                   tra(ji,jj,jk,jpfer) = tra(ji,jj,jk,jpfer) + 0.002 * 4E-10 * zsoufer(ji,jj,jk) * rfact2 / rday
                   tra(ji,jj,jk,jppo4) = tra(ji,jj,jk,jppo4) + concdnh4 / ( concdnh4 + trb(ji,jj,jk,jppo4) ) &
                   &                     * 0.001 * trb(ji,jj,jk,jpdoc) * xstep
+                   
+                    ! Divisions are routing nitrogen fixed matter directly to
+                    ! different pools:
+                    !   one third to NH4, 
+                    !   one third to DOC, 
+                    !   two sixths to POC,
+                    !   one sixths to GOC 
+
+                  IF ( ln_n15 ) THEN
+                     tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zfact / 3.0  
+                     tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) + zfact * 1.0 / 3.0
+                     tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) + zfact * 1.0 / 3.0 * 2.0 / 3.0
+                     tra(ji,jj,jk,jp15goc) = tra(ji,jj,jk,jp15goc) + zfact * 1.0 / 3.0 * 1.0 / 3.0
+                  ENDIF
+
               END DO
             END DO 
          END DO

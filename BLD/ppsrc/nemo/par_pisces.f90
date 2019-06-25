@@ -59,8 +59,17 @@ MODULE par_pisces
    INTEGER, PUBLIC ::   jpgon     !: Big nitrogen particles Concentration
    INTEGER, PUBLIC ::   jpgop     !: Big phosphorus particles Concentration
    INTEGER, PUBLIC ::   jplgw     !: Weak Ligands
+
+   INTEGER, PUBLIC ::   jp15poc   !: 15N small particulate organic concentration
+   INTEGER, PUBLIC ::   jp15phy   !: 15N phytoplankton concentration
+   INTEGER, PUBLIC ::   jp15zoo   !: 15N zooplankton concentration
+   INTEGER, PUBLIC ::   jp15doc   !: 15N dissolved organic matter concentration
+   INTEGER, PUBLIC ::   jp15dia   !: 15N diatoms concentration
+   INTEGER, PUBLIC ::   jp15mes   !: 15N mesozooplankton concentration
+   INTEGER, PUBLIC ::   jp15goc   !: 15N big particulate organic concentration
    INTEGER, PUBLIC ::   jp15no3   !: 15N Nitrates Concentration
    INTEGER, PUBLIC ::   jp15nh4   !: 15N Ammonium Concentration
+   
 
 
    !!---------------------------------------------------------------------

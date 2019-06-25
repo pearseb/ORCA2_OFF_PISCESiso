@@ -80,7 +80,7 @@ CONTAINS
       ! This is based on a fractal dimension of 2.56 and a spectral
       ! slope of -3.6 (identical to what is used in p4zsink to compute
       ! aggregation
-      solgoc = 0.04/ 2.56 * 1./ ( 1.-50**(-0.04) )
+      solgoc = 0.04/ 2.56 * 1./ ( 1.-50**(-0.04) ) ! solgoc =~ 0.1079
 
       ! Initialisation of temprary arrys
       IF( ln_p4z ) THEN
@@ -200,12 +200,15 @@ CONTAINS
                   ! POC disaggregation by turbulence and bacterial activity. 
                   ! --------------------------------------------------------
                   zremig = zremigoc(ji,jj,jk) * xstep * tgfunc(ji,jj,jk)
+                     ! zremig = rate of remineralisation given temperature and seconds per timestep
                   zorem2  = zremig * trb(ji,jj,jk,jpgoc)
                   orem(ji,jj,jk)      = zorem2
                   zorem3(ji,jj,jk) = zremig * solgoc * trb(ji,jj,jk,jpgoc)
                   zofer2 = zremig * trb(ji,jj,jk,jpbfe)
                   zofer3 = zremig * solgoc * trb(ji,jj,jk,jpbfe)
-
+ 
+                     ! zorem2 --> DOC (disaggregation of GOC)
+                     ! zorem3 --> POC (bacterial solubilization of GOC)
                   ! -------------------------------------
                   tra(ji,jj,jk,jppoc) = tra(ji,jj,jk,jppoc) + zorem3(ji,jj,jk)
                   tra(ji,jj,jk,jpgoc) = tra(ji,jj,jk,jpgoc) - zorem2 - zorem3(ji,jj,jk)
@@ -214,6 +217,13 @@ CONTAINS
                   tra(ji,jj,jk,jpdoc) = tra(ji,jj,jk,jpdoc) + zorem2
                   tra(ji,jj,jk,jpfer) = tra(ji,jj,jk,jpfer) + zofer2
                   zfolimi(ji,jj,jk)   = zofer2
+             
+                  IF ( ln_n15 ) THEN
+                     tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) + zorem3(ji,jj,jk)
+                     tra(ji,jj,jk,jp15goc) = tra(ji,jj,jk,jp15goc) - zorem2 - zorem3(ji,jj,jk)
+                     tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) + zorem2
+                  ENDIF
+                  
                END DO
             END DO
          END DO
@@ -421,6 +431,12 @@ CONTAINS
                     tra(ji,jj,jk,jppoc) = tra(ji,jj,jk,jppoc) - zorem
                     tra(ji,jj,jk,jpsfe) = tra(ji,jj,jk,jpsfe) - zofer
                     zfolimi(ji,jj,jk)   = zfolimi(ji,jj,jk) + zofer
+
+                    IF ( ln_n15 ) THEN
+                       tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) + zorem
+                       tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) - zorem
+                    ENDIF
+                   
                   ENDIF
                END DO
             END DO
