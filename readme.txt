@@ -47,6 +47,9 @@ STEPS TAKEN...
         8. modified existing additions to avoid anomolous fractionation at small concentrations
 		- BEFORE: trb(ji,jj,jk,jp15xxx) / ( trb(ji,jj,j,jpxxx) + rtrn )
 		- AFTER: ( trb(ji,jj,jk,jp15xxx) + rtrn ) / ( trb(ji,jj,j,jpxxx) + rtrn )
+        9. carried d15n signatures between DOC, POC and GOC during aggregation and disaggregation
+		- p4zagg.F90
+		- p4zpoc.F90
 	
 
 

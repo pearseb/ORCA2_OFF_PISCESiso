@@ -375,8 +375,10 @@ CONTAINS
                     ! Second, apply utilisation factors to fractionation factors
                     ! for new and regenerated production (same for now) and
                     ! multiply by the current ratio of 15Nno3 to total no3
-                    zr15_new = (1.0 - e15n_prod*1e-3*zu_15) * trb(ji,jj,jk,jp15no3)/(trb(ji,jj,jk,jpno3) + rtrn)
-                    zr15_reg = (1.0 - e15n_prod*1e-3*zun_15) * trb(ji,jj,jk,jp15nh4)/(trb(ji,jj,jk,jpnh4) + rtrn)
+                    zr15_new = (1.0 - e15n_prod*1e-3*zu_15)  &
+                    &          * ( trb(ji,jj,jk,jp15no3) + rtrn ) / ( trb(ji,jj,jk,jpno3) + rtrn )
+                    zr15_reg = (1.0 - e15n_prod*1e-3*zun_15)  &
+                    &          * ( trb(ji,jj,jk,jp15nh4) + rtrn ) / ( trb(ji,jj,jk,jpnh4) + rtrn )
                     ! Third, apply the fractionation factors to the state variables
                     tra(ji,jj,jk,jp15phy) = tra(ji,jj,jk,jp15phy) + zr15_new * zpronewn(ji,jj,jk) * texcretn &
                     &                                             + zr15_reg * zproreg * texcretn

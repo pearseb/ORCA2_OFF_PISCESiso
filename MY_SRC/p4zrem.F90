@@ -147,12 +147,12 @@ CONTAINS
 
                   IF( ln_n15) THEN
                      tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + ( zolimi(ji,jj,jk) + denitr(ji,jj,jk) + zoxyremc )  &
-                     &                       * trb(ji,jj,jk,jp15doc) / ( trb(ji,jj,jk,jpdoc) + rtrn )
+                     &                       * ( trb(ji,jj,jk,jp15doc) + rtrn ) / ( trb(ji,jj,jk,jpdoc) + rtrn )
                      tra(ji,jj,jk,jp15no3) = tra(ji,jj,jk,jp15no3) - denitr (ji,jj,jk) * rdenit  &
-                     &                       * trb(ji,jj,jk,jp15no3) / ( trb(ji,jj,jk,jpno3) + rtrn )  &
+                     &                       * ( trb(ji,jj,jk,jp15no3) + rtrn ) / ( trb(ji,jj,jk,jpno3) + rtrn )  &
                      &                       * ( 1.0 - e15n_den*1e-3 )
                      tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) - ( zolimi(ji,jj,jk) + denitr(ji,jj,jk) + zoxyremc )  &
-                     &                       * trb(ji,jj,jk,jp15doc) / ( trb(ji,jj,jk,jpdoc) + rtrn )
+                     &                       * ( trb(ji,jj,jk,jp15doc) + rtrn ) / ( trb(ji,jj,jk,jpdoc) + rtrn )
                   ENDIF
 
                END DO
@@ -229,13 +229,14 @@ CONTAINS
                tra(ji,jj,jk,jptal) = tra(ji,jj,jk,jptal) - 2 * rno3 * zonitr(ji,jj,jk) + rno3 * ( rdenita - 1. ) * zdenitnh4
 
                IF( ln_n15 ) THEN
-                  tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) - ( zonitr(ji,jj,jk) * ( 1.0 - e15n_nit*1e-3 )   &
-                  &                       + zdenitnh4 ) * trb(ji,jj,jk,jp15nh4) / (trb(ji,jj,jk,jpnh4) + rtrn )   
+                  tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) & 
+                  &                       - ( zonitr(ji,jj,jk) * ( 1.0 - e15n_nit*1e-3 ) + zdenitnh4 )   &
+                  &                       * ( trb(ji,jj,jk,jp15nh4) + rtrn ) / (trb(ji,jj,jk,jpnh4) + rtrn )   
                   tra(ji,jj,jk,jp15no3) = tra(ji,jj,jk,jp15no3) + zonitr(ji,jj,jk)                 &
-                  &                       * trb(ji,jj,jk,jp15nh4) / (trb(ji,jj,jk,jpnh4) + rtrn )  &
+                  &                       * ( trb(ji,jj,jk,jp15nh4) + rtrn ) / (trb(ji,jj,jk,jpnh4) + rtrn )  &
                   &                       * ( 1.0 - e15n_nit*1e-3 )                                &
                   &                       - rdenita * zdenitnh4                                    &
-                  &                       * trb(ji,jj,jk,jp15nh4) / (trb(ji,jj,jk,jpnh4) + rtrn )  
+                  &                       * ( trb(ji,jj,jk,jp15nh4) + rtrn ) / (trb(ji,jj,jk,jpnh4) + rtrn )  
                ENDIF
 
             END DO
