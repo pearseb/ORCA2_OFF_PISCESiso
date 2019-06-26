@@ -42,8 +42,11 @@ STEPS TAKEN...
 		- p4zprod.F90
         6. added fractionation due to water column denitrification and nitrification
 		- p4zrem.F90
-        7. added fractionation due to benthic denitrification 
+        7. added fractionation due to benthic denitrification and included fluxes at sediment
 		- p4zsed.F90
+        8. modified existing additions to avoid anomolous fractionation at small concentrations
+		- BEFORE: trb(ji,jj,jk,jp15xxx) / ( trb(ji,jj,j,jpxxx) + rtrn )
+		- AFTER: ( trb(ji,jj,jk,jp15xxx) + rtrn ) / ( trb(ji,jj,j,jpxxx) + rtrn )
 	
 
 

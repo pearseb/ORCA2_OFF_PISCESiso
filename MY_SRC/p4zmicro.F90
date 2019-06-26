@@ -139,12 +139,12 @@ CONTAINS
 
                !    Various remineralization and excretion terms
                !    --------------------------------------------
-               zgrasrat  = ( zgraztotf + rtrn ) / ( zgraztotc + rtrn )
-               zgrasratn = ( zgraztotn + rtrn ) / ( zgraztotc + rtrn )
-               zepshert  =  MIN( 1., zgrasratn, zgrasrat / ferat3)
+               zgrasrat  = ( zgraztotf + rtrn ) / ( zgraztotc + rtrn )  ! Fe/C ratio
+               zgrasratn = ( zgraztotn + rtrn ) / ( zgraztotc + rtrn )  ! N/C ratio
+               zepshert  =  MIN( 1., zgrasratn, zgrasrat / ferat3)  ! Fe/C : Fe/C
                zbeta     = MAX(0., (epsher - epshermin) )
                zepsherf  = epshermin + zbeta / ( 1.0 + 0.04E6 * 12. * zfood * zbeta )
-               zepsherv  = zepsherf * zepshert 
+               zepsherv  = zepsherf * zepshert ! 1 minus growth efficiency (proportion of food ingested that is regenerated)
 
                zgrafer   = zgraztotc * MAX( 0. , ( 1. - unass ) * zgrasrat - ferat3 * zepsherv ) 
                zgrarem   = zgraztotc * ( 1. - zepsherv - unass )

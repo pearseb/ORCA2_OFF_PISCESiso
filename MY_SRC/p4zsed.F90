@@ -56,6 +56,7 @@ CONTAINS
       REAL(wp) ::  zo2, zno3, zflx, zpdenit, z1pdenit, zolimit
       REAL(wp) ::  zsiloss, zcaloss, zws3, zws4, zwsc, zdep
       REAL(wp) ::  zwstpoc, zwstpon, zwstpop
+      REAL(wp) ::  zwstpoc15
       REAL(wp) ::  ztrfer, ztrpo4s, ztrdp, zwdust, zmudia, ztemp
       REAL(wp) ::  xdiano3, xdianh4
       !
@@ -203,7 +204,7 @@ CONTAINS
          tra(:,:,1,jpno3) = tra(:,:,1,jpno3) + nitdep(:,:) * rfact2
          tra(:,:,1,jptal) = tra(:,:,1,jptal) - rno3 * nitdep(:,:) * rfact2
 
-         IF ( ln_n15 ) THEN
+         IF( ln_n15 ) THEN
             tra(:,:,1,jp15no3) = tra(:,:,1,jp15no3) + (1. + d15n_dep*1e-3)*nitdep(:,:) * rfact2
          ENDIF
 
@@ -317,17 +318,17 @@ CONTAINS
       DO jj = 1, jpj
          DO ji = 1, jpi
             ikt  = mbkt(ji,jj)
-            zdep = xstep / e3t_n(ji,jj,ikt) ! timesteps per metre
-            zws4 = zwsbio4(ji,jj) * zdep ! m/s / thickness * day/timestep = number of seconds needed
-            zws3 = zwsbio3(ji,jj) * zdep
-            tra(ji,jj,ikt,jpgoc) = tra(ji,jj,ikt,jpgoc) - trb(ji,jj,ikt,jpgoc) * zws4 
-            tra(ji,jj,ikt,jppoc) = tra(ji,jj,ikt,jppoc) - trb(ji,jj,ikt,jppoc) * zws3
-            tra(ji,jj,ikt,jpbfe) = tra(ji,jj,ikt,jpbfe) - trb(ji,jj,ikt,jpbfe) * zws4
-            tra(ji,jj,ikt,jpsfe) = tra(ji,jj,ikt,jpsfe) - trb(ji,jj,ikt,jpsfe) * zws3
+            zdep = xstep / e3t_n(ji,jj,ikt) ! timesteps/thickness
+            zws4 = zwsbio4(ji,jj) * zdep ! m/s * s/m = proportion of large particles in last depth level hitting sediment
+            zws3 = zwsbio3(ji,jj) * zdep ! proportion of small particles in last depth level hitting sediment
+            tra(ji,jj,ikt,jpgoc) = tra(ji,jj,ikt,jpgoc) - trb(ji,jj,ikt,jpgoc) * zws4 ! remove GOC from water column
+            tra(ji,jj,ikt,jppoc) = tra(ji,jj,ikt,jppoc) - trb(ji,jj,ikt,jppoc) * zws3 ! remove POC from water column
+            tra(ji,jj,ikt,jpbfe) = tra(ji,jj,ikt,jpbfe) - trb(ji,jj,ikt,jpbfe) * zws4 ! remove BFe from water column
+            tra(ji,jj,ikt,jpsfe) = tra(ji,jj,ikt,jpsfe) - trb(ji,jj,ikt,jpsfe) * zws3 ! remove SFe from water column
 
-            IF ( ln_n15 ) THEN
-               tra(ji,jj,ikt,jp15goc) = tra(ji,jj,ikt,jp15goc) - trb(ji,jj,ikt,jp15goc) * zws4 
-               tra(ji,jj,ikt,jp15poc) = tra(ji,jj,ikt,jp15poc) - trb(ji,jj,ikt,jp15poc) * zws3
+            IF( ln_n15 ) THEN
+               tra(ji,jj,ikt,jp15goc) = tra(ji,jj,ikt,jp15goc) - trb(ji,jj,ikt,jp15goc) * zws4 ! remove GOC_15 
+               tra(ji,jj,ikt,jp15poc) = tra(ji,jj,ikt,jp15poc) - trb(ji,jj,ikt,jp15poc) * zws3 ! remove POC_15
             ENDIF
 
          END DO
@@ -354,30 +355,35 @@ CONTAINS
          DO jj = 1, jpj
             DO ji = 1, jpi
                ikt  = mbkt(ji,jj) ! we are in deepest grid cell of ocean
-               zdep = xstep / e3t_n(ji,jj,ikt) 
-               zws4 = zwsbio4(ji,jj) * zdep
-               zws3 = zwsbio3(ji,jj) * zdep
-               zrivno3 = 1. - zbureff(ji,jj)
-               zwstpoc = trb(ji,jj,ikt,jpgoc) * zws4 + trb(ji,jj,ikt,jppoc) * zws3
+               zdep = xstep / e3t_n(ji,jj,ikt) ! s/m (timestep/thickness) 
+               zws4 = zwsbio4(ji,jj) * zdep ! proportion of large particles in last depth level hitting sediment
+               zws3 = zwsbio3(ji,jj) * zdep ! proportion of small particles in last depth level hitting sediment 
+               zrivno3 = 1. - zbureff(ji,jj) ! proportion of sedimenting particles not buried
+               zwstpoc = trb(ji,jj,ikt,jpgoc) * zws4 + trb(ji,jj,ikt,jppoc) * zws3 !molC/L 
+                 ! zwstpoc = OM * proportion POC/GOC sedimented = molC/L of GOC+POC hitting sediment
                zpdenit  = MIN( 0.5 * ( trb(ji,jj,ikt,jpno3) - rtrn ) / rdenit, zdenit2d(ji,jj) * zwstpoc * zrivno3 )
                z1pdenit = zwstpoc * zrivno3 - zpdenit
-                 ! zrivno3 = proportion POM buried
-                 ! zpdenit = denitrification rate
-                 ! z1pdenit = remineralisation rate via oxygen
+                 ! zrivno3 = proportion of particulate carbon that isn't buried and must be remineralised 
+                 ! zpdenit = amount of material (POC+GOC) that is denitrified (molC/L)
+                 ! z1pdenit = amount of material (POC+GOC) that is remineralised without denitrification (molC/L)
                zolimit = MIN( ( trb(ji,jj,ikt,jpoxy) - rtrn ) / o2ut, z1pdenit * ( 1.- nitrfac(ji,jj,ikt) ) )
-                 ! zolimit = adjusted z1pdenit to include oxic remineralisation
-                 ! in water column above sediment and to limit oxic
-                 ! remineralisation if O2 not present
+                 ! zolimit = adjusted z1pdenit that occurs through oxic remineralisation
                tra(ji,jj,ikt,jpdoc) = tra(ji,jj,ikt,jpdoc) + z1pdenit - zolimit
-                 ! DOC used during oxic remineralisation (zolimit)
+                 ! z1pdenit (non-nitrogeneous remineralisation) - zolimit (oxic remineralisation)
+                 !  thus... the component of remineralisation that cannot be accommodated by N or O2 goes to DOC
                tra(ji,jj,ikt,jppo4) = tra(ji,jj,ikt,jppo4) + zpdenit + zolimit
                tra(ji,jj,ikt,jpnh4) = tra(ji,jj,ikt,jpnh4) + zpdenit + zolimit
                tra(ji,jj,ikt,jpno3) = tra(ji,jj,ikt,jpno3) - rdenit * zpdenit
           
-               IF ( ln_n15 ) THEN
-                  tra(ji,jj,ikt,jp15doc) = tra(ji,jj,ikt,jp15doc) + z1pdenit - zolimit
-                  tra(ji,jj,ikt,jp15nh4) = tra(ji,jj,ikt,jp15nh4) + zpdenit + zolimit
-                  tra(ji,jj,ikt,jp15no3) = tra(ji,jj,ikt,jp15no3) - rdenit * zpdenit
+               IF( ln_n15 ) THEN
+                  zwstpoc15 = trb(ji,jj,ikt,jp15goc)*zws4 + trb(ji,jj,ikt,jp15poc)*zws3 !POC+GOC hitting sediment 
+                  tra(ji,jj,ikt,jp15doc) = tra(ji,jj,ikt,jp15doc) + ( zwstpoc15 * zrivno3 - zpdenit - zolimit )  &
+                  &                        * ( zwstpoc15 + rtrn ) / ( zwstpoc + rtrn )
+                  tra(ji,jj,ikt,jp15nh4) = tra(ji,jj,ikt,jp15nh4) + ( zpdenit + zolimit ) &
+                  &                        * ( zwstpoc15 + rtrn ) / ( zwstpoc + rtrn )
+                  tra(ji,jj,ikt,jp15no3) = tra(ji,jj,ikt,jp15no3) - rdenit * zpdenit  &
+                  &                        * ( 1.0 - e15n_ben*1e-3 )  &
+                  &                        * ( trb(ji,jj,jk,jp15no3) + rtrn ) / ( trb(ji,jj,jk,jpno3) + rtrn )
                ENDIF 
 
                tra(ji,jj,ikt,jpoxy) = tra(ji,jj,ikt,jpoxy) - zolimit * o2ut
