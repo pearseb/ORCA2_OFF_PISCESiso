@@ -37,8 +37,13 @@ STEPS TAKEN...
 		- jp15poc	Small particulate organic carbon
 		- jp15goc	Large particulate organic carbon
 		- jp15doc	Dissolved organic carbon
-        4. add d15n signatures of external sources (rivers + atmospheric deposition + n2fixation)
-        4. add fractionation due to utilisation
+        4. added d15n signatures of external sources (rivers + atmospheric deposition + n2fixation)
+        5. added fractionation due to utilisation 
+		- p4zprod.F90
+        6. added fractionation due to water column denitrification and nitrification
+		- p4zrem.F90
+        7. added fractionation due to benthic denitrification 
+		- p4zsed.F90
 	
 
 

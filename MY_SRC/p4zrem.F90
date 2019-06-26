@@ -128,27 +128,31 @@ CONTAINS
                   zoxyremc          = zammonic - denitr(ji,jj,jk) 
                     ! reallocate material that can't be remineralised using NO3 to oxygen
                   !
-                  zolimi (ji,jj,jk) = MAX( 0.e0, zolimi (ji,jj,jk) )  ! make sure all arrays are positive
-                  denitr (ji,jj,jk) = MAX( 0.e0, denitr (ji,jj,jk) )
+                  zolimi(ji,jj,jk) = MAX( 0.e0, zolimi(ji,jj,jk) )  ! make sure all arrays are positive
+                  denitr(ji,jj,jk) = MAX( 0.e0, denitr(ji,jj,jk) )
                   zoxyremc          = MAX( 0.e0, zoxyremc )
                     ! zolimi = oxic remineralisation of DOC --> NH4 using oxygen
                     ! denitr = suboxic remineralisation of DOC --> NH4 using nitrate
                     ! zoxyremc = suboxic remineralisation of DOC --> NH4 not using nitrate 
  
                   !
-                  tra(ji,jj,jk,jppo4) = tra(ji,jj,jk,jppo4) + zolimi (ji,jj,jk) + denitr(ji,jj,jk) + zoxyremc
-                  tra(ji,jj,jk,jpnh4) = tra(ji,jj,jk,jpnh4) + zolimi (ji,jj,jk) + denitr(ji,jj,jk) + zoxyremc
-                  tra(ji,jj,jk,jpno3) = tra(ji,jj,jk,jpno3) - denitr (ji,jj,jk) * rdenit
-                  tra(ji,jj,jk,jpdoc) = tra(ji,jj,jk,jpdoc) - zolimi (ji,jj,jk) - denitr(ji,jj,jk) - zoxyremc
-                  tra(ji,jj,jk,jpoxy) = tra(ji,jj,jk,jpoxy) - zolimi (ji,jj,jk) * o2ut
-                  tra(ji,jj,jk,jpdic) = tra(ji,jj,jk,jpdic) + zolimi (ji,jj,jk) + denitr(ji,jj,jk) + zoxyremc
+                  tra(ji,jj,jk,jppo4) = tra(ji,jj,jk,jppo4) + zolimi(ji,jj,jk) + denitr(ji,jj,jk) + zoxyremc
+                  tra(ji,jj,jk,jpnh4) = tra(ji,jj,jk,jpnh4) + zolimi(ji,jj,jk) + denitr(ji,jj,jk) + zoxyremc
+                  tra(ji,jj,jk,jpno3) = tra(ji,jj,jk,jpno3) - denitr(ji,jj,jk) * rdenit
+                  tra(ji,jj,jk,jpdoc) = tra(ji,jj,jk,jpdoc) - zolimi(ji,jj,jk) - denitr(ji,jj,jk) - zoxyremc
+                  tra(ji,jj,jk,jpoxy) = tra(ji,jj,jk,jpoxy) - zolimi(ji,jj,jk) * o2ut
+                  tra(ji,jj,jk,jpdic) = tra(ji,jj,jk,jpdic) + zolimi(ji,jj,jk) + denitr(ji,jj,jk) + zoxyremc
                   tra(ji,jj,jk,jptal) = tra(ji,jj,jk,jptal) + rno3 * ( zolimi(ji,jj,jk) + zoxyremc    &
                   &                     + ( rdenit + 1.) * denitr(ji,jj,jk) )
 
-                  IF (ln_n15) THEN
-                     tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zolimi (ji,jj,jk) + denitr(ji,jj,jk) + zoxyremc
-                     tra(ji,jj,jk,jp15no3) = tra(ji,jj,jk,jp15no3) - denitr (ji,jj,jk) * rdenit
-                     tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) - zolimi (ji,jj,jk) - denitr(ji,jj,jk) - zoxyremc
+                  IF( ln_n15) THEN
+                     tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + ( zolimi(ji,jj,jk) + denitr(ji,jj,jk) + zoxyremc )  &
+                     &                       * trb(ji,jj,jk,jp15doc) / ( trb(ji,jj,jk,jpdoc) + rtrn )
+                     tra(ji,jj,jk,jp15no3) = tra(ji,jj,jk,jp15no3) - denitr (ji,jj,jk) * rdenit  &
+                     &                       * trb(ji,jj,jk,jp15no3) / ( trb(ji,jj,jk,jpno3) + rtrn )  &
+                     &                       * ( 1.0 + e15n_den*1e-3 )
+                     tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) - ( zolimi(ji,jj,jk) + denitr(ji,jj,jk) + zoxyremc )  &
+                     &                       * trb(ji,jj,jk,jp15doc) / ( trb(ji,jj,jk,jpdoc) + rtrn )
                   ENDIF
 
                END DO
@@ -213,6 +217,10 @@ CONTAINS
                &         / ( 1.+ emoy(ji,jj,jk) ) * ( 1. + fr_i(ji,jj) * emoy(ji,jj,jk) ) 
                zdenitnh4 = nitrif * xstep * trb(ji,jj,jk,jpnh4) * nitrfac(ji,jj,jk)
                zdenitnh4 = MIN(  ( trb(ji,jj,jk,jpno3) - rtrn ) / rdenita, zdenitnh4 ) 
+
+               ! zonitri = nitrification of NH4 --> NO3 under oxic conditions
+               ! zdenitnh4 = nitrification of NH4 under anoxic conditions NH4 --> NO3
+               !             ... except that this NH4 is removed from the system (NH4 --> N2)
                ! Update of the tracers trends
                ! ----------------------------
                tra(ji,jj,jk,jpnh4) = tra(ji,jj,jk,jpnh4) - zonitr(ji,jj,jk) - zdenitnh4
@@ -220,9 +228,14 @@ CONTAINS
                tra(ji,jj,jk,jpoxy) = tra(ji,jj,jk,jpoxy) - o2nit * zonitr(ji,jj,jk)
                tra(ji,jj,jk,jptal) = tra(ji,jj,jk,jptal) - 2 * rno3 * zonitr(ji,jj,jk) + rno3 * ( rdenita - 1. ) * zdenitnh4
 
-               IF ( ln_n15 ) THEN
-                  tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) - zonitr(ji,jj,jk) - zdenitnh4
-                  tra(ji,jj,jk,jp15no3) = tra(ji,jj,jk,jp15no3) + zonitr(ji,jj,jk) - rdenita * zdenitnh4
+               IF( ln_n15 ) THEN
+                  tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) - ( zonitr(ji,jj,jk) * ( 1.0 + e15n_nit*1e-3 )   &
+                  &                       + zdenitnh4 ) * trb(ji,jj,jk,jp15nh4) / (trb(ji,jj,jk,jpnh4) + rtrn )   
+                  tra(ji,jj,jk,jp15no3) = tra(ji,jj,jk,jp15no3) + zonitr(ji,jj,jk)                 &
+                  &                       * trb(ji,jj,jk,jp15nh4) / (trb(ji,jj,jk,jpnh4) + rtrn )  &
+                  &                       * ( 1.0 + e15n_nit*1e-3 )                                &
+                  &                       - rdenita * zdenitnh4                                    &
+                  &                       * trb(ji,jj,jk,jp15nh4) / (trb(ji,jj,jk,jpnh4) + rtrn )  
                ENDIF
 
             END DO
