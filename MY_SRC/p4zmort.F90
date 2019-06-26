@@ -115,12 +115,12 @@ CONTAINS
                tra(ji,jj,jk,jpbfe) = tra(ji,jj,jk,jpbfe) + zfracal * zmortp * zfactfe
 
                IF( ln_n15 ) THEN
-                  tra(ji,jj,jk,jp15phy) = tra(ji,jj,jk,jp15phy) - zmortp  !  &
-               !&                          *( tra(ji,jj,jk,jp15phy) + rtrn ) / ( tra(ji,jj,jk,jpphy) + rtrn ) 
-                  tra(ji,jj,jk,jp15goc) = tra(ji,jj,jk,jp15goc) + zfracal * zmortp  ! &
-               !&                          *( tra(ji,jj,jk,jp15phy) + rtrn ) / ( tra(ji,jj,jk,jpphy) + rtrn ) 
-                  tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) + ( 1. - zfracal ) * zmortp  ! &
-               !&                          *( tra(ji,jj,jk,jp15phy) + rtrn ) / ( tra(ji,jj,jk,jpphy) + rtrn ) 
+                  tra(ji,jj,jk,jp15phy) = tra(ji,jj,jk,jp15phy) - zmortp                      &
+                  &                       *( tra(ji,jj,jk,jp15phy) + rtrn ) / ( tra(ji,jj,jk,jpphy) + rtrn ) 
+                  tra(ji,jj,jk,jp15goc) = tra(ji,jj,jk,jp15goc) + zfracal * zmortp            &
+                  &                       *( tra(ji,jj,jk,jp15phy) + rtrn ) / ( tra(ji,jj,jk,jpphy) + rtrn ) 
+                  tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) + ( 1. - zfracal ) * zmortp   &
+                  &                       *( tra(ji,jj,jk,jp15phy) + rtrn ) / ( tra(ji,jj,jk,jpphy) + rtrn ) 
                ENDIF
 
             END DO
@@ -200,12 +200,12 @@ CONTAINS
                tra(ji,jj,jk,jpbfe) = tra(ji,jj,jk,jpbfe) + ( zrespp2 + 0.5 * ztortp2 ) * zfactfe
 
                IF( ln_n15 ) THEN
-                  tra(ji,jj,jk,jp15dia) = tra(ji,jj,jk,jp15dia) - zmortp2  !  &
-               !&                          *( tra(ji,jj,jk,jp15dia) + rtrn ) / ( tra(ji,jj,jk,jpdia) + rtrn )
-                  tra(ji,jj,jk,jp15goc) = tra(ji,jj,jk,jp15goc) + ( zrespp2 + 0.5 * ztortp2 )  ! &
-               !&                          *( tra(ji,jj,jk,jp15dia) + rtrn ) / ( tra(ji,jj,jk,jpdia) + rtrn )
-                  tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) +  0.5 * ztortp2   ! &
-               !&                          *( tra(ji,jj,jk,jp15dia) + rtrn ) / ( tra(ji,jj,jk,jpdia) + rtrn )
+                  tra(ji,jj,jk,jp15dia) = tra(ji,jj,jk,jp15dia) - zmortp2                       &
+               &                          *( tra(ji,jj,jk,jp15dia) + rtrn ) / ( tra(ji,jj,jk,jpdia) + rtrn )
+                  tra(ji,jj,jk,jp15goc) = tra(ji,jj,jk,jp15goc) + ( zrespp2 + 0.5 * ztortp2 )   &
+               &                          *( tra(ji,jj,jk,jp15dia) + rtrn ) / ( tra(ji,jj,jk,jpdia) + rtrn )
+                  tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) +  0.5 * ztortp2                &
+               &                          *( tra(ji,jj,jk,jp15dia) + rtrn ) / ( tra(ji,jj,jk,jpdia) + rtrn )
                ENDIF
 
             END DO
