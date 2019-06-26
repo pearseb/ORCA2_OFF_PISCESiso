@@ -196,15 +196,15 @@ CONTAINS
                   ! POC disaggregation by turbulence and bacterial activity. 
                   ! --------------------------------------------------------
                   zremig = zremigoc(ji,jj,jk) * xstep * tgfunc(ji,jj,jk)
-                     ! zremig = rate of remineralisation given temperature and seconds per timestep
+                    ! zremig = rate of remineralisation given temperature and seconds per timestep
                   zorem2  = zremig * trb(ji,jj,jk,jpgoc)
                   orem(ji,jj,jk)      = zorem2
                   zorem3(ji,jj,jk) = zremig * solgoc * trb(ji,jj,jk,jpgoc)
                   zofer2 = zremig * trb(ji,jj,jk,jpbfe)
                   zofer3 = zremig * solgoc * trb(ji,jj,jk,jpbfe)
  
-                     ! zorem2 --> DOC (disaggregation of GOC)
-                     ! zorem3 --> POC (bacterial solubilization of GOC)
+                     ! zorem2 GOC --> DOC (disaggregation (temp dependent))
+                     ! zorem3 GOC --> POC (bacterial solubilization)
                   ! -------------------------------------
                   tra(ji,jj,jk,jppoc) = tra(ji,jj,jk,jppoc) + zorem3(ji,jj,jk)
                   tra(ji,jj,jk,jpgoc) = tra(ji,jj,jk,jpgoc) - zorem2 - zorem3(ji,jj,jk)
@@ -214,10 +214,13 @@ CONTAINS
                   tra(ji,jj,jk,jpfer) = tra(ji,jj,jk,jpfer) + zofer2
                   zfolimi(ji,jj,jk)   = zofer2
              
-                  IF ( ln_n15 ) THEN
-                     tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) + zorem3(ji,jj,jk)
-                     tra(ji,jj,jk,jp15goc) = tra(ji,jj,jk,jp15goc) - zorem2 - zorem3(ji,jj,jk)
-                     tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) + zorem2
+                  IF( ln_n15 ) THEN
+                     tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) + zorem3(ji,jj,jk)              &
+                     &                       * ( trb(ji,jj,jk,jp15goc) + rtrn ) / ( trb(ji,jj,jk,jpgoc) + rtrn )
+                     tra(ji,jj,jk,jp15goc) = tra(ji,jj,jk,jp15goc) - ( zorem2 + zorem3(ji,jj,jk) ) &
+                     &                       * ( trb(ji,jj,jk,jp15goc) + rtrn ) / ( trb(ji,jj,jk,jpgoc) + rtrn )
+                     tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) + zorem2                        &
+                     &                       * ( trb(ji,jj,jk,jp15goc) + rtrn ) / ( trb(ji,jj,jk,jpgoc) + rtrn )
                   ENDIF
                   
                END DO
@@ -429,8 +432,10 @@ CONTAINS
                     zfolimi(ji,jj,jk)   = zfolimi(ji,jj,jk) + zofer
 
                     IF ( ln_n15 ) THEN
-                       tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) + zorem
-                       tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) - zorem
+                       tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) + zorem  &
+                       &                       * ( trb(ji,jj,jk,jp15poc) + rtrn ) / ( trb(ji,jj,jk,jppoc) + rtrn )
+                       tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) - zorem  &
+                       &                       * ( trb(ji,jj,jk,jp15poc) + rtrn ) / ( trb(ji,jj,jk,jppoc) + rtrn )
                     ENDIF
                    
                   ENDIF

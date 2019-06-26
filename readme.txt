@@ -20,8 +20,8 @@ Files to be altered:
 ~			p4zmeso.F90  -->  sources and sinks of mesozooplankton
 ~                       p4zagg.F90  -->  Aggregation of particles
 ~			p4zrem.F90  -->  remineralisation of organic matter
+~			p4zpoc.F90  -->  remineralisation of organic particles
 ~		p4zsed.F90  -->  sedimentary processes (NH4 release, denitrification, burial)
-~		p4zpoc.F90  -->  remineralisation of organic particles
 
 
 STEPS TAKEN...
@@ -50,6 +50,12 @@ STEPS TAKEN...
         9. carried d15n signatures between DOC, POC and GOC during aggregation and disaggregation
 		- p4zagg.F90
 		- p4zpoc.F90
+        10. carried d15n signatures between PHY, PHY2, POC and GOC during phytoplankton mortality
+		- p4zmort.F90
+        11. carried d15n signatures between NH4, DOC, PHY, PHY2, ZOO, POC and GOC in microzooplankton lifecycle
+		- p4zmicro.F90
+        12. carried d15n signatures between NH4, DOC, PHY, PHY2, ZOO, POC and GOC in mesozooplankton lifecycle
+		- p4zmeso.F90
 	
 
 

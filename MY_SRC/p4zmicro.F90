@@ -112,9 +112,9 @@ CONTAINS
                !     Microzooplankton grazing
                !     ------------------------
                zfood     = xprefn * zcompaph + xprefc * zcompapoc + xprefd * zcompadi ! molC/L total food available
-               zfoodlim  = MAX( 0. , zfood - min(xthresh,0.5*zfood) ) !Flim increases as food availability inceases 
-               zdenom    = zfoodlim / ( xkgraz + zfoodlim )  ! [0,1] , closer to when food availability greater 
-               zdenom2   = zdenom / ( zfood + rtrn )
+               zfoodlim  = MAX( 0. , zfood - min(xthresh,0.5*zfood) ) ! zfoodlim increases as food availability increases 
+               zdenom    = zfoodlim / ( xkgraz + zfoodlim )  ! [0,1] , closer to 1 when food availability greater 
+               zdenom2   = zdenom / ( zfood + rtrn ) ! [0 --> 1], closer to 1 when food availability high
                zgraze    = grazrat * xstep * tgfunc2(ji,jj,jk) * trb(ji,jj,jk,jpzoo) * (1. - nitrfac(ji,jj,jk)) 
 
                zgrazp    = zgraze  * xprefn * zcompaph  * zdenom2 
@@ -171,7 +171,7 @@ CONTAINS
                tra(ji,jj,jk,jpdic) = tra(ji,jj,jk,jpdic) + zgrarsig
                tra(ji,jj,jk,jptal) = tra(ji,jj,jk,jptal) + rno3 * zgrarsig
                !
-               IF ( ln_n15 ) THEN
+               IF( ln_n15 ) THEN
                   tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zgrarsig ! food immediately excreted to NH4
                   tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) + zgrarem - zgrarsig ! food immediately excreted to DOC
                   tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) + zgrapoc  ! messy feeding routed directly to POC
@@ -203,7 +203,7 @@ CONTAINS
                tra(ji,jj,jk,jptal) = tra(ji,jj,jk,jptal) - 2. * zprcaca
                tra(ji,jj,jk,jpcal) = tra(ji,jj,jk,jpcal) + zprcaca
                !
-               IF ( ln_n15 ) THEN
+               IF( ln_n15 ) THEN
                   tra(ji,jj,jk,jp15zoo) = tra(ji,jj,jk,jp15zoo) - zmortz + zepsherv * zgraztotc
                   tra(ji,jj,jk,jp15phy) = tra(ji,jj,jk,jp15phy) - zgrazp
                   tra(ji,jj,jk,jp15dia) = tra(ji,jj,jk,jp15dia) - zgrazsd
