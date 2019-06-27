@@ -73,6 +73,8 @@ CONTAINS
       REAL(wp) :: zgrarem, zgrafer, zgrapoc, zprcaca, zmortz
       REAL(wp) :: zrespz, ztortz, zgrasrat, zgrasratn
       REAL(wp) :: zgrazp, zgrazm, zgrazsd
+      REAL(wp) :: zgrazp15, zgrazm15, zgrazsd15, zgraztotc15
+      REAL(wp) :: zgrarem_15, zgrapoc_15, zgrasig_15, zgrasigex_15, zmortz_15
       REAL(wp) :: zgrazmf, zgrazsf, zgrazpf
       REAL(wp), DIMENSION(jpi,jpj,jpk) :: zgrazing, zfezoo
       REAL(wp), DIMENSION(:,:,:), ALLOCATABLE :: zw3d, zzligprod
@@ -129,6 +131,13 @@ CONTAINS
                ! zcompaph = concentration of food type (molC/L)
                ! zdenom2 = the fraction of food that can be consumed at this timestep, given thresholds
                ! zgrazp/zgrazm/zgrazsd = the concentration (molC/L) of food type consumed by microzooplankton
+               
+               IF( ln_n15 ) THEN
+                  zgrazp15    = zgrazp  * ( trb(ji,jj,jk,jp15phy) + rtrn ) / (trb(ji,jj,jk,jpphy) + rtrn ) 
+                  zgrazm15    = zgrazm  * ( trb(ji,jj,jk,jp15poc) + rtrn ) / (trb(ji,jj,jk,jppoc) + rtrn ) 
+                  zgrazsd15   = zgrazsd * ( trb(ji,jj,jk,jp15dia) + rtrn ) / (trb(ji,jj,jk,jpdia) + rtrn )
+                  zgraztotc15 = zgrazp15 + zgrazm15 + zgrazsd15
+               ENDIF
 
                zgrazpf   = zgrazp  * trb(ji,jj,jk,jpnfe) / (trb(ji,jj,jk,jpphy) + rtrn)
                zgrazmf   = zgrazm  * trb(ji,jj,jk,jpsfe) / (trb(ji,jj,jk,jppoc) + rtrn)
@@ -136,23 +145,54 @@ CONTAINS
                !
                zgraztotc = zgrazp  + zgrazm  + zgrazsd ! total molC/L consumed by microzooplankton
                zgraztotf = zgrazpf + zgrazsf + zgrazmf ! total molFe/L
-               zgraztotn = zgrazp * quotan(ji,jj,jk) + zgrazm + zgrazsd * quotad(ji,jj,jk)
+               zgraztotn = zgrazp * quotan(ji,jj,jk) + zgrazm + zgrazsd * quotad(ji,jj,jk) 
+               ! phy and dia multiplied by their quality in terms of nitrogen,
+               ! such that zgraztotn <= zgraztotc
 
                ! Grazing by microzooplankton
                zgrazing(ji,jj,jk) = zgraztotc
 
                !    Various remineralization and excretion terms
                !    --------------------------------------------
-               zgrasrat  = ( zgraztotf + rtrn ) / ( zgraztotc + rtrn )  ! Fe/C ratio
-               zgrasratn = ( zgraztotn + rtrn ) / ( zgraztotc + rtrn )  ! N/C ratio
-               zepshert  =  MIN( 1., zgrasratn, zgrasrat / ferat3)  ! Fe/C : Fe/C
+               zgrasrat  = ( zgraztotf + rtrn ) / ( zgraztotc + rtrn )  ! Fe/C ratio [0,>1]
+               zgrasratn = ( zgraztotn + rtrn ) / ( zgraztotc + rtrn )  ! N/C ratio [0,1]
+               zepshert  =  MIN( 1., zgrasratn, zgrasrat / ferat3) ! measure of food quality [0,1]
+                 ! zgrasratn = quality of food due to N [0,1]
+                 ! zgrasrat / ferat3 = Fe/C phy : Fe/C zoo  [0,1]
                zbeta     = MAX(0., (epsher - epshermin) )
                zepsherf  = epshermin + zbeta / ( 1.0 + 0.04E6 * 12. * zfood * zbeta )
-               zepsherv  = zepsherf * zepshert ! 1 minus growth efficiency (proportion of food ingested that is regenerated)
+                 ! zepsherf = 0.3 when zbeta == 0.0 (default in p4z)
+               zepsherv  = zepsherf * zepshert 
+                 ! zepsherf (min efficiency of zooplankton growth) * food quality [0,0.3]
+                 ! zepsherv is the amount of carbon that becomes zooplankton biomass
 
                zgrafer   = zgraztotc * MAX( 0. , ( 1. - unass ) * zgrasrat - ferat3 * zepsherv ) 
-               zgrarem   = zgraztotc * ( 1. - zepsherv - unass )
+               zgrarem   = zgraztotc * ( 1. - zepsherv - unass ) 
+                 ! zgrarem = amount of carbon assimilated but not turned into zooplankton biomass
                zgrapoc   = zgraztotc * unass  ! amount of carbon not assimilated (messy feeding?)
+
+               !.........................
+               !   7 variables
+               ! zepsherv = amount of carbon assimilated by zooplankton and becomes biomass (ZOO)
+               ! zgrarem  = amount of carbon assimilated by zooplankton but is excreted as other substances (NH4, DOC)
+               ! zgrapoc  = amount of carbon not assimilated by zooplankton but becomes POC (POC) 
+               ! zgrarsig = amount of carbon assimilated by zooplankton that is excreted as NH4 (NH4)
+               ! ... zgrarem - zgrarsig = carbon assimilated by zooplankton that is excreted as DOM (DOC)
+               ! zgrazp   = amount of phytoplankton carbon removed by microzooplankton 
+               ! zgrazm   = amount of POC carbon removed by microzooplankton 
+               ! zgrazsd  = amount of diatom carbon removed by microzooplankton 
+
+               IF( ln_n15 ) THEN
+                  zgrarem_15 = zgraztotc15 * ( 1. - zepsherv - unass )
+                  zgrapoc_15 = zgraztotc15 * unass
+                  zgrasig_15 = zgrarem_15 * sigma1
+                  zgrasigex_15 = ( 1.0 - epsher - unass ) * zgraztotc15   &  ! total carbon that is excreted
+                  &              * sigma1    & ! excreted carbon that becomes NH4
+                  &              * zgrasratn   ! measure of food quality [0,1]
+                  zmortz_15  = (ztortz + zrespz)   &
+                  &            * ( trb(ji,jj,jk,jp15zoo) + rtrn ) / ( trb(ji,jj,jk,jpzoo) + rtrn )
+               ENDIF
+
 
                !  Update of the TRA arrays
                !  ------------------------
@@ -176,9 +216,10 @@ CONTAINS
                tra(ji,jj,jk,jptal) = tra(ji,jj,jk,jptal) + rno3 * zgrarsig
                !
                IF( ln_n15 ) THEN
-                  tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zgrarsig ! food immediately excreted to NH4
-                  tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) + zgrarem - zgrarsig ! food immediately excreted to DOC
-                  tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) + zgrapoc  ! messy feeding routed directly to POC
+                  tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zgrasigex_15    &
+                  &                       + ( zgrasig_15 - zgrasigex_15 )
+                  tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) + zgrarem_15 - zgrasig_15
+                  tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) + zgrapoc_15
                ENDIF
                !
                !   Update the arrays TRA which contain the biological sources and sinks
@@ -208,10 +249,10 @@ CONTAINS
                tra(ji,jj,jk,jpcal) = tra(ji,jj,jk,jpcal) + zprcaca
                !
                IF( ln_n15 ) THEN
-                  tra(ji,jj,jk,jp15zoo) = tra(ji,jj,jk,jp15zoo) - zmortz + zepsherv * zgraztotc
-                  tra(ji,jj,jk,jp15phy) = tra(ji,jj,jk,jp15phy) - zgrazp
-                  tra(ji,jj,jk,jp15dia) = tra(ji,jj,jk,jp15dia) - zgrazsd
-                  tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) + zmortz - zgrazm
+                  tra(ji,jj,jk,jp15zoo) = tra(ji,jj,jk,jp15zoo) - zmortz_15 + zepsherv * zgraztotc15
+                  tra(ji,jj,jk,jp15phy) = tra(ji,jj,jk,jp15phy) - zgrazp15
+                  tra(ji,jj,jk,jp15dia) = tra(ji,jj,jk,jp15dia) - zgrazsd15
+                  tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) + zmortz_15 - zgrazm15
                ENDIF
                !
             END DO
