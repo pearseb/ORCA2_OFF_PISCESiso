@@ -56,6 +56,10 @@ STEPS TAKEN...
 		- p4zmicro.F90
         12. carried d15n signatures between NH4, DOC, PHY, PHY2, ZOO, ZOO2, POC and GOC in mesozooplankton lifecycle
 		- p4zmeso.F90
+        13. added fractionation during zooplankton feeding
+		- p4zmicro.F90
+		- p4zmeso.F90
+     
 	
 
 

@@ -212,10 +212,10 @@ CONTAINS
                tra(ji,jj,jk,jptal) = tra(ji,jj,jk,jptal) + rno3 * zgrarsig
                !
                IF( ln_n15 ) THEN
-                  tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zgrasigex_15    &
+                  tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zgrasigex_15 * ( 1. - e15n_ex*1e-3 )   &
                   &                       + ( zgrasig_15 - zgrasigex_15 )
                   tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) + zgrarem_15 - zgrasig_15
-                  tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) + zgrapoc_15
+                  tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) + zgrapoc_15 * ( 1. - e15n_in*1e-3 )
                ENDIF
                !
                !   Update the arrays TRA which contain the biological sources and sinks
@@ -245,7 +245,9 @@ CONTAINS
                tra(ji,jj,jk,jpcal) = tra(ji,jj,jk,jpcal) + zprcaca
                !
                IF( ln_n15 ) THEN
-                  tra(ji,jj,jk,jp15zoo) = tra(ji,jj,jk,jp15zoo) - zmortz_15 + zepsherv * zgraztotc15
+                  tra(ji,jj,jk,jp15zoo) = tra(ji,jj,jk,jp15zoo) - zmortz_15 + zepsherv * zgraztotc15  &
+                  &                       + zgrasigex_15 * e15n_ex*1e-3                               &
+                  &                       + zgrapoc_15 * e15n_in*1e-3
                   tra(ji,jj,jk,jp15phy) = tra(ji,jj,jk,jp15phy) - zgrazp15
                   tra(ji,jj,jk,jp15dia) = tra(ji,jj,jk,jp15dia) - zgrazsd15
                   tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) + zmortz_15 - zgrazm15
