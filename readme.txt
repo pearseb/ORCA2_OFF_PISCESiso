@@ -54,7 +54,7 @@ STEPS TAKEN...
 		- p4zmort.F90
         11. carried d15n signatures between NH4, DOC, PHY, PHY2, ZOO, POC and GOC in microzooplankton lifecycle
 		- p4zmicro.F90
-        12. carried d15n signatures between NH4, DOC, PHY, PHY2, ZOO, POC and GOC in mesozooplankton lifecycle
+        12. carried d15n signatures between NH4, DOC, PHY, PHY2, ZOO, ZOO2, POC and GOC in mesozooplankton lifecycle
 		- p4zmeso.F90
 	
 

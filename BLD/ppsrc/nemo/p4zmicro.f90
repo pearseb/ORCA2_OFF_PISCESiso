@@ -186,7 +186,7 @@ CONTAINS
                   zgrarem_15 = zgraztotc15 * ( 1. - zepsherv - unass )
                   zgrapoc_15 = zgraztotc15 * unass
                   zgrasig_15 = zgrarem_15 * sigma1
-                  zgrasigex_15 = ( 1.0 - epsher - unass ) * zgraztotc15   &  ! total carbon that is excreted
+                  zgrasigex_15 = ( 1. - epsher - unass ) * zgraztotc15   &  ! total carbon that is excreted
                   &              * sigma1    & ! excreted carbon that becomes NH4
                   &              * zgrasratn   ! measure of food quality [0,1]
                   zmortz_15  = (ztortz + zrespz)   &
