@@ -157,7 +157,7 @@ CONTAINS
                IF( ln_n15 ) THEN
                   zgrazn15 = zgrazn * ( trb(ji,jj,jk,jp15phy) + rtrn ) / ( trb(ji,jj,jk,jpphy) + rtrn )
                   zgrazd15 = zgrazd * ( trb(ji,jj,jk,jp15dia) + rtrn ) / ( trb(ji,jj,jk,jpdia) + rtrn )
-                  zgrazz15 = zgrazn * ( trb(ji,jj,jk,jp15zoo) + rtrn ) / ( trb(ji,jj,jk,jpzoo) + rtrn )
+                  zgrazz15 = zgrazz * ( trb(ji,jj,jk,jp15zoo) + rtrn ) / ( trb(ji,jj,jk,jpzoo) + rtrn )
                   zgrazpoc15 = zgrazpoc * ( trb(ji,jj,jk,jp15poc) + rtrn ) / ( trb(ji,jj,jk,jppoc) + rtrn )
                   zgrazffg15 = zgrazffeg * ( trb(ji,jj,jk,jp15goc) + rtrn ) / ( trb(ji,jj,jk,jpgoc) + rtrn )
                   zgrazffp15 = zgrazffep * ( trb(ji,jj,jk,jp15poc) + rtrn ) / ( trb(ji,jj,jk,jppoc) + rtrn )

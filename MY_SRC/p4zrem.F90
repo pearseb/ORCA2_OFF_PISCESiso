@@ -236,7 +236,7 @@ CONTAINS
                   &                       * ( trb(ji,jj,jk,jp15nh4) + rtrn ) / (trb(ji,jj,jk,jpnh4) + rtrn )  &
                   &                       * ( 1.0 - e15n_nit*1e-3 )                                &
                   &                       - rdenita * zdenitnh4                                    &
-                  &                       * ( trb(ji,jj,jk,jp15nh4) + rtrn ) / (trb(ji,jj,jk,jpnh4) + rtrn )  
+                  &                       * ( trb(ji,jj,jk,jp15no3) + rtrn ) / (trb(ji,jj,jk,jpno3) + rtrn )  
                ENDIF
 
             END DO

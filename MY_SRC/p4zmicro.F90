@@ -182,11 +182,11 @@ CONTAINS
                   zgrarem_15 = zgraztotc15 * ( 1. - zepsherv - unass )
                   zgrapoc_15 = zgraztotc15 * unass
                   zgrasig_15 = zgrarem_15 * sigma1
-                  zgrasigex_15 = ( 1. - epsher - unass ) * zgraztotc15   &  ! total carbon that is excreted
-                  &              * sigma1    & ! excreted carbon that becomes NH4
-                  &              * zgrasratn   ! measure of food quality [0,1]
-                  zmortz_15  = (ztortz + zrespz)   &
-                  &            * ( trb(ji,jj,jk,jp15zoo) + rtrn ) / ( trb(ji,jj,jk,jpzoo) + rtrn )
+                  zgrasigex_15 = ( 1. - epsher - unass ) * zgraztotc15 * sigma1 * zgrasratn   
+                    ! zgrasigex_15 = amount of NH4 excreted by zooplankton
+                    ! according to measure of food quality [0,1] (zgrasratn) multiplied by 
+                    ! the minimum possible excretion (( 1. - epsher - unass ) * zgraztotc15 * sigma1)
+                  zmortz_15  = (ztortz + zrespz) * ( trb(ji,jj,jk,jp15zoo) + rtrn ) / ( trb(ji,jj,jk,jpzoo) + rtrn )
                ENDIF
 
 

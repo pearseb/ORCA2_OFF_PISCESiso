@@ -59,6 +59,9 @@ STEPS TAKEN...
         13. added fractionation during zooplankton feeding
 		- p4zmicro.F90
 		- p4zmeso.F90
+        14. placed constraints on min/max d15n of NH4 (set by nn_n15min & nn_n15max in namelist_pisces_ref)
+		- p4zsms.F90
+
      
 	
 

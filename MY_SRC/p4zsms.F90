@@ -61,9 +61,15 @@ CONTAINS
       !!
       INTEGER ::   ji, jj, jk, jnt, jn, jl
       REAL(wp) ::  ztra
+      LOGICAL :: diag2
+      INTEGER :: iii2, jjj2, kkk2
       CHARACTER (len=25) :: charout
       !!---------------------------------------------------------------------
       !
+      diag2 = .true.
+      iii2 = 29
+      jjj2 = 105
+      kkk2 = 26
       IF( ln_timing )   CALL timing_start('p4z_sms')
       !
       IF( kt == nittrc000 ) THEN
@@ -109,25 +115,132 @@ CONTAINS
       !
       DO jnt = 1, nrdttrc          ! Potential time splitting if requested
          !
+         IF( ln_n15 .and. diag2 ) THEN
+            print*, " "
+            print*, " before call to p4zbio "
+            print*, "NO3 " 
+            print*, trb(iii2,jjj2,kkk2,jpno3),trb(iii2,jjj2,kkk2,jp15no3),trb(iii2,jjj2,kkk2,jpno3)-trb(iii2,jjj2,kkk2,jp15no3)
+            print*, trn(iii2,jjj2,kkk2,jpno3),trn(iii2,jjj2,kkk2,jp15no3),trn(iii2,jjj2,kkk2,jpno3)-trn(iii2,jjj2,kkk2,jp15no3)
+            print*, tra(iii2,jjj2,kkk2,jpno3),tra(iii2,jjj2,kkk2,jp15no3),tra(iii2,jjj2,kkk2,jpno3)-tra(iii2,jjj2,kkk2,jp15no3)
+            print*, "NH4 " 
+            print*, trb(iii2,jjj2,kkk2,jpnh4), trb(iii2,jjj2,kkk2,jp15nh4),trb(iii2,jjj2,kkk2,jpnh4)-trb(iii2,jjj2,kkk2,jp15nh4)
+            print*, trn(iii2,jjj2,kkk2,jpnh4), trn(iii2,jjj2,kkk2,jp15nh4),trn(iii2,jjj2,kkk2,jpnh4)-trn(iii2,jjj2,kkk2,jp15nh4)
+            print*, tra(iii2,jjj2,kkk2,jpnh4), tra(iii2,jjj2,kkk2,jp15nh4),tra(iii2,jjj2,kkk2,jpnh4)-tra(iii2,jjj2,kkk2,jp15nh4)
+            print*, "DOC " 
+            print*, trb(iii2,jjj2,kkk2,jpdoc), trb(iii2,jjj2,kkk2,jp15doc),trb(iii2,jjj2,kkk2,jpdoc)-trb(iii2,jjj2,kkk2,jp15doc)
+            print*, trn(iii2,jjj2,kkk2,jpdoc), trn(iii2,jjj2,kkk2,jp15doc),trn(iii2,jjj2,kkk2,jpdoc)-trn(iii2,jjj2,kkk2,jp15doc)
+            print*, tra(iii2,jjj2,kkk2,jpdoc), tra(iii2,jjj2,kkk2,jp15doc),tra(iii2,jjj2,kkk2,jpdoc)-tra(iii2,jjj2,kkk2,jp15doc)
+            print*, "POC " 
+            print*, trb(iii2,jjj2,kkk2,jppoc), trb(iii2,jjj2,kkk2,jp15poc),trb(iii2,jjj2,kkk2,jppoc)-trb(iii2,jjj2,kkk2,jp15poc)
+            print*, trn(iii2,jjj2,kkk2,jppoc), trn(iii2,jjj2,kkk2,jp15poc),trn(iii2,jjj2,kkk2,jppoc)-trn(iii2,jjj2,kkk2,jp15poc)
+            print*, tra(iii2,jjj2,kkk2,jppoc), tra(iii2,jjj2,kkk2,jp15poc),tra(iii2,jjj2,kkk2,jppoc)-tra(iii2,jjj2,kkk2,jp15poc)
+            print*, "GOC " 
+            print*, trb(iii2,jjj2,kkk2,jpgoc), trb(iii2,jjj2,kkk2,jp15goc),trb(iii2,jjj2,kkk2,jpgoc)-trb(iii2,jjj2,kkk2,jp15goc)
+            print*, trn(iii2,jjj2,kkk2,jpgoc), trn(iii2,jjj2,kkk2,jp15goc),trn(iii2,jjj2,kkk2,jpgoc)-trn(iii2,jjj2,kkk2,jp15goc)
+            print*, tra(iii2,jjj2,kkk2,jpgoc), tra(iii2,jjj2,kkk2,jp15goc),tra(iii2,jjj2,kkk2,jpgoc)-tra(iii2,jjj2,kkk2,jp15goc)
+            print*, "PHY " 
+            print*, trb(iii2,jjj2,kkk2,jpphy), trb(iii2,jjj2,kkk2,jp15phy),trb(iii2,jjj2,kkk2,jpphy)-trb(iii2,jjj2,kkk2,jp15phy)
+            print*, trn(iii2,jjj2,kkk2,jpphy), trn(iii2,jjj2,kkk2,jp15phy),trn(iii2,jjj2,kkk2,jpphy)-trn(iii2,jjj2,kkk2,jp15phy)
+            print*, tra(iii2,jjj2,kkk2,jpphy), tra(iii2,jjj2,kkk2,jp15phy),tra(iii2,jjj2,kkk2,jpphy)-tra(iii2,jjj2,kkk2,jp15phy)
+            print*, "PHY2 " 
+            print*, trb(iii2,jjj2,kkk2,jpdia), trb(iii2,jjj2,kkk2,jp15dia),trb(iii2,jjj2,kkk2,jpdia)-trb(iii2,jjj2,kkk2,jp15dia)
+            print*, trn(iii2,jjj2,kkk2,jpdia), trn(iii2,jjj2,kkk2,jp15dia),trn(iii2,jjj2,kkk2,jpdia)-trn(iii2,jjj2,kkk2,jp15dia)
+            print*, tra(iii2,jjj2,kkk2,jpdia), tra(iii2,jjj2,kkk2,jp15dia),tra(iii2,jjj2,kkk2,jpdia)-tra(iii2,jjj2,kkk2,jp15dia)
+            print*, "ZOO " 
+            print*, trb(iii2,jjj2,kkk2,jpzoo), trb(iii2,jjj2,kkk2,jp15zoo),trb(iii2,jjj2,kkk2,jpzoo)-trb(iii2,jjj2,kkk2,jp15zoo)
+            print*, trn(iii2,jjj2,kkk2,jpzoo), trn(iii2,jjj2,kkk2,jp15zoo),trn(iii2,jjj2,kkk2,jpzoo)-trn(iii2,jjj2,kkk2,jp15zoo)
+            print*, tra(iii2,jjj2,kkk2,jpzoo), tra(iii2,jjj2,kkk2,jp15zoo),tra(iii2,jjj2,kkk2,jpzoo)-tra(iii2,jjj2,kkk2,jp15zoo)
+            print*, "ZOO2 " 
+            print*, trb(iii2,jjj2,kkk2,jpmes), trb(iii2,jjj2,kkk2,jp15mes),trb(iii2,jjj2,kkk2,jpmes)-trb(iii2,jjj2,kkk2,jp15mes)
+            print*, trn(iii2,jjj2,kkk2,jpmes), trn(iii2,jjj2,kkk2,jp15mes),trn(iii2,jjj2,kkk2,jpmes)-trn(iii2,jjj2,kkk2,jp15mes)
+            print*, tra(iii2,jjj2,kkk2,jpmes), tra(iii2,jjj2,kkk2,jp15mes),tra(iii2,jjj2,kkk2,jpmes)-tra(iii2,jjj2,kkk2,jp15mes)
+            print*, " "
+         ENDIF
          CALL p4z_bio( kt, jnt )   ! Biology
          CALL p4z_lys( kt, jnt )   ! Compute CaCO3 saturation
-         !IF( ln_n15 ) THEN
-         !   print*, " "
-         !   print*, " before call to sediment routine "
-         !   print*, trb(60,60,1,jpno3),trb(60,60,1,jp15no3),trb(60,60,1,jpno3)-trb(60,60,1,jp15no3)
-         !   print*, trn(60,60,1,jpno3),trn(60,60,1,jp15no3),trn(60,60,1,jpno3)-trn(60,60,1,jp15no3)
-         !   print*, tra(60,60,1,jpno3),tra(60,60,1,jp15no3),tra(60,60,1,jpno3)-tra(60,60,1,jp15no3)
-         !   print*, " "
-         !ENDIF
+         IF( ln_n15 .and. diag2 ) THEN
+            print*, " "
+            print*, " before call to sediment routine "
+            print*, "NO3 " 
+            print*, trb(iii2,jjj2,kkk2,jpno3),trb(iii2,jjj2,kkk2,jp15no3),trb(iii2,jjj2,kkk2,jpno3)-trb(iii2,jjj2,kkk2,jp15no3)
+            print*, trn(iii2,jjj2,kkk2,jpno3),trn(iii2,jjj2,kkk2,jp15no3),trn(iii2,jjj2,kkk2,jpno3)-trn(iii2,jjj2,kkk2,jp15no3)
+            print*, tra(iii2,jjj2,kkk2,jpno3),tra(iii2,jjj2,kkk2,jp15no3),tra(iii2,jjj2,kkk2,jpno3)-tra(iii2,jjj2,kkk2,jp15no3)
+            print*, "NH4 " 
+            print*, trb(iii2,jjj2,kkk2,jpnh4), trb(iii2,jjj2,kkk2,jp15nh4),trb(iii2,jjj2,kkk2,jpnh4)-trb(iii2,jjj2,kkk2,jp15nh4)
+            print*, trn(iii2,jjj2,kkk2,jpnh4), trn(iii2,jjj2,kkk2,jp15nh4),trn(iii2,jjj2,kkk2,jpnh4)-trn(iii2,jjj2,kkk2,jp15nh4)
+            print*, tra(iii2,jjj2,kkk2,jpnh4), tra(iii2,jjj2,kkk2,jp15nh4),tra(iii2,jjj2,kkk2,jpnh4)-tra(iii2,jjj2,kkk2,jp15nh4)
+            print*, "DOC " 
+            print*, trb(iii2,jjj2,kkk2,jpdoc), trb(iii2,jjj2,kkk2,jp15doc),trb(iii2,jjj2,kkk2,jpdoc)-trb(iii2,jjj2,kkk2,jp15doc)
+            print*, trn(iii2,jjj2,kkk2,jpdoc), trn(iii2,jjj2,kkk2,jp15doc),trn(iii2,jjj2,kkk2,jpdoc)-trn(iii2,jjj2,kkk2,jp15doc)
+            print*, tra(iii2,jjj2,kkk2,jpdoc), tra(iii2,jjj2,kkk2,jp15doc),tra(iii2,jjj2,kkk2,jpdoc)-tra(iii2,jjj2,kkk2,jp15doc)
+            print*, "POC " 
+            print*, trb(iii2,jjj2,kkk2,jppoc), trb(iii2,jjj2,kkk2,jp15poc),trb(iii2,jjj2,kkk2,jppoc)-trb(iii2,jjj2,kkk2,jp15poc)
+            print*, trn(iii2,jjj2,kkk2,jppoc), trn(iii2,jjj2,kkk2,jp15poc),trn(iii2,jjj2,kkk2,jppoc)-trn(iii2,jjj2,kkk2,jp15poc)
+            print*, tra(iii2,jjj2,kkk2,jppoc), tra(iii2,jjj2,kkk2,jp15poc),tra(iii2,jjj2,kkk2,jppoc)-tra(iii2,jjj2,kkk2,jp15poc)
+            print*, "GOC " 
+            print*, trb(iii2,jjj2,kkk2,jpgoc), trb(iii2,jjj2,kkk2,jp15goc),trb(iii2,jjj2,kkk2,jpgoc)-trb(iii2,jjj2,kkk2,jp15goc)
+            print*, trn(iii2,jjj2,kkk2,jpgoc), trn(iii2,jjj2,kkk2,jp15goc),trn(iii2,jjj2,kkk2,jpgoc)-trn(iii2,jjj2,kkk2,jp15goc)
+            print*, tra(iii2,jjj2,kkk2,jpgoc), tra(iii2,jjj2,kkk2,jp15goc),tra(iii2,jjj2,kkk2,jpgoc)-tra(iii2,jjj2,kkk2,jp15goc)
+            print*, "PHY " 
+            print*, trb(iii2,jjj2,kkk2,jpphy), trb(iii2,jjj2,kkk2,jp15phy),trb(iii2,jjj2,kkk2,jpphy)-trb(iii2,jjj2,kkk2,jp15phy)
+            print*, trn(iii2,jjj2,kkk2,jpphy), trn(iii2,jjj2,kkk2,jp15phy),trn(iii2,jjj2,kkk2,jpphy)-trn(iii2,jjj2,kkk2,jp15phy)
+            print*, tra(iii2,jjj2,kkk2,jpphy), tra(iii2,jjj2,kkk2,jp15phy),tra(iii2,jjj2,kkk2,jpphy)-tra(iii2,jjj2,kkk2,jp15phy)
+            print*, "PHY2 " 
+            print*, trb(iii2,jjj2,kkk2,jpdia), trb(iii2,jjj2,kkk2,jp15dia),trb(iii2,jjj2,kkk2,jpdia)-trb(iii2,jjj2,kkk2,jp15dia)
+            print*, trn(iii2,jjj2,kkk2,jpdia), trn(iii2,jjj2,kkk2,jp15dia),trn(iii2,jjj2,kkk2,jpdia)-trn(iii2,jjj2,kkk2,jp15dia)
+            print*, tra(iii2,jjj2,kkk2,jpdia), tra(iii2,jjj2,kkk2,jp15dia),tra(iii2,jjj2,kkk2,jpdia)-tra(iii2,jjj2,kkk2,jp15dia)
+            print*, "ZOO " 
+            print*, trb(iii2,jjj2,kkk2,jpzoo), trb(iii2,jjj2,kkk2,jp15zoo),trb(iii2,jjj2,kkk2,jpzoo)-trb(iii2,jjj2,kkk2,jp15zoo)
+            print*, trn(iii2,jjj2,kkk2,jpzoo), trn(iii2,jjj2,kkk2,jp15zoo),trn(iii2,jjj2,kkk2,jpzoo)-trn(iii2,jjj2,kkk2,jp15zoo)
+            print*, tra(iii2,jjj2,kkk2,jpzoo), tra(iii2,jjj2,kkk2,jp15zoo),tra(iii2,jjj2,kkk2,jpzoo)-tra(iii2,jjj2,kkk2,jp15zoo)
+            print*, "ZOO2 " 
+            print*, trb(iii2,jjj2,kkk2,jpmes), trb(iii2,jjj2,kkk2,jp15mes),trb(iii2,jjj2,kkk2,jpmes)-trb(iii2,jjj2,kkk2,jp15mes)
+            print*, trn(iii2,jjj2,kkk2,jpmes), trn(iii2,jjj2,kkk2,jp15mes),trn(iii2,jjj2,kkk2,jpmes)-trn(iii2,jjj2,kkk2,jp15mes)
+            print*, tra(iii2,jjj2,kkk2,jpmes), tra(iii2,jjj2,kkk2,jp15mes),tra(iii2,jjj2,kkk2,jpmes)-tra(iii2,jjj2,kkk2,jp15mes)
+            print*, " "
+         ENDIF
          CALL p4z_sed( kt, jnt )   ! Surface and Bottom boundary conditions
-         !IF( ln_n15 ) THEN
-         !   print*, " "
-         !   print*, " after call to sediment routine "
-         !   print*, trb(60,60,1,jpno3),trb(60,60,1,jp15no3),trb(60,60,1,jpno3)-trb(60,60,1,jp15no3)
-         !   print*, trn(60,60,1,jpno3),trn(60,60,1,jp15no3),trn(60,60,1,jpno3)-trn(60,60,1,jp15no3)
-         !   print*, tra(60,60,1,jpno3),tra(60,60,1,jp15no3),tra(60,60,1,jpno3)-tra(60,60,1,jp15no3)
-         !   print*, " "
-         !ENDIF
+         IF( ln_n15 .and. diag2 ) THEN
+            print*, " "
+            print*, " after call to sediment routine "
+            print*, "NO3 " 
+            print*, trb(iii2,jjj2,kkk2,jpno3),trb(iii2,jjj2,kkk2,jp15no3),trb(iii2,jjj2,kkk2,jpno3)-trb(iii2,jjj2,kkk2,jp15no3)
+            print*, trn(iii2,jjj2,kkk2,jpno3),trn(iii2,jjj2,kkk2,jp15no3),trn(iii2,jjj2,kkk2,jpno3)-trn(iii2,jjj2,kkk2,jp15no3)
+            print*, tra(iii2,jjj2,kkk2,jpno3),tra(iii2,jjj2,kkk2,jp15no3),tra(iii2,jjj2,kkk2,jpno3)-tra(iii2,jjj2,kkk2,jp15no3)
+            print*, "NH4 " 
+            print*, trb(iii2,jjj2,kkk2,jpnh4), trb(iii2,jjj2,kkk2,jp15nh4),trb(iii2,jjj2,kkk2,jpnh4)-trb(iii2,jjj2,kkk2,jp15nh4)
+            print*, trn(iii2,jjj2,kkk2,jpnh4), trn(iii2,jjj2,kkk2,jp15nh4),trn(iii2,jjj2,kkk2,jpnh4)-trn(iii2,jjj2,kkk2,jp15nh4)
+            print*, tra(iii2,jjj2,kkk2,jpnh4), tra(iii2,jjj2,kkk2,jp15nh4),tra(iii2,jjj2,kkk2,jpnh4)-tra(iii2,jjj2,kkk2,jp15nh4)
+            print*, "DOC " 
+            print*, trb(iii2,jjj2,kkk2,jpdoc), trb(iii2,jjj2,kkk2,jp15doc),trb(iii2,jjj2,kkk2,jpdoc)-trb(iii2,jjj2,kkk2,jp15doc)
+            print*, trn(iii2,jjj2,kkk2,jpdoc), trn(iii2,jjj2,kkk2,jp15doc),trn(iii2,jjj2,kkk2,jpdoc)-trn(iii2,jjj2,kkk2,jp15doc)
+            print*, tra(iii2,jjj2,kkk2,jpdoc), tra(iii2,jjj2,kkk2,jp15doc),tra(iii2,jjj2,kkk2,jpdoc)-tra(iii2,jjj2,kkk2,jp15doc)
+            print*, "POC " 
+            print*, trb(iii2,jjj2,kkk2,jppoc), trb(iii2,jjj2,kkk2,jp15poc),trb(iii2,jjj2,kkk2,jppoc)-trb(iii2,jjj2,kkk2,jp15poc)
+            print*, trn(iii2,jjj2,kkk2,jppoc), trn(iii2,jjj2,kkk2,jp15poc),trn(iii2,jjj2,kkk2,jppoc)-trn(iii2,jjj2,kkk2,jp15poc)
+            print*, tra(iii2,jjj2,kkk2,jppoc), tra(iii2,jjj2,kkk2,jp15poc),tra(iii2,jjj2,kkk2,jppoc)-tra(iii2,jjj2,kkk2,jp15poc)
+            print*, "GOC " 
+            print*, trb(iii2,jjj2,kkk2,jpgoc), trb(iii2,jjj2,kkk2,jp15goc),trb(iii2,jjj2,kkk2,jpgoc)-trb(iii2,jjj2,kkk2,jp15goc)
+            print*, trn(iii2,jjj2,kkk2,jpgoc), trn(iii2,jjj2,kkk2,jp15goc),trn(iii2,jjj2,kkk2,jpgoc)-trn(iii2,jjj2,kkk2,jp15goc)
+            print*, tra(iii2,jjj2,kkk2,jpgoc), tra(iii2,jjj2,kkk2,jp15goc),tra(iii2,jjj2,kkk2,jpgoc)-tra(iii2,jjj2,kkk2,jp15goc)
+            print*, "PHY " 
+            print*, trb(iii2,jjj2,kkk2,jpphy), trb(iii2,jjj2,kkk2,jp15phy),trb(iii2,jjj2,kkk2,jpphy)-trb(iii2,jjj2,kkk2,jp15phy)
+            print*, trn(iii2,jjj2,kkk2,jpphy), trn(iii2,jjj2,kkk2,jp15phy),trn(iii2,jjj2,kkk2,jpphy)-trn(iii2,jjj2,kkk2,jp15phy)
+            print*, tra(iii2,jjj2,kkk2,jpphy), tra(iii2,jjj2,kkk2,jp15phy),tra(iii2,jjj2,kkk2,jpphy)-tra(iii2,jjj2,kkk2,jp15phy)
+            print*, "PHY2 " 
+            print*, trb(iii2,jjj2,kkk2,jpdia), trb(iii2,jjj2,kkk2,jp15dia),trb(iii2,jjj2,kkk2,jpdia)-trb(iii2,jjj2,kkk2,jp15dia)
+            print*, trn(iii2,jjj2,kkk2,jpdia), trn(iii2,jjj2,kkk2,jp15dia),trn(iii2,jjj2,kkk2,jpdia)-trn(iii2,jjj2,kkk2,jp15dia)
+            print*, tra(iii2,jjj2,kkk2,jpdia), tra(iii2,jjj2,kkk2,jp15dia),tra(iii2,jjj2,kkk2,jpdia)-tra(iii2,jjj2,kkk2,jp15dia)
+            print*, "ZOO " 
+            print*, trb(iii2,jjj2,kkk2,jpzoo), trb(iii2,jjj2,kkk2,jp15zoo),trb(iii2,jjj2,kkk2,jpzoo)-trb(iii2,jjj2,kkk2,jp15zoo)
+            print*, trn(iii2,jjj2,kkk2,jpzoo), trn(iii2,jjj2,kkk2,jp15zoo),trn(iii2,jjj2,kkk2,jpzoo)-trn(iii2,jjj2,kkk2,jp15zoo)
+            print*, tra(iii2,jjj2,kkk2,jpzoo), tra(iii2,jjj2,kkk2,jp15zoo),tra(iii2,jjj2,kkk2,jpzoo)-tra(iii2,jjj2,kkk2,jp15zoo)
+            print*, "ZOO2 " 
+            print*, trb(iii2,jjj2,kkk2,jpmes), trb(iii2,jjj2,kkk2,jp15mes),trb(iii2,jjj2,kkk2,jpmes)-trb(iii2,jjj2,kkk2,jp15mes)
+            print*, trn(iii2,jjj2,kkk2,jpmes), trn(iii2,jjj2,kkk2,jp15mes),trn(iii2,jjj2,kkk2,jpmes)-trn(iii2,jjj2,kkk2,jp15mes)
+            print*, tra(iii2,jjj2,kkk2,jpmes), tra(iii2,jjj2,kkk2,jp15mes),tra(iii2,jjj2,kkk2,jpmes)-tra(iii2,jjj2,kkk2,jp15mes)
+            print*, " "
+         ENDIF
          CALL p4z_flx( kt, jnt )   ! Compute surface fluxes
          !
          xnegtr(:,:,:) = 1.e0
@@ -153,7 +266,9 @@ CONTAINS
             tra(:,:,:,jn) = 0._wp
          END DO
          ! Set realistic bounds for nitrogen isotopes
-         IF ( ln_n15 ) THEN
+         IF( ln_n15 ) THEN
+            trb(:,:,:,jp15nh4) = MIN(trb(:,:,:,jp15nh4) , ( (nn_n15max/1000.)  + 1.)*trb(:,:,:,jpnh4) )
+            trb(:,:,:,jp15nh4) = MAX(trb(:,:,:,jp15nh4) , ( (nn_n15min/1000.)  + 1.)*trb(:,:,:,jpnh4) )
             trb(:,:,:,jp15no3) = MIN(trb(:,:,:,jp15no3) , ( (nn_n15max/1000.)  + 1.)*trb(:,:,:,jpno3) )
             trb(:,:,:,jp15no3) = MAX(trb(:,:,:,jp15no3) , ( (nn_n15min/1000.)  + 1.)*trb(:,:,:,jpno3) )
          ENDIF

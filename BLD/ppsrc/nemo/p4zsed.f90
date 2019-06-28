@@ -331,8 +331,8 @@ CONTAINS
             tra(ji,jj,ikt,jpsfe) = tra(ji,jj,ikt,jpsfe) - trb(ji,jj,ikt,jpsfe) * zws3 ! remove SFe from water column
 
             IF( ln_n15 ) THEN
-               tra(ji,jj,ikt,jp15goc) = tra(ji,jj,ikt,jp15goc) - trb(ji,jj,ikt,jp15goc) * zws4 ! remove GOC_15 
-               tra(ji,jj,ikt,jp15poc) = tra(ji,jj,ikt,jp15poc) - trb(ji,jj,ikt,jp15poc) * zws3 ! remove POC_15
+               tra(ji,jj,ikt,jp15goc) = tra(ji,jj,ikt,jp15goc) - trb(ji,jj,ikt,jp15goc) * zws4 ! remove previous GOC_15 
+               tra(ji,jj,ikt,jp15poc) = tra(ji,jj,ikt,jp15poc) - trb(ji,jj,ikt,jp15poc) * zws3 ! remove previous POC_15
             ENDIF
 
          END DO
@@ -381,10 +381,11 @@ CONTAINS
           
                IF( ln_n15 ) THEN
                   zwstpoc15 = trb(ji,jj,ikt,jp15goc)*zws4 + trb(ji,jj,ikt,jp15poc)*zws3 !POC+GOC hitting sediment 
-                  tra(ji,jj,ikt,jp15doc) = tra(ji,jj,ikt,jp15doc) + ( zwstpoc15 * zrivno3 - zpdenit - zolimit )  &
-                  &                        * ( zwstpoc15 + rtrn ) / ( zwstpoc + rtrn )
-                  tra(ji,jj,ikt,jp15nh4) = tra(ji,jj,ikt,jp15nh4) + ( zpdenit + zolimit ) &
-                  &                        * ( zwstpoc15 + rtrn ) / ( zwstpoc + rtrn )
+                  tra(ji,jj,ikt,jp15doc) = tra(ji,jj,ikt,jp15doc) + zwstpoc15 * zrivno3           &
+                  &                        - zpdenit * ( zwstpoc15 + rtrn ) / ( zwstpoc + rtrn )  &
+                  &                        - zolimit * ( zwstpoc15 + rtrn ) / ( zwstpoc + rtrn )
+                  tra(ji,jj,ikt,jp15nh4) = tra(ji,jj,ikt,jp15nh4) + zpdenit * ( zwstpoc15 + rtrn ) / ( zwstpoc + rtrn ) &
+                  &                        + zolimit * ( zwstpoc15 + rtrn ) / ( zwstpoc + rtrn )
                   tra(ji,jj,ikt,jp15no3) = tra(ji,jj,ikt,jp15no3) - rdenit * zpdenit  &
                   &                        * ( 1.0 - e15n_ben*1e-3 )  &
                   &                        * ( trb(ji,jj,jk,jp15no3) + rtrn ) / ( trb(ji,jj,jk,jpno3) + rtrn )
@@ -495,8 +496,8 @@ CONTAINS
                   IF ( ln_n15 ) THEN
                      tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zfact * (1. + d15n_fix*1e-3) * 1./3.  
                      tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) + zfact * (1. + d15n_fix*1e-3) * 1./3.
-                     tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) + zfact * (1. + d15n_fix*1e-3) * 2./6.
-                     tra(ji,jj,jk,jp15goc) = tra(ji,jj,jk,jp15goc) + zfact * (1. + d15n_fix*1e-3) * 1./6.
+                     tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) + zfact * (1. + d15n_fix*1e-3) * 2./9.
+                     tra(ji,jj,jk,jp15goc) = tra(ji,jj,jk,jp15goc) + zfact * (1. + d15n_fix*1e-3) * 1./9.
                   ENDIF
 
               END DO

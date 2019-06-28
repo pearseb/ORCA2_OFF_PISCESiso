@@ -161,7 +161,7 @@ CONTAINS
                IF( ln_n15 ) THEN
                   zgrazn15 = zgrazn * ( trb(ji,jj,jk,jp15phy) + rtrn ) / ( trb(ji,jj,jk,jpphy) + rtrn )
                   zgrazd15 = zgrazd * ( trb(ji,jj,jk,jp15dia) + rtrn ) / ( trb(ji,jj,jk,jpdia) + rtrn )
-                  zgrazz15 = zgrazn * ( trb(ji,jj,jk,jp15zoo) + rtrn ) / ( trb(ji,jj,jk,jpzoo) + rtrn )
+                  zgrazz15 = zgrazz * ( trb(ji,jj,jk,jp15zoo) + rtrn ) / ( trb(ji,jj,jk,jpzoo) + rtrn )
                   zgrazpoc15 = zgrazpoc * ( trb(ji,jj,jk,jp15poc) + rtrn ) / ( trb(ji,jj,jk,jppoc) + rtrn )
                   zgrazffg15 = zgrazffeg * ( trb(ji,jj,jk,jp15goc) + rtrn ) / ( trb(ji,jj,jk,jpgoc) + rtrn )
                   zgrazffp15 = zgrazffep * ( trb(ji,jj,jk,jp15poc) + rtrn ) / ( trb(ji,jj,jk,jppoc) + rtrn )
@@ -259,7 +259,7 @@ CONTAINS
                tra(ji,jj,jk,jpdoc) = tra(ji,jj,jk,jpdoc) + zgrarem2 - zgrarsig
                
                IF( ln_n15 ) THEN
-                  tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zgrasigex2_15        &
+                  tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zgrasigex2_15 * ( 1. - e15n_ex2*1e-3 )  &
                   &                       + ( zgrasig2_15 - zgrasigex2_15 )
                   tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) + zgrarem2_15 - zgrasig2_15
                ENDIF
@@ -310,12 +310,15 @@ CONTAINS
 
                IF( ln_n15 ) THEN
                   zmortz15 = zmortz * ( trb(ji,jj,jk,jp15mes) + rtrn ) / ( trb(ji,jj,jk,jpmes) + rtrn )
-                  tra(ji,jj,jk,jp15mes) = tra(ji,jj,jk,jp15mes) - zmortz15 + zepsherv * zgraztotc15
+                  tra(ji,jj,jk,jp15mes) = tra(ji,jj,jk,jp15mes) - zmortz15 + zepsherv * zgraztotc15    &
+                  &                       + zgrasigex2_15 * e15n_ex2*1e-3                              &
+                  &                       + zgrapoc2_15 * e15n_in2*1e-3
                   tra(ji,jj,jk,jp15dia) = tra(ji,jj,jk,jp15dia) - zgrazd15
                   tra(ji,jj,jk,jp15zoo) = tra(ji,jj,jk,jp15zoo) - zgrazz15
                   tra(ji,jj,jk,jp15phy) = tra(ji,jj,jk,jp15phy) - zgrazn15
                   tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) - zgrazpoc15 - zgrazffp15 + zfrac15
-                  tra(ji,jj,jk,jp15goc) = tra(ji,jj,jk,jp15goc) + zmortzgoc_15 - zgrazffg15 + zgrapoc2_15 - zfrac15
+                  tra(ji,jj,jk,jp15goc) = tra(ji,jj,jk,jp15goc) + zmortzgoc_15 - zgrazffg15 - zfrac15  &
+                  &                       + zgrapoc2_15 * ( 1. - e15n_in2*1e-3 )
                ENDIF
 
             END DO
