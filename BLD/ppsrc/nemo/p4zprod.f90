@@ -368,10 +368,10 @@ CONTAINS
 
                  IF( ln_n15 ) THEN
                     ! First, calculate utilisation factors for new and regenerated production.
-                    zu_15 = MIN(1.0, MAX(0.0, 1.0 - (zpronewn(ji,jj,jk) + zpronewd(ji,jj,jk))   &
-                    &                             / (rtrn + trb(ji,jj,jk,jp15no3)) ) )
-                    zun_15 = MIN(1.0, MAX(0.0, 1.0 - (zproreg + zproreg2)   &
-                    &                              / (rtrn + trb(ji,jj,jk,jp15nh4)) ) )
+                    zu_15 = MIN(1.0, MAX(0.0, 1.0 - (zpronewn(ji,jj,jk) + zpronewd(ji,jj,jk) + rtrn)   &
+                    &                             / (trb(ji,jj,jk,jpno3) + rtrn) ) )
+                    zun_15 = MIN(1.0, MAX(0.0, 1.0 - (zproreg + zproreg2 + rtrn)   &
+                    &                              / (trb(ji,jj,jk,jpnh4) + rtrn) ) )
                     ! Second, apply utilisation factors to fractionation factors
                     ! for new and regenerated production (same for now) and
                     ! multiply by the current ratio of 15Nno3 to total no3

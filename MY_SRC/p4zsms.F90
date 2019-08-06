@@ -66,10 +66,10 @@ CONTAINS
       CHARACTER (len=25) :: charout
       !!---------------------------------------------------------------------
       !
-      diag2 = .true.
-      iii2 = 29
-      jjj2 = 105
-      kkk2 = 26
+      diag2 = .false.
+      iii2 = 116
+      jjj2 = 85
+      kkk2 = 1
       IF( ln_timing )   CALL timing_start('p4z_sms')
       !
       IF( kt == nittrc000 ) THEN
@@ -267,8 +267,8 @@ CONTAINS
          END DO
          ! Set realistic bounds for nitrogen isotopes
          IF( ln_n15 ) THEN
-            trb(:,:,:,jp15nh4) = MIN(trb(:,:,:,jp15nh4) , ( (nn_n15max/1000.)  + 1.)*trb(:,:,:,jpnh4) )
-            trb(:,:,:,jp15nh4) = MAX(trb(:,:,:,jp15nh4) , ( (nn_n15min/1000.)  + 1.)*trb(:,:,:,jpnh4) )
+            !trb(:,:,:,jp15nh4) = MIN(trb(:,:,:,jp15nh4) , ( (nn_n15max/1000.)  + 1.)*trb(:,:,:,jpnh4) )
+            !trb(:,:,:,jp15nh4) = MAX(trb(:,:,:,jp15nh4) , ( (nn_n15min/1000.)  + 1.)*trb(:,:,:,jpnh4) )
             trb(:,:,:,jp15no3) = MIN(trb(:,:,:,jp15no3) , ( (nn_n15max/1000.)  + 1.)*trb(:,:,:,jpno3) )
             trb(:,:,:,jp15no3) = MAX(trb(:,:,:,jp15no3) , ( (nn_n15min/1000.)  + 1.)*trb(:,:,:,jpno3) )
          ENDIF

@@ -61,6 +61,10 @@ STEPS TAKEN...
 		- p4zmeso.F90
         14. placed constraints on min/max d15n of NH4 (set by nn_n15min & nn_n15max in namelist_pisces_ref)
 		- p4zsms.F90
+        15. removed contraints on min/max d15n for NH4, and
+            added rtrn to numerator of calculations of variables "zu_15" and "zun_15" in p4zprod.F90
+                - p4zsms.F90
+                - p4zprod.F90 (lines 366-370)
 
      
 	
