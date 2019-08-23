@@ -65,6 +65,8 @@ STEPS TAKEN...
             added rtrn to numerator of calculations of variables "zu_15" and "zun_15" in p4zprod.F90
                 - p4zsms.F90
                 - p4zprod.F90 (lines 366-370)
+        16. bug found and corrected (lines 255-257), ratio of 15N:N missing for mortality of mesozooplankton
+                - p4zmeso.F90
 
      
 	

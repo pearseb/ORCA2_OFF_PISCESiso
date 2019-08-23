@@ -141,24 +141,25 @@ CONTAINS
                zgrazffeg = grazflux  * xstep * wsbio4(ji,jj,jk)      &
                &           * tgfunc2(ji,jj,jk) * trb(ji,jj,jk,jpgoc) * trb(ji,jj,jk,jpmes) &
                &           * (1. - nitrfac(ji,jj,jk))
+               zgrazffep = grazflux  * xstep *  wsbio3(ji,jj,jk)     &
+               &           * tgfunc2(ji,jj,jk) * trb(ji,jj,jk,jppoc) * trb(ji,jj,jk,jpmes) &
+               &           * (1. - nitrfac(ji,jj,jk))
                ! grazflux = flux feeding rate (per m molC/L)
                ! wsbio4(ji,jj,jk) * trb(ji,jj,jk,jpgoc) * xstep = rate of GOC flux (m molC/L)
                ! tgfunc2(ji,jj,jk) * trb(ji,jj,jk,jpmes) = growth rate of zooplankton (molC/L)
                ! (1. - nitrfac(ji,jj,jk)) = no grazing without oxygen
                ! zgrazffeg = assimilation of big particles by flux feeding (molC/L)
-
-               zgrazfffg = zgrazffeg * trb(ji,jj,jk,jpbfe) / (trb(ji,jj,jk,jpgoc) + rtrn)
-               zgrazffep = grazflux  * xstep *  wsbio3(ji,jj,jk)     &
-               &           * tgfunc2(ji,jj,jk) * trb(ji,jj,jk,jppoc) * trb(ji,jj,jk,jpmes) &
-               &           * (1. - nitrfac(ji,jj,jk))
                ! zgrazffep = assimilation of small particles by flux feeding (molC/L)
 
+               ! Iron flux feeding
                zgrazfffp = zgrazffep * trb(ji,jj,jk,jpsfe) / (trb(ji,jj,jk,jppoc) + rtrn)
-               !
+               zgrazfffg = zgrazffeg * trb(ji,jj,jk,jpbfe) / (trb(ji,jj,jk,jpgoc) + rtrn)
+               
+               ! Total feeding of Mesozooplankton [POC,GOC<PHY,PHY2,ZOO] --> [ZOO2]
                zgraztotc = zgrazd + zgrazz + zgrazn + zgrazpoc + zgrazffep + zgrazffeg ! total feeding
                
                ! get the d15N signature of the food sources
-               IF( ln_n15 ) THEN
+               IF ( ln_n15 ) THEN
                   zgrazn15 = zgrazn * ( trb(ji,jj,jk,jp15phy) + rtrn ) / ( trb(ji,jj,jk,jpphy) + rtrn )
                   zgrazd15 = zgrazd * ( trb(ji,jj,jk,jp15dia) + rtrn ) / ( trb(ji,jj,jk,jpdia) + rtrn )
                   zgrazz15 = zgrazz * ( trb(ji,jj,jk,jp15zoo) + rtrn ) / ( trb(ji,jj,jk,jpzoo) + rtrn )
@@ -167,8 +168,9 @@ CONTAINS
                   zgrazffp15 = zgrazffep * ( trb(ji,jj,jk,jp15poc) + rtrn ) / ( trb(ji,jj,jk,jppoc) + rtrn )
                ENDIF
 
-               ! compute the proportion of filter feeders
-               zproport  = (zgrazffep + zgrazffeg)/(rtrn + zgraztotc) ! filter feeders assumed to be flux feeders
+               !!! COMPUTE THE FRACTIONATION OF POC INTO GOC BY FILTER FEEDINGi [GOC] --> [POC]
+               ! compute the proportion of filter feeding of total feeding rate
+               zproport  = (zgrazffep + zgrazffeg + rtrn)/(zgraztotc + rtrn)
                ! Compute fractionation of aggregates. It is assumed that 
                ! diatoms based aggregates are more prone to fractionation
                ! since they are more porous (marine snow instead of fecal pellets)
@@ -177,8 +179,16 @@ CONTAINS
                zfrac     = zproport * grazflux  * xstep * wsbio4(ji,jj,jk)      &
                &          * trb(ji,jj,jk,jpgoc) * trb(ji,jj,jk,jpmes)          &
                &          * ( 0.2 + 3.8 * zratio2 / ( 1.**2 + zratio2 ) )
+               ! zproport = proportion of flux/filter feeder within prey food bank
+               ! grazflux * trb(ji,jj,jk,jpmes) = bulk flux feeding rate of meso 
+               ! wsbio4(ji,jj,jk) * trb(ji,jj,jk,jpgoc) * xstep = rate of GOC flux ariving at depth level (m molC/L)
+               ! ( 0.2 + 3.8 * zratio2 / ( 1.**2 + zratio2 )) = random parameterisation between 0.2 and 2
+               ! zfrac = amount of GOC carbon converted to POC carbon
+               
+               ! Iron
                zfracfe   = zfrac * trb(ji,jj,jk,jpbfe) / (trb(ji,jj,jk,jpgoc) + rtrn)
                
+               ! Multiply proportion of filter feeders by the grazing rate?
                zgrazffep = zproport * zgrazffep
                zgrazffeg = zproport * zgrazffeg
                zgrazfffp = zproport * zgrazfffp
@@ -189,7 +199,7 @@ CONTAINS
                zgraztotf = zgrazf + zgraznf + zgrazz * ferat3 + zgrazpof + zgrazfffp + zgrazfffg
                
                ! calculate the fractionation of particulates by filter feeders
-               IF( ln_n15 ) THEN
+               IF ( ln_n15 ) THEN
                   zfrac15     = zfrac * ( trb(ji,jj,jk,jp15goc) + rtrn ) / ( trb(ji,jj,jk,jpgoc) + rtrn )
                   zgrazffg15  = zgrazffg15 * zproport
                   zgrazffp15  = zgrazffp15 * zproport
@@ -206,61 +216,71 @@ CONTAINS
                zepshert  = MIN( 1., zgrasratn, zgrasrat / ferat3)
                zbeta     = MAX(0., (epsher2 - epsher2min) )
                zepsherf  = epsher2min + zbeta / ( 1.0 + 0.04E6 * 12. * zfood * zbeta ) 
-               zepsherv  = zepsherf * zepshert ! [0,0.5]
+               zepsherv  = zepsherf * zepshert ! [0,0.5], 0.0 --> 0.35 in p4z
                  !  zepshert = quality of food accounting for Fe and N quotas  [0,1]
-                 !  zepsherf = efficiency of meso growth [0.2,0.5]
+                 !  zepsherf = efficiency of meso growth [0.2,0.5], 0.35 in p4z
                  !  zepsherv = proportion of food assimilated into MES 
-                 !  unass2   = proportion of food not assimilated into MES ( goes --> POC )
-                 !  epsher2  = proportion of food assimilated into MES if maximum growth rate was achieved  
+                 !             [POC,GOC,PHY,PHY2,ZOO] --> [ZOO2] (max 0.35 in p4z)
+                 !  unass2   = proportion of food not assimilated into MES
+                 !             [POC,GOC,PHY,PHY2,ZOO] --> [POC] (0.3) 
+                 !  epsher2  = proportion of food assimilated into MES if maximum efficiency achieved  
+                 !             [POC,GOC,PHY,PHY2,ZOO] --> [ZOO2] (0.35)
 
-               zgrarem2  = zgraztotc * ( 1. - zepsherv - unass2 ) &
-               &         + ( 1. - epsher2 - unass2 ) / ( 1. - epsher2 ) * ztortz
+               zgrarem2  = zgraztotc * ( 1. - zepsherv - unass2 ) &  ![food] --> [NH4/DOC]
+               &         + ztortz * ( 1. - epsher2 - unass2 ) / ( 1. - epsher2 ) ![mes] --> [NH4/DOC]
                zgrafer2  = zgraztotc * MAX( 0. , ( 1. - unass2 ) * zgrasrat - ferat3 * zepsherv )    &
                &         + ferat3 * ( ( 1. - epsher2 - unass2 ) /( 1. - epsher2 ) * ztortz )
-               zgrapoc2  = zgraztotc * unass2
+               zgrapoc2  = zgraztotc * unass2  ![food] --> [GOC]
                
-                 ! ( 1. - zepsherv - unass2 ) = proportion of food assimilated but immediately excreted 
-                 ! ( 1. - epsher2 - unass2 ) = proportion of food assimilated but immediately excreted 
-                 !                             assuming maximum growth rate of zooplankton
-                 ! ( 1. - epsher2 ) = proportion of food remaining after assimilation assuming 
-                 !                    maximum growth rate of zooplankton
-                 ! ( 1. - epsher2 - unass2 ) / ( 1. - epsher2 ) = ratio of food excreted to hypothetical
-                 !                                                food excreted if all food was assimilated 
+                 ! ( 1. - zepsherv - unass2 ) = proportion of food excreted [0.35 --> 0.7 in P4Z] 
+                 ! ( 1. - epsher2 - unass2 ) = proportion of food excreted assuming maximum efficiency [0.35]
+                 ! ( 1. - epsher2 ) = proportion of food not assimilated (excreted + not consumed) max efficiency [0.65]
+                 ! ( 1. - epsher2 - unass2 ) / ( 1. - epsher2 ) = ratio of food excreted to not assimilated 
+                 !                                                (excreted + not consumed) assuming max efficiency [0.538]
 
-                 ! zgraztotc * ( 1. - zepsherv - unass2 )                = total carbon excreted
+                 ! zgraztotc * ( 1. - zepsherv - unass2 )                = total food carbon excreted
                  ! ( 1. - epsher2 - unass2 ) / ( 1. - epsher2 ) * ztortz = mortality that goes to excretion
                  !                                                         (because not assimilating everything)
-                 ! ( unass2 / ( 1. - epsher2 ) = unassimilated C : assimilated + excreted C
+                 ! ( unass2 / ( 1. - epsher2 ) = unassimilated C : assimilated + excreted C (0.462)
                  ! ( unass2 / ( 1. - epsher2 ) * ztortz = mortality that goes to large particles (POC)
 
-                 !  zgrarem2 = carbon remineralised during mesozooplankton eating and respiration (excreted)
-                 !  zgrapoc2 = carbon unassimilated during mesozooplankton eating
+                 !  zgrarem2 = carbon excreted during feeding |+| mortality
+                 !             [POC,GOC,PHY,PHY2,ZOO] --> [DOC,NH4] |+| [ZOO2] --> [DOC,NH4]
+                 !  zgrapoc2 = carbon unassimilated during mesozooplankton eating [POC,GOC,PHY,PHY2,ZOO] --> [GOC]
                  !  zgrasig2 = carbon remineralised directly into NH4 (bulk term, includes direct remin + excretion )
-                 !  zgrasigex2 = carbon remineralised directly into NH4 via excretion 
+                 !  zgrasigex2 = food excreted to  directly into NH4 via excretion 
                  !               (accounts for food quality and achieved growth efficiency)
                  !               (excretion is greater with poor food quality and unrealised growth efficiency)
-                 !  zmotrzgoc = carbon formed into large particles from zooplankton mortality 
+                 !  zmotrzgoc = carbon formed into large particles from zooplankton mortality and respiration
+                 !              [ZOO2] --> [GOC]
 
                ! calculate the remin (-->NH4/DOC), remin[excretion] (-->NH4), unassim (-->GOC), mort (-->GOC)
-               IF( ln_n15 ) THEN
-                  zgrarem2_15   = zgraztotc15 * ( 1. - zepsherv - unass2 ) &
-                  &               + ( 1. - epsher2 - unass2 ) / ( 1. - epsher2 ) * ztortz
-                  zgrapoc2_15   = zgraztotc15 * unass2
-                  zgrasig2_15   = zgrarem2_15 * sigma2
-                  zgrasigex2_15 = zgraztotc15 * ( 1. - epsher2 - unass2 ) * sigma2 * zgrasratn
-                  zmortzgoc_15  = ( unass2 / ( 1. - epsher2 ) * ztortz + zrespz )  &
+               IF ( ln_n15 ) THEN
+                  zgrarem2_15   = zgraztotc15 * ( 1. - zepsherv - unass2 ) &  ! [food] --> [NH4/DOC]
+                  &               + ztortz * ( 1. - epsher2 - unass2 ) / ( 1. - epsher2 )  & ![mes] --> [NH4/DOC]
+                  &               * ( trb(ji,jj,jk,jp15mes) + rtrn ) / ( trb(ji,jj,jk,jpmes) + rtrn )
+                  zgrapoc2_15   = zgraztotc15 * unass2 ! [food] --> [GOC]
+                  zgrasig2_15   = zgrarem2_15 * sigma2 ! [food/mes] --> [NH4]
+                  zgrasigex2_15 = zgraztotc15 * ( 1. - epsher2 - unass2 ) * sigma2 * zgrasratn ![food] --> [NH4]
+                  zmortzgoc_15  = ( unass2 / ( 1. - epsher2 ) * ztortz + zrespz )  & ! [mes] --> [GOC]
                   &               * ( trb(ji,jj,jk,jp15mes) + rtrn ) / ( trb(ji,jj,jk,jpmes) + rtrn )
                ENDIF
 
                !   Update the arrays TRA which contain the biological sources and sinks
-               zgrarsig  = zgrarem2 * sigma2
+               zgrarsig  = zgrarem2 * sigma2 ! 60% of carbon excreted to NH4 [food/mes] --> [NH4] 
                tra(ji,jj,jk,jppo4) = tra(ji,jj,jk,jppo4) + zgrarsig
                tra(ji,jj,jk,jpnh4) = tra(ji,jj,jk,jpnh4) + zgrarsig
                tra(ji,jj,jk,jpdoc) = tra(ji,jj,jk,jpdoc) + zgrarem2 - zgrarsig
                
-               IF( ln_n15 ) THEN
-                  tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zgrasigex2_15 * ( 1. - e15n_ex2*1e-3 )  &
+               IF ( ln_n15 ) THEN
+                  tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zgrasigex2_15 * ( 1. - e15n_ex2/1000.0 )  &
                   &                       + ( zgrasig2_15 - zgrasigex2_15 )
+                  ! zgrasigex2_15 is always less than zgrasig2_15, because:
+                  !     (1) it does not include the excretion of NH4 during mortality
+                  !     (2) although it assumes maximum efficiency of assimilation (epsher2),
+                  !         it multiples this by zgrazratn, which is [0,1] and
+                  !         is a measure of the food quality via N content
+                  ! So, zgrasigex is the amount of carbon excreted to NH4 due to N content of food
                   tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) + zgrarem2_15 - zgrasig2_15
                ENDIF
                !
@@ -311,14 +331,15 @@ CONTAINS
                IF( ln_n15 ) THEN
                   zmortz15 = zmortz * ( trb(ji,jj,jk,jp15mes) + rtrn ) / ( trb(ji,jj,jk,jpmes) + rtrn )
                   tra(ji,jj,jk,jp15mes) = tra(ji,jj,jk,jp15mes) - zmortz15 + zepsherv * zgraztotc15    &
-                  &                       + zgrasigex2_15 * e15n_ex2*1e-3                              &
-                  &                       + zgrapoc2_15 * e15n_in2*1e-3
+                  &                       + zgrasigex2_15 * e15n_ex2/1000.0                            &
+                  &                       + zgrapoc2_15 * e15n_in2/1000.0
                   tra(ji,jj,jk,jp15dia) = tra(ji,jj,jk,jp15dia) - zgrazd15
                   tra(ji,jj,jk,jp15zoo) = tra(ji,jj,jk,jp15zoo) - zgrazz15
                   tra(ji,jj,jk,jp15phy) = tra(ji,jj,jk,jp15phy) - zgrazn15
                   tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) - zgrazpoc15 - zgrazffp15 + zfrac15
                   tra(ji,jj,jk,jp15goc) = tra(ji,jj,jk,jp15goc) + zmortzgoc_15 - zgrazffg15 - zfrac15  &
-                  &                       + zgrapoc2_15 * ( 1. - e15n_in2*1e-3 )
+                  &                       + zgrapoc2_15 * ( 1. - e15n_in2/1000.0 )
+                  ! zgrasigex2_15 therefore enriches meso in N15 during excretion of NH4
                ENDIF
 
             END DO

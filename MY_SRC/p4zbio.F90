@@ -79,8 +79,8 @@ CONTAINS
       END DO
 
       diag = .false.
-      iii = 116
-      jjj = 85
+      iii = 159
+      jjj = 110
       kkk = 1 
 
       CALL p4z_opt     ( kt, knt )     ! Optic: PAR in the water column
@@ -89,41 +89,41 @@ CONTAINS
         print*, rtrn
         print*, " before call to sinking routine " 
         print*, "NO3 " 
-        print*, trb(iii,jjj,kkk,jpno3),trb(iii,jjj,kkk,jp15no3),trb(iii,jjj,kkk,jpno3)-trb(iii,jjj,kkk,jp15no3)
-        print*, trn(iii,jjj,kkk,jpno3),trn(iii,jjj,kkk,jp15no3),trn(iii,jjj,kkk,jpno3)-trn(iii,jjj,kkk,jp15no3)
-        print*, tra(iii,jjj,kkk,jpno3),tra(iii,jjj,kkk,jp15no3),tra(iii,jjj,kkk,jpno3)-tra(iii,jjj,kkk,jp15no3)
-        print*, "NH4 " 
-        print*, trb(iii,jjj,kkk,jpnh4), trb(iii,jjj,kkk,jp15nh4),trb(iii,jjj,kkk,jpnh4)-trb(iii,jjj,kkk,jp15nh4)
-        print*, trn(iii,jjj,kkk,jpnh4), trn(iii,jjj,kkk,jp15nh4),trn(iii,jjj,kkk,jpnh4)-trn(iii,jjj,kkk,jp15nh4)
-        print*, tra(iii,jjj,kkk,jpnh4), tra(iii,jjj,kkk,jp15nh4),tra(iii,jjj,kkk,jpnh4)-tra(iii,jjj,kkk,jp15nh4)
-        print*, "DOC " 
-        print*, trb(iii,jjj,kkk,jpdoc), trb(iii,jjj,kkk,jp15doc),trb(iii,jjj,kkk,jpdoc)-trb(iii,jjj,kkk,jp15doc)
-        print*, trn(iii,jjj,kkk,jpdoc), trn(iii,jjj,kkk,jp15doc),trn(iii,jjj,kkk,jpdoc)-trn(iii,jjj,kkk,jp15doc)
-        print*, tra(iii,jjj,kkk,jpdoc), tra(iii,jjj,kkk,jp15doc),tra(iii,jjj,kkk,jpdoc)-tra(iii,jjj,kkk,jp15doc)
-        print*, "POC " 
-        print*, trb(iii,jjj,kkk,jppoc), trb(iii,jjj,kkk,jp15poc),trb(iii,jjj,kkk,jppoc)-trb(iii,jjj,kkk,jp15poc)
-        print*, trn(iii,jjj,kkk,jppoc), trn(iii,jjj,kkk,jp15poc),trn(iii,jjj,kkk,jppoc)-trn(iii,jjj,kkk,jp15poc)
-        print*, tra(iii,jjj,kkk,jppoc), tra(iii,jjj,kkk,jp15poc),tra(iii,jjj,kkk,jppoc)-tra(iii,jjj,kkk,jp15poc)
-        print*, "GOC " 
-        print*, trb(iii,jjj,kkk,jpgoc), trb(iii,jjj,kkk,jp15goc),trb(iii,jjj,kkk,jpgoc)-trb(iii,jjj,kkk,jp15goc)
-        print*, trn(iii,jjj,kkk,jpgoc), trn(iii,jjj,kkk,jp15goc),trn(iii,jjj,kkk,jpgoc)-trn(iii,jjj,kkk,jp15goc)
-        print*, tra(iii,jjj,kkk,jpgoc), tra(iii,jjj,kkk,jp15goc),tra(iii,jjj,kkk,jpgoc)-tra(iii,jjj,kkk,jp15goc)
-        print*, "PHY " 
-        print*, trb(iii,jjj,kkk,jpphy), trb(iii,jjj,kkk,jp15phy),trb(iii,jjj,kkk,jpphy)-trb(iii,jjj,kkk,jp15phy)
-        print*, trn(iii,jjj,kkk,jpphy), trn(iii,jjj,kkk,jp15phy),trn(iii,jjj,kkk,jpphy)-trn(iii,jjj,kkk,jp15phy)
-        print*, tra(iii,jjj,kkk,jpphy), tra(iii,jjj,kkk,jp15phy),tra(iii,jjj,kkk,jpphy)-tra(iii,jjj,kkk,jp15phy)
-        print*, "PHY2 " 
-        print*, trb(iii,jjj,kkk,jpdia), trb(iii,jjj,kkk,jp15dia),trb(iii,jjj,kkk,jpdia)-trb(iii,jjj,kkk,jp15dia)
-        print*, trn(iii,jjj,kkk,jpdia), trn(iii,jjj,kkk,jp15dia),trn(iii,jjj,kkk,jpdia)-trn(iii,jjj,kkk,jp15dia)
-        print*, tra(iii,jjj,kkk,jpdia), tra(iii,jjj,kkk,jp15dia),tra(iii,jjj,kkk,jpdia)-tra(iii,jjj,kkk,jp15dia)
-        print*, "ZOO " 
-        print*, trb(iii,jjj,kkk,jpzoo), trb(iii,jjj,kkk,jp15zoo),trb(iii,jjj,kkk,jpzoo)-trb(iii,jjj,kkk,jp15zoo)
-        print*, trn(iii,jjj,kkk,jpzoo), trn(iii,jjj,kkk,jp15zoo),trn(iii,jjj,kkk,jpzoo)-trn(iii,jjj,kkk,jp15zoo)
-        print*, tra(iii,jjj,kkk,jpzoo), tra(iii,jjj,kkk,jp15zoo),tra(iii,jjj,kkk,jpzoo)-tra(iii,jjj,kkk,jp15zoo)
-        print*, "ZOO2 " 
-        print*, trb(iii,jjj,kkk,jpmes), trb(iii,jjj,kkk,jp15mes),trb(iii,jjj,kkk,jpmes)-trb(iii,jjj,kkk,jp15mes)
-        print*, trn(iii,jjj,kkk,jpmes), trn(iii,jjj,kkk,jp15mes),trn(iii,jjj,kkk,jpmes)-trn(iii,jjj,kkk,jp15mes)
-        print*, tra(iii,jjj,kkk,jpmes), tra(iii,jjj,kkk,jp15mes),tra(iii,jjj,kkk,jpmes)-tra(iii,jjj,kkk,jp15mes)
+        print*, trb(iii,jjj,kkk,jpno3),trb(iii,jjj,kkk,jp15no3),trb(iii,jjj,kkk,jpno3)-trb(iii,jjj,kkk,jp15no3),trb(iii,jjj,kkk,jp15no3)/trb(iii,jjj,kkk,jpno3)
+        print*, trn(iii,jjj,kkk,jpno3),trn(iii,jjj,kkk,jp15no3),trn(iii,jjj,kkk,jpno3)-trn(iii,jjj,kkk,jp15no3),trn(iii,jjj,kkk,jp15no3)/trn(iii,jjj,kkk,jpno3)
+        print*, tra(iii,jjj,kkk,jpno3),tra(iii,jjj,kkk,jp15no3),tra(iii,jjj,kkk,jpno3)-tra(iii,jjj,kkk,jp15no3),tra(iii,jjj,kkk,jp15no3)/tra(iii,jjj,kkk,jpno3)
+        print*, "NH4 "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpnh4),trb(iii,jjj,kkk,jp15nh4),trb(iii,jjj,kkk,jpnh4)-trb(iii,jjj,kkk,jp15nh4),trb(iii,jjj,kkk,jp15nh4)/trb(iii,jjj,kkk,jpnh4)
+        print*, trn(iii,jjj,kkk,jpnh4),trn(iii,jjj,kkk,jp15nh4),trn(iii,jjj,kkk,jpnh4)-trn(iii,jjj,kkk,jp15nh4),trn(iii,jjj,kkk,jp15nh4)/trn(iii,jjj,kkk,jpnh4)
+        print*, tra(iii,jjj,kkk,jpnh4),tra(iii,jjj,kkk,jp15nh4),tra(iii,jjj,kkk,jpnh4)-tra(iii,jjj,kkk,jp15nh4),tra(iii,jjj,kkk,jp15nh4)/tra(iii,jjj,kkk,jpnh4)
+        print*, "DOC "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpdoc),trb(iii,jjj,kkk,jp15doc),trb(iii,jjj,kkk,jpdoc)-trb(iii,jjj,kkk,jp15doc),trb(iii,jjj,kkk,jp15doc)/trb(iii,jjj,kkk,jpdoc)
+        print*, trn(iii,jjj,kkk,jpdoc),trn(iii,jjj,kkk,jp15doc),trn(iii,jjj,kkk,jpdoc)-trn(iii,jjj,kkk,jp15doc),trn(iii,jjj,kkk,jp15doc)/trn(iii,jjj,kkk,jpdoc)
+        print*, tra(iii,jjj,kkk,jpdoc),tra(iii,jjj,kkk,jp15doc),tra(iii,jjj,kkk,jpdoc)-tra(iii,jjj,kkk,jp15doc),tra(iii,jjj,kkk,jp15doc)/tra(iii,jjj,kkk,jpdoc)
+        print*, "POC "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jppoc),trb(iii,jjj,kkk,jp15poc),trb(iii,jjj,kkk,jppoc)-trb(iii,jjj,kkk,jp15poc),trb(iii,jjj,kkk,jp15poc)/trb(iii,jjj,kkk,jppoc)
+        print*, trn(iii,jjj,kkk,jppoc),trn(iii,jjj,kkk,jp15poc),trn(iii,jjj,kkk,jppoc)-trn(iii,jjj,kkk,jp15poc),trn(iii,jjj,kkk,jp15poc)/trn(iii,jjj,kkk,jppoc)
+        print*, tra(iii,jjj,kkk,jppoc),tra(iii,jjj,kkk,jp15poc),tra(iii,jjj,kkk,jppoc)-tra(iii,jjj,kkk,jp15poc),tra(iii,jjj,kkk,jp15poc)/tra(iii,jjj,kkk,jppoc)
+        print*, "GOC "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpgoc),trb(iii,jjj,kkk,jp15goc),trb(iii,jjj,kkk,jpgoc)-trb(iii,jjj,kkk,jp15goc),trb(iii,jjj,kkk,jp15goc)/trb(iii,jjj,kkk,jpgoc)
+        print*, trn(iii,jjj,kkk,jpgoc),trn(iii,jjj,kkk,jp15goc),trn(iii,jjj,kkk,jpgoc)-trn(iii,jjj,kkk,jp15goc),trn(iii,jjj,kkk,jp15goc)/trn(iii,jjj,kkk,jpgoc)
+        print*, tra(iii,jjj,kkk,jpgoc),tra(iii,jjj,kkk,jp15goc),tra(iii,jjj,kkk,jpgoc)-tra(iii,jjj,kkk,jp15goc),tra(iii,jjj,kkk,jp15goc)/tra(iii,jjj,kkk,jpgoc)
+        print*, "PHY "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpphy),trb(iii,jjj,kkk,jp15phy),trb(iii,jjj,kkk,jpphy)-trb(iii,jjj,kkk,jp15phy),trb(iii,jjj,kkk,jp15phy)/trb(iii,jjj,kkk,jpphy)
+        print*, trn(iii,jjj,kkk,jpphy),trn(iii,jjj,kkk,jp15phy),trn(iii,jjj,kkk,jpphy)-trn(iii,jjj,kkk,jp15phy),trn(iii,jjj,kkk,jp15phy)/trn(iii,jjj,kkk,jpphy)
+        print*, tra(iii,jjj,kkk,jpphy),tra(iii,jjj,kkk,jp15phy),tra(iii,jjj,kkk,jpphy)-tra(iii,jjj,kkk,jp15phy),tra(iii,jjj,kkk,jp15phy)/tra(iii,jjj,kkk,jpphy)
+        print*, "PHY2 "                                                                                                                                     
+        print*, trb(iii,jjj,kkk,jpdia),trb(iii,jjj,kkk,jp15dia),trb(iii,jjj,kkk,jpdia)-trb(iii,jjj,kkk,jp15dia),trb(iii,jjj,kkk,jp15dia)/trb(iii,jjj,kkk,jpdia)
+        print*, trn(iii,jjj,kkk,jpdia),trn(iii,jjj,kkk,jp15dia),trn(iii,jjj,kkk,jpdia)-trn(iii,jjj,kkk,jp15dia),trn(iii,jjj,kkk,jp15dia)/trn(iii,jjj,kkk,jpdia)
+        print*, tra(iii,jjj,kkk,jpdia),tra(iii,jjj,kkk,jp15dia),tra(iii,jjj,kkk,jpdia)-tra(iii,jjj,kkk,jp15dia),tra(iii,jjj,kkk,jp15dia)/tra(iii,jjj,kkk,jpdia)
+        print*, "ZOO "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpzoo),trb(iii,jjj,kkk,jp15zoo),trb(iii,jjj,kkk,jpzoo)-trb(iii,jjj,kkk,jp15zoo),trb(iii,jjj,kkk,jp15zoo)/trb(iii,jjj,kkk,jpzoo)
+        print*, trn(iii,jjj,kkk,jpzoo),trn(iii,jjj,kkk,jp15zoo),trn(iii,jjj,kkk,jpzoo)-trn(iii,jjj,kkk,jp15zoo),trn(iii,jjj,kkk,jp15zoo)/trn(iii,jjj,kkk,jpzoo)
+        print*, tra(iii,jjj,kkk,jpzoo),tra(iii,jjj,kkk,jp15zoo),tra(iii,jjj,kkk,jpzoo)-tra(iii,jjj,kkk,jp15zoo),tra(iii,jjj,kkk,jp15zoo)/tra(iii,jjj,kkk,jpzoo)
+        print*, "ZOO2 "                                                                                                                                     
+        print*, trb(iii,jjj,kkk,jpmes),trb(iii,jjj,kkk,jp15mes),trb(iii,jjj,kkk,jpmes)-trb(iii,jjj,kkk,jp15mes),trb(iii,jjj,kkk,jp15mes)/trb(iii,jjj,kkk,jpmes)
+        print*, trn(iii,jjj,kkk,jpmes),trn(iii,jjj,kkk,jp15mes),trn(iii,jjj,kkk,jpmes)-trn(iii,jjj,kkk,jp15mes),trn(iii,jjj,kkk,jp15mes)/trn(iii,jjj,kkk,jpmes)
+        print*, tra(iii,jjj,kkk,jpmes),tra(iii,jjj,kkk,jp15mes),tra(iii,jjj,kkk,jpmes)-tra(iii,jjj,kkk,jp15mes),tra(iii,jjj,kkk,jp15mes)/tra(iii,jjj,kkk,jpmes)
         print*, " "
       ENDIF
       CALL p4z_sink    ( kt, knt )     ! vertical flux of particulate organic matter
@@ -132,41 +132,41 @@ CONTAINS
         print*, rtrn
         print*, " after call to sinking routine " 
         print*, "NO3 " 
-        print*, trb(iii,jjj,kkk,jpno3),trb(iii,jjj,kkk,jp15no3),trb(iii,jjj,kkk,jpno3)-trb(iii,jjj,kkk,jp15no3)
-        print*, trn(iii,jjj,kkk,jpno3),trn(iii,jjj,kkk,jp15no3),trn(iii,jjj,kkk,jpno3)-trn(iii,jjj,kkk,jp15no3)
-        print*, tra(iii,jjj,kkk,jpno3),tra(iii,jjj,kkk,jp15no3),tra(iii,jjj,kkk,jpno3)-tra(iii,jjj,kkk,jp15no3)
-        print*, "NH4 " 
-        print*, trb(iii,jjj,kkk,jpnh4), trb(iii,jjj,kkk,jp15nh4),trb(iii,jjj,kkk,jpnh4)-trb(iii,jjj,kkk,jp15nh4)
-        print*, trn(iii,jjj,kkk,jpnh4), trn(iii,jjj,kkk,jp15nh4),trn(iii,jjj,kkk,jpnh4)-trn(iii,jjj,kkk,jp15nh4)
-        print*, tra(iii,jjj,kkk,jpnh4), tra(iii,jjj,kkk,jp15nh4),tra(iii,jjj,kkk,jpnh4)-tra(iii,jjj,kkk,jp15nh4)
-        print*, "DOC " 
-        print*, trb(iii,jjj,kkk,jpdoc), trb(iii,jjj,kkk,jp15doc),trb(iii,jjj,kkk,jpdoc)-trb(iii,jjj,kkk,jp15doc)
-        print*, trn(iii,jjj,kkk,jpdoc), trn(iii,jjj,kkk,jp15doc),trn(iii,jjj,kkk,jpdoc)-trn(iii,jjj,kkk,jp15doc)
-        print*, tra(iii,jjj,kkk,jpdoc), tra(iii,jjj,kkk,jp15doc),tra(iii,jjj,kkk,jpdoc)-tra(iii,jjj,kkk,jp15doc)
-        print*, "POC " 
-        print*, trb(iii,jjj,kkk,jppoc), trb(iii,jjj,kkk,jp15poc),trb(iii,jjj,kkk,jppoc)-trb(iii,jjj,kkk,jp15poc)
-        print*, trn(iii,jjj,kkk,jppoc), trn(iii,jjj,kkk,jp15poc),trn(iii,jjj,kkk,jppoc)-trn(iii,jjj,kkk,jp15poc)
-        print*, tra(iii,jjj,kkk,jppoc), tra(iii,jjj,kkk,jp15poc),tra(iii,jjj,kkk,jppoc)-tra(iii,jjj,kkk,jp15poc)
-        print*, "GOC " 
-        print*, trb(iii,jjj,kkk,jpgoc), trb(iii,jjj,kkk,jp15goc),trb(iii,jjj,kkk,jpgoc)-trb(iii,jjj,kkk,jp15goc)
-        print*, trn(iii,jjj,kkk,jpgoc), trn(iii,jjj,kkk,jp15goc),trn(iii,jjj,kkk,jpgoc)-trn(iii,jjj,kkk,jp15goc)
-        print*, tra(iii,jjj,kkk,jpgoc), tra(iii,jjj,kkk,jp15goc),tra(iii,jjj,kkk,jpgoc)-tra(iii,jjj,kkk,jp15goc)
-        print*, "PHY " 
-        print*, trb(iii,jjj,kkk,jpphy), trb(iii,jjj,kkk,jp15phy),trb(iii,jjj,kkk,jpphy)-trb(iii,jjj,kkk,jp15phy)
-        print*, trn(iii,jjj,kkk,jpphy), trn(iii,jjj,kkk,jp15phy),trn(iii,jjj,kkk,jpphy)-trn(iii,jjj,kkk,jp15phy)
-        print*, tra(iii,jjj,kkk,jpphy), tra(iii,jjj,kkk,jp15phy),tra(iii,jjj,kkk,jpphy)-tra(iii,jjj,kkk,jp15phy)
-        print*, "PHY2 " 
-        print*, trb(iii,jjj,kkk,jpdia), trb(iii,jjj,kkk,jp15dia),trb(iii,jjj,kkk,jpdia)-trb(iii,jjj,kkk,jp15dia)
-        print*, trn(iii,jjj,kkk,jpdia), trn(iii,jjj,kkk,jp15dia),trn(iii,jjj,kkk,jpdia)-trn(iii,jjj,kkk,jp15dia)
-        print*, tra(iii,jjj,kkk,jpdia), tra(iii,jjj,kkk,jp15dia),tra(iii,jjj,kkk,jpdia)-tra(iii,jjj,kkk,jp15dia)
-        print*, "ZOO " 
-        print*, trb(iii,jjj,kkk,jpzoo), trb(iii,jjj,kkk,jp15zoo),trb(iii,jjj,kkk,jpzoo)-trb(iii,jjj,kkk,jp15zoo)
-        print*, trn(iii,jjj,kkk,jpzoo), trn(iii,jjj,kkk,jp15zoo),trn(iii,jjj,kkk,jpzoo)-trn(iii,jjj,kkk,jp15zoo)
-        print*, tra(iii,jjj,kkk,jpzoo), tra(iii,jjj,kkk,jp15zoo),tra(iii,jjj,kkk,jpzoo)-tra(iii,jjj,kkk,jp15zoo)
-        print*, "ZOO2 " 
-        print*, trb(iii,jjj,kkk,jpmes), trb(iii,jjj,kkk,jp15mes),trb(iii,jjj,kkk,jpmes)-trb(iii,jjj,kkk,jp15mes)
-        print*, trn(iii,jjj,kkk,jpmes), trn(iii,jjj,kkk,jp15mes),trn(iii,jjj,kkk,jpmes)-trn(iii,jjj,kkk,jp15mes)
-        print*, tra(iii,jjj,kkk,jpmes), tra(iii,jjj,kkk,jp15mes),tra(iii,jjj,kkk,jpmes)-tra(iii,jjj,kkk,jp15mes)
+        print*, trb(iii,jjj,kkk,jpno3),trb(iii,jjj,kkk,jp15no3),trb(iii,jjj,kkk,jpno3)-trb(iii,jjj,kkk,jp15no3),trb(iii,jjj,kkk,jp15no3)/trb(iii,jjj,kkk,jpno3)
+        print*, trn(iii,jjj,kkk,jpno3),trn(iii,jjj,kkk,jp15no3),trn(iii,jjj,kkk,jpno3)-trn(iii,jjj,kkk,jp15no3),trn(iii,jjj,kkk,jp15no3)/trn(iii,jjj,kkk,jpno3)
+        print*, tra(iii,jjj,kkk,jpno3),tra(iii,jjj,kkk,jp15no3),tra(iii,jjj,kkk,jpno3)-tra(iii,jjj,kkk,jp15no3),tra(iii,jjj,kkk,jp15no3)/tra(iii,jjj,kkk,jpno3)
+        print*, "NH4 "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpnh4),trb(iii,jjj,kkk,jp15nh4),trb(iii,jjj,kkk,jpnh4)-trb(iii,jjj,kkk,jp15nh4),trb(iii,jjj,kkk,jp15nh4)/trb(iii,jjj,kkk,jpnh4)
+        print*, trn(iii,jjj,kkk,jpnh4),trn(iii,jjj,kkk,jp15nh4),trn(iii,jjj,kkk,jpnh4)-trn(iii,jjj,kkk,jp15nh4),trn(iii,jjj,kkk,jp15nh4)/trn(iii,jjj,kkk,jpnh4)
+        print*, tra(iii,jjj,kkk,jpnh4),tra(iii,jjj,kkk,jp15nh4),tra(iii,jjj,kkk,jpnh4)-tra(iii,jjj,kkk,jp15nh4),tra(iii,jjj,kkk,jp15nh4)/tra(iii,jjj,kkk,jpnh4)
+        print*, "DOC "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpdoc),trb(iii,jjj,kkk,jp15doc),trb(iii,jjj,kkk,jpdoc)-trb(iii,jjj,kkk,jp15doc),trb(iii,jjj,kkk,jp15doc)/trb(iii,jjj,kkk,jpdoc)
+        print*, trn(iii,jjj,kkk,jpdoc),trn(iii,jjj,kkk,jp15doc),trn(iii,jjj,kkk,jpdoc)-trn(iii,jjj,kkk,jp15doc),trn(iii,jjj,kkk,jp15doc)/trn(iii,jjj,kkk,jpdoc)
+        print*, tra(iii,jjj,kkk,jpdoc),tra(iii,jjj,kkk,jp15doc),tra(iii,jjj,kkk,jpdoc)-tra(iii,jjj,kkk,jp15doc),tra(iii,jjj,kkk,jp15doc)/tra(iii,jjj,kkk,jpdoc)
+        print*, "POC "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jppoc),trb(iii,jjj,kkk,jp15poc),trb(iii,jjj,kkk,jppoc)-trb(iii,jjj,kkk,jp15poc),trb(iii,jjj,kkk,jp15poc)/trb(iii,jjj,kkk,jppoc)
+        print*, trn(iii,jjj,kkk,jppoc),trn(iii,jjj,kkk,jp15poc),trn(iii,jjj,kkk,jppoc)-trn(iii,jjj,kkk,jp15poc),trn(iii,jjj,kkk,jp15poc)/trn(iii,jjj,kkk,jppoc)
+        print*, tra(iii,jjj,kkk,jppoc),tra(iii,jjj,kkk,jp15poc),tra(iii,jjj,kkk,jppoc)-tra(iii,jjj,kkk,jp15poc),tra(iii,jjj,kkk,jp15poc)/tra(iii,jjj,kkk,jppoc)
+        print*, "GOC "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpgoc),trb(iii,jjj,kkk,jp15goc),trb(iii,jjj,kkk,jpgoc)-trb(iii,jjj,kkk,jp15goc),trb(iii,jjj,kkk,jp15goc)/trb(iii,jjj,kkk,jpgoc)
+        print*, trn(iii,jjj,kkk,jpgoc),trn(iii,jjj,kkk,jp15goc),trn(iii,jjj,kkk,jpgoc)-trn(iii,jjj,kkk,jp15goc),trn(iii,jjj,kkk,jp15goc)/trn(iii,jjj,kkk,jpgoc)
+        print*, tra(iii,jjj,kkk,jpgoc),tra(iii,jjj,kkk,jp15goc),tra(iii,jjj,kkk,jpgoc)-tra(iii,jjj,kkk,jp15goc),tra(iii,jjj,kkk,jp15goc)/tra(iii,jjj,kkk,jpgoc)
+        print*, "PHY "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpphy),trb(iii,jjj,kkk,jp15phy),trb(iii,jjj,kkk,jpphy)-trb(iii,jjj,kkk,jp15phy),trb(iii,jjj,kkk,jp15phy)/trb(iii,jjj,kkk,jpphy)
+        print*, trn(iii,jjj,kkk,jpphy),trn(iii,jjj,kkk,jp15phy),trn(iii,jjj,kkk,jpphy)-trn(iii,jjj,kkk,jp15phy),trn(iii,jjj,kkk,jp15phy)/trn(iii,jjj,kkk,jpphy)
+        print*, tra(iii,jjj,kkk,jpphy),tra(iii,jjj,kkk,jp15phy),tra(iii,jjj,kkk,jpphy)-tra(iii,jjj,kkk,jp15phy),tra(iii,jjj,kkk,jp15phy)/tra(iii,jjj,kkk,jpphy)
+        print*, "PHY2 "                                                                                                                                     
+        print*, trb(iii,jjj,kkk,jpdia),trb(iii,jjj,kkk,jp15dia),trb(iii,jjj,kkk,jpdia)-trb(iii,jjj,kkk,jp15dia),trb(iii,jjj,kkk,jp15dia)/trb(iii,jjj,kkk,jpdia)
+        print*, trn(iii,jjj,kkk,jpdia),trn(iii,jjj,kkk,jp15dia),trn(iii,jjj,kkk,jpdia)-trn(iii,jjj,kkk,jp15dia),trn(iii,jjj,kkk,jp15dia)/trn(iii,jjj,kkk,jpdia)
+        print*, tra(iii,jjj,kkk,jpdia),tra(iii,jjj,kkk,jp15dia),tra(iii,jjj,kkk,jpdia)-tra(iii,jjj,kkk,jp15dia),tra(iii,jjj,kkk,jp15dia)/tra(iii,jjj,kkk,jpdia)
+        print*, "ZOO "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpzoo),trb(iii,jjj,kkk,jp15zoo),trb(iii,jjj,kkk,jpzoo)-trb(iii,jjj,kkk,jp15zoo),trb(iii,jjj,kkk,jp15zoo)/trb(iii,jjj,kkk,jpzoo)
+        print*, trn(iii,jjj,kkk,jpzoo),trn(iii,jjj,kkk,jp15zoo),trn(iii,jjj,kkk,jpzoo)-trn(iii,jjj,kkk,jp15zoo),trn(iii,jjj,kkk,jp15zoo)/trn(iii,jjj,kkk,jpzoo)
+        print*, tra(iii,jjj,kkk,jpzoo),tra(iii,jjj,kkk,jp15zoo),tra(iii,jjj,kkk,jpzoo)-tra(iii,jjj,kkk,jp15zoo),tra(iii,jjj,kkk,jp15zoo)/tra(iii,jjj,kkk,jpzoo)
+        print*, "ZOO2 "                                                                                                                                     
+        print*, trb(iii,jjj,kkk,jpmes),trb(iii,jjj,kkk,jp15mes),trb(iii,jjj,kkk,jpmes)-trb(iii,jjj,kkk,jp15mes),trb(iii,jjj,kkk,jp15mes)/trb(iii,jjj,kkk,jpmes)
+        print*, trn(iii,jjj,kkk,jpmes),trn(iii,jjj,kkk,jp15mes),trn(iii,jjj,kkk,jpmes)-trn(iii,jjj,kkk,jp15mes),trn(iii,jjj,kkk,jp15mes)/trn(iii,jjj,kkk,jpmes)
+        print*, tra(iii,jjj,kkk,jpmes),tra(iii,jjj,kkk,jp15mes),tra(iii,jjj,kkk,jpmes)-tra(iii,jjj,kkk,jp15mes),tra(iii,jjj,kkk,jp15mes)/tra(iii,jjj,kkk,jpmes)
         print*, " "
       ENDIF
       CALL p4z_fechem  ( kt, knt )     ! Iron chemistry/scavenging
@@ -176,41 +176,41 @@ CONTAINS
         print*, rtrn
         print*, " before calls to biological routines " 
         print*, "NO3 " 
-        print*, trb(iii,jjj,kkk,jpno3),trb(iii,jjj,kkk,jp15no3),trb(iii,jjj,kkk,jpno3)-trb(iii,jjj,kkk,jp15no3)
-        print*, trn(iii,jjj,kkk,jpno3),trn(iii,jjj,kkk,jp15no3),trn(iii,jjj,kkk,jpno3)-trn(iii,jjj,kkk,jp15no3)
-        print*, tra(iii,jjj,kkk,jpno3),tra(iii,jjj,kkk,jp15no3),tra(iii,jjj,kkk,jpno3)-tra(iii,jjj,kkk,jp15no3)
-        print*, "NH4 " 
-        print*, trb(iii,jjj,kkk,jpnh4), trb(iii,jjj,kkk,jp15nh4),trb(iii,jjj,kkk,jpnh4)-trb(iii,jjj,kkk,jp15nh4)
-        print*, trn(iii,jjj,kkk,jpnh4), trn(iii,jjj,kkk,jp15nh4),trn(iii,jjj,kkk,jpnh4)-trn(iii,jjj,kkk,jp15nh4)
-        print*, tra(iii,jjj,kkk,jpnh4), tra(iii,jjj,kkk,jp15nh4),tra(iii,jjj,kkk,jpnh4)-tra(iii,jjj,kkk,jp15nh4)
-        print*, "DOC " 
-        print*, trb(iii,jjj,kkk,jpdoc), trb(iii,jjj,kkk,jp15doc),trb(iii,jjj,kkk,jpdoc)-trb(iii,jjj,kkk,jp15doc)
-        print*, trn(iii,jjj,kkk,jpdoc), trn(iii,jjj,kkk,jp15doc),trn(iii,jjj,kkk,jpdoc)-trn(iii,jjj,kkk,jp15doc)
-        print*, tra(iii,jjj,kkk,jpdoc), tra(iii,jjj,kkk,jp15doc),tra(iii,jjj,kkk,jpdoc)-tra(iii,jjj,kkk,jp15doc)
-        print*, "POC " 
-        print*, trb(iii,jjj,kkk,jppoc), trb(iii,jjj,kkk,jp15poc),trb(iii,jjj,kkk,jppoc)-trb(iii,jjj,kkk,jp15poc)
-        print*, trn(iii,jjj,kkk,jppoc), trn(iii,jjj,kkk,jp15poc),trn(iii,jjj,kkk,jppoc)-trn(iii,jjj,kkk,jp15poc)
-        print*, tra(iii,jjj,kkk,jppoc), tra(iii,jjj,kkk,jp15poc),tra(iii,jjj,kkk,jppoc)-tra(iii,jjj,kkk,jp15poc)
-        print*, "GOC " 
-        print*, trb(iii,jjj,kkk,jpgoc), trb(iii,jjj,kkk,jp15goc),trb(iii,jjj,kkk,jpgoc)-trb(iii,jjj,kkk,jp15goc)
-        print*, trn(iii,jjj,kkk,jpgoc), trn(iii,jjj,kkk,jp15goc),trn(iii,jjj,kkk,jpgoc)-trn(iii,jjj,kkk,jp15goc)
-        print*, tra(iii,jjj,kkk,jpgoc), tra(iii,jjj,kkk,jp15goc),tra(iii,jjj,kkk,jpgoc)-tra(iii,jjj,kkk,jp15goc)
-        print*, "PHY " 
-        print*, trb(iii,jjj,kkk,jpphy), trb(iii,jjj,kkk,jp15phy),trb(iii,jjj,kkk,jpphy)-trb(iii,jjj,kkk,jp15phy)
-        print*, trn(iii,jjj,kkk,jpphy), trn(iii,jjj,kkk,jp15phy),trn(iii,jjj,kkk,jpphy)-trn(iii,jjj,kkk,jp15phy)
-        print*, tra(iii,jjj,kkk,jpphy), tra(iii,jjj,kkk,jp15phy),tra(iii,jjj,kkk,jpphy)-tra(iii,jjj,kkk,jp15phy)
-        print*, "PHY2 " 
-        print*, trb(iii,jjj,kkk,jpdia), trb(iii,jjj,kkk,jp15dia),trb(iii,jjj,kkk,jpdia)-trb(iii,jjj,kkk,jp15dia)
-        print*, trn(iii,jjj,kkk,jpdia), trn(iii,jjj,kkk,jp15dia),trn(iii,jjj,kkk,jpdia)-trn(iii,jjj,kkk,jp15dia)
-        print*, tra(iii,jjj,kkk,jpdia), tra(iii,jjj,kkk,jp15dia),tra(iii,jjj,kkk,jpdia)-tra(iii,jjj,kkk,jp15dia)
-        print*, "ZOO " 
-        print*, trb(iii,jjj,kkk,jpzoo), trb(iii,jjj,kkk,jp15zoo),trb(iii,jjj,kkk,jpzoo)-trb(iii,jjj,kkk,jp15zoo)
-        print*, trn(iii,jjj,kkk,jpzoo), trn(iii,jjj,kkk,jp15zoo),trn(iii,jjj,kkk,jpzoo)-trn(iii,jjj,kkk,jp15zoo)
-        print*, tra(iii,jjj,kkk,jpzoo), tra(iii,jjj,kkk,jp15zoo),tra(iii,jjj,kkk,jpzoo)-tra(iii,jjj,kkk,jp15zoo)
-        print*, "ZOO2 " 
-        print*, trb(iii,jjj,kkk,jpmes), trb(iii,jjj,kkk,jp15mes),trb(iii,jjj,kkk,jpmes)-trb(iii,jjj,kkk,jp15mes)
-        print*, trn(iii,jjj,kkk,jpmes), trn(iii,jjj,kkk,jp15mes),trn(iii,jjj,kkk,jpmes)-trn(iii,jjj,kkk,jp15mes)
-        print*, tra(iii,jjj,kkk,jpmes), tra(iii,jjj,kkk,jp15mes),tra(iii,jjj,kkk,jpmes)-tra(iii,jjj,kkk,jp15mes)
+        print*, trb(iii,jjj,kkk,jpno3),trb(iii,jjj,kkk,jp15no3),trb(iii,jjj,kkk,jpno3)-trb(iii,jjj,kkk,jp15no3),trb(iii,jjj,kkk,jp15no3)/trb(iii,jjj,kkk,jpno3)
+        print*, trn(iii,jjj,kkk,jpno3),trn(iii,jjj,kkk,jp15no3),trn(iii,jjj,kkk,jpno3)-trn(iii,jjj,kkk,jp15no3),trn(iii,jjj,kkk,jp15no3)/trn(iii,jjj,kkk,jpno3)
+        print*, tra(iii,jjj,kkk,jpno3),tra(iii,jjj,kkk,jp15no3),tra(iii,jjj,kkk,jpno3)-tra(iii,jjj,kkk,jp15no3),tra(iii,jjj,kkk,jp15no3)/tra(iii,jjj,kkk,jpno3)
+        print*, "NH4 "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpnh4),trb(iii,jjj,kkk,jp15nh4),trb(iii,jjj,kkk,jpnh4)-trb(iii,jjj,kkk,jp15nh4),trb(iii,jjj,kkk,jp15nh4)/trb(iii,jjj,kkk,jpnh4)
+        print*, trn(iii,jjj,kkk,jpnh4),trn(iii,jjj,kkk,jp15nh4),trn(iii,jjj,kkk,jpnh4)-trn(iii,jjj,kkk,jp15nh4),trn(iii,jjj,kkk,jp15nh4)/trn(iii,jjj,kkk,jpnh4)
+        print*, tra(iii,jjj,kkk,jpnh4),tra(iii,jjj,kkk,jp15nh4),tra(iii,jjj,kkk,jpnh4)-tra(iii,jjj,kkk,jp15nh4),tra(iii,jjj,kkk,jp15nh4)/tra(iii,jjj,kkk,jpnh4)
+        print*, "DOC "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpdoc),trb(iii,jjj,kkk,jp15doc),trb(iii,jjj,kkk,jpdoc)-trb(iii,jjj,kkk,jp15doc),trb(iii,jjj,kkk,jp15doc)/trb(iii,jjj,kkk,jpdoc)
+        print*, trn(iii,jjj,kkk,jpdoc),trn(iii,jjj,kkk,jp15doc),trn(iii,jjj,kkk,jpdoc)-trn(iii,jjj,kkk,jp15doc),trn(iii,jjj,kkk,jp15doc)/trn(iii,jjj,kkk,jpdoc)
+        print*, tra(iii,jjj,kkk,jpdoc),tra(iii,jjj,kkk,jp15doc),tra(iii,jjj,kkk,jpdoc)-tra(iii,jjj,kkk,jp15doc),tra(iii,jjj,kkk,jp15doc)/tra(iii,jjj,kkk,jpdoc)
+        print*, "POC "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jppoc),trb(iii,jjj,kkk,jp15poc),trb(iii,jjj,kkk,jppoc)-trb(iii,jjj,kkk,jp15poc),trb(iii,jjj,kkk,jp15poc)/trb(iii,jjj,kkk,jppoc)
+        print*, trn(iii,jjj,kkk,jppoc),trn(iii,jjj,kkk,jp15poc),trn(iii,jjj,kkk,jppoc)-trn(iii,jjj,kkk,jp15poc),trn(iii,jjj,kkk,jp15poc)/trn(iii,jjj,kkk,jppoc)
+        print*, tra(iii,jjj,kkk,jppoc),tra(iii,jjj,kkk,jp15poc),tra(iii,jjj,kkk,jppoc)-tra(iii,jjj,kkk,jp15poc),tra(iii,jjj,kkk,jp15poc)/tra(iii,jjj,kkk,jppoc)
+        print*, "GOC "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpgoc),trb(iii,jjj,kkk,jp15goc),trb(iii,jjj,kkk,jpgoc)-trb(iii,jjj,kkk,jp15goc),trb(iii,jjj,kkk,jp15goc)/trb(iii,jjj,kkk,jpgoc)
+        print*, trn(iii,jjj,kkk,jpgoc),trn(iii,jjj,kkk,jp15goc),trn(iii,jjj,kkk,jpgoc)-trn(iii,jjj,kkk,jp15goc),trn(iii,jjj,kkk,jp15goc)/trn(iii,jjj,kkk,jpgoc)
+        print*, tra(iii,jjj,kkk,jpgoc),tra(iii,jjj,kkk,jp15goc),tra(iii,jjj,kkk,jpgoc)-tra(iii,jjj,kkk,jp15goc),tra(iii,jjj,kkk,jp15goc)/tra(iii,jjj,kkk,jpgoc)
+        print*, "PHY "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpphy),trb(iii,jjj,kkk,jp15phy),trb(iii,jjj,kkk,jpphy)-trb(iii,jjj,kkk,jp15phy),trb(iii,jjj,kkk,jp15phy)/trb(iii,jjj,kkk,jpphy)
+        print*, trn(iii,jjj,kkk,jpphy),trn(iii,jjj,kkk,jp15phy),trn(iii,jjj,kkk,jpphy)-trn(iii,jjj,kkk,jp15phy),trn(iii,jjj,kkk,jp15phy)/trn(iii,jjj,kkk,jpphy)
+        print*, tra(iii,jjj,kkk,jpphy),tra(iii,jjj,kkk,jp15phy),tra(iii,jjj,kkk,jpphy)-tra(iii,jjj,kkk,jp15phy),tra(iii,jjj,kkk,jp15phy)/tra(iii,jjj,kkk,jpphy)
+        print*, "PHY2 "                                                                                                                                     
+        print*, trb(iii,jjj,kkk,jpdia),trb(iii,jjj,kkk,jp15dia),trb(iii,jjj,kkk,jpdia)-trb(iii,jjj,kkk,jp15dia),trb(iii,jjj,kkk,jp15dia)/trb(iii,jjj,kkk,jpdia)
+        print*, trn(iii,jjj,kkk,jpdia),trn(iii,jjj,kkk,jp15dia),trn(iii,jjj,kkk,jpdia)-trn(iii,jjj,kkk,jp15dia),trn(iii,jjj,kkk,jp15dia)/trn(iii,jjj,kkk,jpdia)
+        print*, tra(iii,jjj,kkk,jpdia),tra(iii,jjj,kkk,jp15dia),tra(iii,jjj,kkk,jpdia)-tra(iii,jjj,kkk,jp15dia),tra(iii,jjj,kkk,jp15dia)/tra(iii,jjj,kkk,jpdia)
+        print*, "ZOO "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpzoo),trb(iii,jjj,kkk,jp15zoo),trb(iii,jjj,kkk,jpzoo)-trb(iii,jjj,kkk,jp15zoo),trb(iii,jjj,kkk,jp15zoo)/trb(iii,jjj,kkk,jpzoo)
+        print*, trn(iii,jjj,kkk,jpzoo),trn(iii,jjj,kkk,jp15zoo),trn(iii,jjj,kkk,jpzoo)-trn(iii,jjj,kkk,jp15zoo),trn(iii,jjj,kkk,jp15zoo)/trn(iii,jjj,kkk,jpzoo)
+        print*, tra(iii,jjj,kkk,jpzoo),tra(iii,jjj,kkk,jp15zoo),tra(iii,jjj,kkk,jpzoo)-tra(iii,jjj,kkk,jp15zoo),tra(iii,jjj,kkk,jp15zoo)/tra(iii,jjj,kkk,jpzoo)
+        print*, "ZOO2 "                                                                                                                                     
+        print*, trb(iii,jjj,kkk,jpmes),trb(iii,jjj,kkk,jp15mes),trb(iii,jjj,kkk,jpmes)-trb(iii,jjj,kkk,jp15mes),trb(iii,jjj,kkk,jp15mes)/trb(iii,jjj,kkk,jpmes)
+        print*, trn(iii,jjj,kkk,jpmes),trn(iii,jjj,kkk,jp15mes),trn(iii,jjj,kkk,jpmes)-trn(iii,jjj,kkk,jp15mes),trn(iii,jjj,kkk,jp15mes)/trn(iii,jjj,kkk,jpmes)
+        print*, tra(iii,jjj,kkk,jpmes),tra(iii,jjj,kkk,jp15mes),tra(iii,jjj,kkk,jpmes)-tra(iii,jjj,kkk,jp15mes),tra(iii,jjj,kkk,jp15mes)/tra(iii,jjj,kkk,jpmes)
         print*, " "
       ENDIF
       IF( ln_p4z ) THEN
@@ -219,41 +219,41 @@ CONTAINS
         print*, " " 
         print*, " after call to p4zlim routines " 
         print*, "NO3 " 
-        print*, trb(iii,jjj,kkk,jpno3), trb(iii,jjj,kkk,jp15no3),trb(iii,jjj,kkk,jpno3)-trb(iii,jjj,kkk,jp15no3)
-        print*, trn(iii,jjj,kkk,jpno3), trn(iii,jjj,kkk,jp15no3),trn(iii,jjj,kkk,jpno3)-trn(iii,jjj,kkk,jp15no3)
-        print*, tra(iii,jjj,kkk,jpno3), tra(iii,jjj,kkk,jp15no3),tra(iii,jjj,kkk,jpno3)-tra(iii,jjj,kkk,jp15no3)
-        print*, "NH4 " 
-        print*, trb(iii,jjj,kkk,jpnh4), trb(iii,jjj,kkk,jp15nh4),trb(iii,jjj,kkk,jpnh4)-trb(iii,jjj,kkk,jp15nh4)
-        print*, trn(iii,jjj,kkk,jpnh4), trn(iii,jjj,kkk,jp15nh4),trn(iii,jjj,kkk,jpnh4)-trn(iii,jjj,kkk,jp15nh4)
-        print*, tra(iii,jjj,kkk,jpnh4), tra(iii,jjj,kkk,jp15nh4),tra(iii,jjj,kkk,jpnh4)-tra(iii,jjj,kkk,jp15nh4)
-        print*, "DOC " 
-        print*, trb(iii,jjj,kkk,jpdoc), trb(iii,jjj,kkk,jp15doc),trb(iii,jjj,kkk,jpdoc)-trb(iii,jjj,kkk,jp15doc)
-        print*, trn(iii,jjj,kkk,jpdoc), trn(iii,jjj,kkk,jp15doc),trn(iii,jjj,kkk,jpdoc)-trn(iii,jjj,kkk,jp15doc)
-        print*, tra(iii,jjj,kkk,jpdoc), tra(iii,jjj,kkk,jp15doc),tra(iii,jjj,kkk,jpdoc)-tra(iii,jjj,kkk,jp15doc)
-        print*, "POC " 
-        print*, trb(iii,jjj,kkk,jppoc), trb(iii,jjj,kkk,jp15poc),trb(iii,jjj,kkk,jppoc)-trb(iii,jjj,kkk,jp15poc)
-        print*, trn(iii,jjj,kkk,jppoc), trn(iii,jjj,kkk,jp15poc),trn(iii,jjj,kkk,jppoc)-trn(iii,jjj,kkk,jp15poc)
-        print*, tra(iii,jjj,kkk,jppoc), tra(iii,jjj,kkk,jp15poc),tra(iii,jjj,kkk,jppoc)-tra(iii,jjj,kkk,jp15poc)
-        print*, "GOC " 
-        print*, trb(iii,jjj,kkk,jpgoc), trb(iii,jjj,kkk,jp15goc),trb(iii,jjj,kkk,jpgoc)-trb(iii,jjj,kkk,jp15goc)
-        print*, trn(iii,jjj,kkk,jpgoc), trn(iii,jjj,kkk,jp15goc),trn(iii,jjj,kkk,jpgoc)-trn(iii,jjj,kkk,jp15goc)
-        print*, tra(iii,jjj,kkk,jpgoc), tra(iii,jjj,kkk,jp15goc),tra(iii,jjj,kkk,jpgoc)-tra(iii,jjj,kkk,jp15goc)
-        print*, "PHY " 
-        print*, trb(iii,jjj,kkk,jpphy), trb(iii,jjj,kkk,jp15phy),trb(iii,jjj,kkk,jpphy)-trb(iii,jjj,kkk,jp15phy)
-        print*, trn(iii,jjj,kkk,jpphy), trn(iii,jjj,kkk,jp15phy),trn(iii,jjj,kkk,jpphy)-trn(iii,jjj,kkk,jp15phy)
-        print*, tra(iii,jjj,kkk,jpphy), tra(iii,jjj,kkk,jp15phy),tra(iii,jjj,kkk,jpphy)-tra(iii,jjj,kkk,jp15phy)
-        print*, "PHY2 " 
-        print*, trb(iii,jjj,kkk,jpdia), trb(iii,jjj,kkk,jp15dia),trb(iii,jjj,kkk,jpdia)-trb(iii,jjj,kkk,jp15dia)
-        print*, trn(iii,jjj,kkk,jpdia), trn(iii,jjj,kkk,jp15dia),trn(iii,jjj,kkk,jpdia)-trn(iii,jjj,kkk,jp15dia)
-        print*, tra(iii,jjj,kkk,jpdia), tra(iii,jjj,kkk,jp15dia),tra(iii,jjj,kkk,jpdia)-tra(iii,jjj,kkk,jp15dia)
-        print*, "ZOO " 
-        print*, trb(iii,jjj,kkk,jpzoo), trb(iii,jjj,kkk,jp15zoo),trb(iii,jjj,kkk,jpzoo)-trb(iii,jjj,kkk,jp15zoo)
-        print*, trn(iii,jjj,kkk,jpzoo), trn(iii,jjj,kkk,jp15zoo),trn(iii,jjj,kkk,jpzoo)-trn(iii,jjj,kkk,jp15zoo)
-        print*, tra(iii,jjj,kkk,jpzoo), tra(iii,jjj,kkk,jp15zoo),tra(iii,jjj,kkk,jpzoo)-tra(iii,jjj,kkk,jp15zoo)
-        print*, "ZOO2 " 
-        print*, trb(iii,jjj,kkk,jpmes), trb(iii,jjj,kkk,jp15mes),trb(iii,jjj,kkk,jpmes)-trb(iii,jjj,kkk,jp15mes)
-        print*, trn(iii,jjj,kkk,jpmes), trn(iii,jjj,kkk,jp15mes),trn(iii,jjj,kkk,jpmes)-trn(iii,jjj,kkk,jp15mes)
-        print*, tra(iii,jjj,kkk,jpmes), tra(iii,jjj,kkk,jp15mes),tra(iii,jjj,kkk,jpmes)-tra(iii,jjj,kkk,jp15mes)
+        print*, trb(iii,jjj,kkk,jpno3),trb(iii,jjj,kkk,jp15no3),trb(iii,jjj,kkk,jpno3)-trb(iii,jjj,kkk,jp15no3),trb(iii,jjj,kkk,jp15no3)/trb(iii,jjj,kkk,jpno3)
+        print*, trn(iii,jjj,kkk,jpno3),trn(iii,jjj,kkk,jp15no3),trn(iii,jjj,kkk,jpno3)-trn(iii,jjj,kkk,jp15no3),trn(iii,jjj,kkk,jp15no3)/trn(iii,jjj,kkk,jpno3)
+        print*, tra(iii,jjj,kkk,jpno3),tra(iii,jjj,kkk,jp15no3),tra(iii,jjj,kkk,jpno3)-tra(iii,jjj,kkk,jp15no3),tra(iii,jjj,kkk,jp15no3)/tra(iii,jjj,kkk,jpno3)
+        print*, "NH4 "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpnh4),trb(iii,jjj,kkk,jp15nh4),trb(iii,jjj,kkk,jpnh4)-trb(iii,jjj,kkk,jp15nh4),trb(iii,jjj,kkk,jp15nh4)/trb(iii,jjj,kkk,jpnh4)
+        print*, trn(iii,jjj,kkk,jpnh4),trn(iii,jjj,kkk,jp15nh4),trn(iii,jjj,kkk,jpnh4)-trn(iii,jjj,kkk,jp15nh4),trn(iii,jjj,kkk,jp15nh4)/trn(iii,jjj,kkk,jpnh4)
+        print*, tra(iii,jjj,kkk,jpnh4),tra(iii,jjj,kkk,jp15nh4),tra(iii,jjj,kkk,jpnh4)-tra(iii,jjj,kkk,jp15nh4),tra(iii,jjj,kkk,jp15nh4)/tra(iii,jjj,kkk,jpnh4)
+        print*, "DOC "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpdoc),trb(iii,jjj,kkk,jp15doc),trb(iii,jjj,kkk,jpdoc)-trb(iii,jjj,kkk,jp15doc),trb(iii,jjj,kkk,jp15doc)/trb(iii,jjj,kkk,jpdoc)
+        print*, trn(iii,jjj,kkk,jpdoc),trn(iii,jjj,kkk,jp15doc),trn(iii,jjj,kkk,jpdoc)-trn(iii,jjj,kkk,jp15doc),trn(iii,jjj,kkk,jp15doc)/trn(iii,jjj,kkk,jpdoc)
+        print*, tra(iii,jjj,kkk,jpdoc),tra(iii,jjj,kkk,jp15doc),tra(iii,jjj,kkk,jpdoc)-tra(iii,jjj,kkk,jp15doc),tra(iii,jjj,kkk,jp15doc)/tra(iii,jjj,kkk,jpdoc)
+        print*, "POC "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jppoc),trb(iii,jjj,kkk,jp15poc),trb(iii,jjj,kkk,jppoc)-trb(iii,jjj,kkk,jp15poc),trb(iii,jjj,kkk,jp15poc)/trb(iii,jjj,kkk,jppoc)
+        print*, trn(iii,jjj,kkk,jppoc),trn(iii,jjj,kkk,jp15poc),trn(iii,jjj,kkk,jppoc)-trn(iii,jjj,kkk,jp15poc),trn(iii,jjj,kkk,jp15poc)/trn(iii,jjj,kkk,jppoc)
+        print*, tra(iii,jjj,kkk,jppoc),tra(iii,jjj,kkk,jp15poc),tra(iii,jjj,kkk,jppoc)-tra(iii,jjj,kkk,jp15poc),tra(iii,jjj,kkk,jp15poc)/tra(iii,jjj,kkk,jppoc)
+        print*, "GOC "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpgoc),trb(iii,jjj,kkk,jp15goc),trb(iii,jjj,kkk,jpgoc)-trb(iii,jjj,kkk,jp15goc),trb(iii,jjj,kkk,jp15goc)/trb(iii,jjj,kkk,jpgoc)
+        print*, trn(iii,jjj,kkk,jpgoc),trn(iii,jjj,kkk,jp15goc),trn(iii,jjj,kkk,jpgoc)-trn(iii,jjj,kkk,jp15goc),trn(iii,jjj,kkk,jp15goc)/trn(iii,jjj,kkk,jpgoc)
+        print*, tra(iii,jjj,kkk,jpgoc),tra(iii,jjj,kkk,jp15goc),tra(iii,jjj,kkk,jpgoc)-tra(iii,jjj,kkk,jp15goc),tra(iii,jjj,kkk,jp15goc)/tra(iii,jjj,kkk,jpgoc)
+        print*, "PHY "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpphy),trb(iii,jjj,kkk,jp15phy),trb(iii,jjj,kkk,jpphy)-trb(iii,jjj,kkk,jp15phy),trb(iii,jjj,kkk,jp15phy)/trb(iii,jjj,kkk,jpphy)
+        print*, trn(iii,jjj,kkk,jpphy),trn(iii,jjj,kkk,jp15phy),trn(iii,jjj,kkk,jpphy)-trn(iii,jjj,kkk,jp15phy),trn(iii,jjj,kkk,jp15phy)/trn(iii,jjj,kkk,jpphy)
+        print*, tra(iii,jjj,kkk,jpphy),tra(iii,jjj,kkk,jp15phy),tra(iii,jjj,kkk,jpphy)-tra(iii,jjj,kkk,jp15phy),tra(iii,jjj,kkk,jp15phy)/tra(iii,jjj,kkk,jpphy)
+        print*, "PHY2 "                                                                                                                                     
+        print*, trb(iii,jjj,kkk,jpdia),trb(iii,jjj,kkk,jp15dia),trb(iii,jjj,kkk,jpdia)-trb(iii,jjj,kkk,jp15dia),trb(iii,jjj,kkk,jp15dia)/trb(iii,jjj,kkk,jpdia)
+        print*, trn(iii,jjj,kkk,jpdia),trn(iii,jjj,kkk,jp15dia),trn(iii,jjj,kkk,jpdia)-trn(iii,jjj,kkk,jp15dia),trn(iii,jjj,kkk,jp15dia)/trn(iii,jjj,kkk,jpdia)
+        print*, tra(iii,jjj,kkk,jpdia),tra(iii,jjj,kkk,jp15dia),tra(iii,jjj,kkk,jpdia)-tra(iii,jjj,kkk,jp15dia),tra(iii,jjj,kkk,jp15dia)/tra(iii,jjj,kkk,jpdia)
+        print*, "ZOO "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpzoo),trb(iii,jjj,kkk,jp15zoo),trb(iii,jjj,kkk,jpzoo)-trb(iii,jjj,kkk,jp15zoo),trb(iii,jjj,kkk,jp15zoo)/trb(iii,jjj,kkk,jpzoo)
+        print*, trn(iii,jjj,kkk,jpzoo),trn(iii,jjj,kkk,jp15zoo),trn(iii,jjj,kkk,jpzoo)-trn(iii,jjj,kkk,jp15zoo),trn(iii,jjj,kkk,jp15zoo)/trn(iii,jjj,kkk,jpzoo)
+        print*, tra(iii,jjj,kkk,jpzoo),tra(iii,jjj,kkk,jp15zoo),tra(iii,jjj,kkk,jpzoo)-tra(iii,jjj,kkk,jp15zoo),tra(iii,jjj,kkk,jp15zoo)/tra(iii,jjj,kkk,jpzoo)
+        print*, "ZOO2 "                                                                                                                                     
+        print*, trb(iii,jjj,kkk,jpmes),trb(iii,jjj,kkk,jp15mes),trb(iii,jjj,kkk,jpmes)-trb(iii,jjj,kkk,jp15mes),trb(iii,jjj,kkk,jp15mes)/trb(iii,jjj,kkk,jpmes)
+        print*, trn(iii,jjj,kkk,jpmes),trn(iii,jjj,kkk,jp15mes),trn(iii,jjj,kkk,jpmes)-trn(iii,jjj,kkk,jp15mes),trn(iii,jjj,kkk,jp15mes)/trn(iii,jjj,kkk,jpmes)
+        print*, tra(iii,jjj,kkk,jpmes),tra(iii,jjj,kkk,jp15mes),tra(iii,jjj,kkk,jpmes)-tra(iii,jjj,kkk,jp15mes),tra(iii,jjj,kkk,jp15mes)/tra(iii,jjj,kkk,jpmes)
         print*, " "
       ENDIF
          CALL p4z_prod ( kt, knt )     ! phytoplankton growth rate over the global ocean. 
@@ -261,41 +261,41 @@ CONTAINS
         print*, " " 
         print*, " after calls to p4zprod routines " 
         print*, "NO3 " 
-        print*, trb(iii,jjj,kkk,jpno3), trb(iii,jjj,kkk,jp15no3),trb(iii,jjj,kkk,jpno3)-trb(iii,jjj,kkk,jp15no3)
-        print*, trn(iii,jjj,kkk,jpno3), trn(iii,jjj,kkk,jp15no3),trn(iii,jjj,kkk,jpno3)-trn(iii,jjj,kkk,jp15no3)
-        print*, tra(iii,jjj,kkk,jpno3), tra(iii,jjj,kkk,jp15no3),tra(iii,jjj,kkk,jpno3)-tra(iii,jjj,kkk,jp15no3)
-        print*, "NH4 " 
-        print*, trb(iii,jjj,kkk,jpnh4), trb(iii,jjj,kkk,jp15nh4),trb(iii,jjj,kkk,jpnh4)-trb(iii,jjj,kkk,jp15nh4)
-        print*, trn(iii,jjj,kkk,jpnh4), trn(iii,jjj,kkk,jp15nh4),trn(iii,jjj,kkk,jpnh4)-trn(iii,jjj,kkk,jp15nh4)
-        print*, tra(iii,jjj,kkk,jpnh4), tra(iii,jjj,kkk,jp15nh4),tra(iii,jjj,kkk,jpnh4)-tra(iii,jjj,kkk,jp15nh4)
-        print*, "DOC " 
-        print*, trb(iii,jjj,kkk,jpdoc), trb(iii,jjj,kkk,jp15doc),trb(iii,jjj,kkk,jpdoc)-trb(iii,jjj,kkk,jp15doc)
-        print*, trn(iii,jjj,kkk,jpdoc), trn(iii,jjj,kkk,jp15doc),trn(iii,jjj,kkk,jpdoc)-trn(iii,jjj,kkk,jp15doc)
-        print*, tra(iii,jjj,kkk,jpdoc), tra(iii,jjj,kkk,jp15doc),tra(iii,jjj,kkk,jpdoc)-tra(iii,jjj,kkk,jp15doc)
-        print*, "POC " 
-        print*, trb(iii,jjj,kkk,jppoc), trb(iii,jjj,kkk,jp15poc),trb(iii,jjj,kkk,jppoc)-trb(iii,jjj,kkk,jp15poc)
-        print*, trn(iii,jjj,kkk,jppoc), trn(iii,jjj,kkk,jp15poc),trn(iii,jjj,kkk,jppoc)-trn(iii,jjj,kkk,jp15poc)
-        print*, tra(iii,jjj,kkk,jppoc), tra(iii,jjj,kkk,jp15poc),tra(iii,jjj,kkk,jppoc)-tra(iii,jjj,kkk,jp15poc)
-        print*, "GOC " 
-        print*, trb(iii,jjj,kkk,jpgoc), trb(iii,jjj,kkk,jp15goc),trb(iii,jjj,kkk,jpgoc)-trb(iii,jjj,kkk,jp15goc)
-        print*, trn(iii,jjj,kkk,jpgoc), trn(iii,jjj,kkk,jp15goc),trn(iii,jjj,kkk,jpgoc)-trn(iii,jjj,kkk,jp15goc)
-        print*, tra(iii,jjj,kkk,jpgoc), tra(iii,jjj,kkk,jp15goc),tra(iii,jjj,kkk,jpgoc)-tra(iii,jjj,kkk,jp15goc)
-        print*, "PHY " 
-        print*, trb(iii,jjj,kkk,jpphy), trb(iii,jjj,kkk,jp15phy),trb(iii,jjj,kkk,jpphy)-trb(iii,jjj,kkk,jp15phy)
-        print*, trn(iii,jjj,kkk,jpphy), trn(iii,jjj,kkk,jp15phy),trn(iii,jjj,kkk,jpphy)-trn(iii,jjj,kkk,jp15phy)
-        print*, tra(iii,jjj,kkk,jpphy), tra(iii,jjj,kkk,jp15phy),tra(iii,jjj,kkk,jpphy)-tra(iii,jjj,kkk,jp15phy)
-        print*, "PHY2 " 
-        print*, trb(iii,jjj,kkk,jpdia), trb(iii,jjj,kkk,jp15dia),trb(iii,jjj,kkk,jpdia)-trb(iii,jjj,kkk,jp15dia)
-        print*, trn(iii,jjj,kkk,jpdia), trn(iii,jjj,kkk,jp15dia),trn(iii,jjj,kkk,jpdia)-trn(iii,jjj,kkk,jp15dia)
-        print*, tra(iii,jjj,kkk,jpdia), tra(iii,jjj,kkk,jp15dia),tra(iii,jjj,kkk,jpdia)-tra(iii,jjj,kkk,jp15dia)
-        print*, "ZOO " 
-        print*, trb(iii,jjj,kkk,jpzoo), trb(iii,jjj,kkk,jp15zoo),trb(iii,jjj,kkk,jpzoo)-trb(iii,jjj,kkk,jp15zoo)
-        print*, trn(iii,jjj,kkk,jpzoo), trn(iii,jjj,kkk,jp15zoo),trn(iii,jjj,kkk,jpzoo)-trn(iii,jjj,kkk,jp15zoo)
-        print*, tra(iii,jjj,kkk,jpzoo), tra(iii,jjj,kkk,jp15zoo),tra(iii,jjj,kkk,jpzoo)-tra(iii,jjj,kkk,jp15zoo)
-        print*, "ZOO2 " 
-        print*, trb(iii,jjj,kkk,jpmes), trb(iii,jjj,kkk,jp15mes),trb(iii,jjj,kkk,jpmes)-trb(iii,jjj,kkk,jp15mes)
-        print*, trn(iii,jjj,kkk,jpmes), trn(iii,jjj,kkk,jp15mes),trn(iii,jjj,kkk,jpmes)-trn(iii,jjj,kkk,jp15mes)
-        print*, tra(iii,jjj,kkk,jpmes), tra(iii,jjj,kkk,jp15mes),tra(iii,jjj,kkk,jpmes)-tra(iii,jjj,kkk,jp15mes)
+        print*, trb(iii,jjj,kkk,jpno3),trb(iii,jjj,kkk,jp15no3),trb(iii,jjj,kkk,jpno3)-trb(iii,jjj,kkk,jp15no3),trb(iii,jjj,kkk,jp15no3)/trb(iii,jjj,kkk,jpno3)
+        print*, trn(iii,jjj,kkk,jpno3),trn(iii,jjj,kkk,jp15no3),trn(iii,jjj,kkk,jpno3)-trn(iii,jjj,kkk,jp15no3),trn(iii,jjj,kkk,jp15no3)/trn(iii,jjj,kkk,jpno3)
+        print*, tra(iii,jjj,kkk,jpno3),tra(iii,jjj,kkk,jp15no3),tra(iii,jjj,kkk,jpno3)-tra(iii,jjj,kkk,jp15no3),tra(iii,jjj,kkk,jp15no3)/tra(iii,jjj,kkk,jpno3)
+        print*, "NH4 "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpnh4),trb(iii,jjj,kkk,jp15nh4),trb(iii,jjj,kkk,jpnh4)-trb(iii,jjj,kkk,jp15nh4),trb(iii,jjj,kkk,jp15nh4)/trb(iii,jjj,kkk,jpnh4)
+        print*, trn(iii,jjj,kkk,jpnh4),trn(iii,jjj,kkk,jp15nh4),trn(iii,jjj,kkk,jpnh4)-trn(iii,jjj,kkk,jp15nh4),trn(iii,jjj,kkk,jp15nh4)/trn(iii,jjj,kkk,jpnh4)
+        print*, tra(iii,jjj,kkk,jpnh4),tra(iii,jjj,kkk,jp15nh4),tra(iii,jjj,kkk,jpnh4)-tra(iii,jjj,kkk,jp15nh4),tra(iii,jjj,kkk,jp15nh4)/tra(iii,jjj,kkk,jpnh4)
+        print*, "DOC "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpdoc),trb(iii,jjj,kkk,jp15doc),trb(iii,jjj,kkk,jpdoc)-trb(iii,jjj,kkk,jp15doc),trb(iii,jjj,kkk,jp15doc)/trb(iii,jjj,kkk,jpdoc)
+        print*, trn(iii,jjj,kkk,jpdoc),trn(iii,jjj,kkk,jp15doc),trn(iii,jjj,kkk,jpdoc)-trn(iii,jjj,kkk,jp15doc),trn(iii,jjj,kkk,jp15doc)/trn(iii,jjj,kkk,jpdoc)
+        print*, tra(iii,jjj,kkk,jpdoc),tra(iii,jjj,kkk,jp15doc),tra(iii,jjj,kkk,jpdoc)-tra(iii,jjj,kkk,jp15doc),tra(iii,jjj,kkk,jp15doc)/tra(iii,jjj,kkk,jpdoc)
+        print*, "POC "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jppoc),trb(iii,jjj,kkk,jp15poc),trb(iii,jjj,kkk,jppoc)-trb(iii,jjj,kkk,jp15poc),trb(iii,jjj,kkk,jp15poc)/trb(iii,jjj,kkk,jppoc)
+        print*, trn(iii,jjj,kkk,jppoc),trn(iii,jjj,kkk,jp15poc),trn(iii,jjj,kkk,jppoc)-trn(iii,jjj,kkk,jp15poc),trn(iii,jjj,kkk,jp15poc)/trn(iii,jjj,kkk,jppoc)
+        print*, tra(iii,jjj,kkk,jppoc),tra(iii,jjj,kkk,jp15poc),tra(iii,jjj,kkk,jppoc)-tra(iii,jjj,kkk,jp15poc),tra(iii,jjj,kkk,jp15poc)/tra(iii,jjj,kkk,jppoc)
+        print*, "GOC "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpgoc),trb(iii,jjj,kkk,jp15goc),trb(iii,jjj,kkk,jpgoc)-trb(iii,jjj,kkk,jp15goc),trb(iii,jjj,kkk,jp15goc)/trb(iii,jjj,kkk,jpgoc)
+        print*, trn(iii,jjj,kkk,jpgoc),trn(iii,jjj,kkk,jp15goc),trn(iii,jjj,kkk,jpgoc)-trn(iii,jjj,kkk,jp15goc),trn(iii,jjj,kkk,jp15goc)/trn(iii,jjj,kkk,jpgoc)
+        print*, tra(iii,jjj,kkk,jpgoc),tra(iii,jjj,kkk,jp15goc),tra(iii,jjj,kkk,jpgoc)-tra(iii,jjj,kkk,jp15goc),tra(iii,jjj,kkk,jp15goc)/tra(iii,jjj,kkk,jpgoc)
+        print*, "PHY "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpphy),trb(iii,jjj,kkk,jp15phy),trb(iii,jjj,kkk,jpphy)-trb(iii,jjj,kkk,jp15phy),trb(iii,jjj,kkk,jp15phy)/trb(iii,jjj,kkk,jpphy)
+        print*, trn(iii,jjj,kkk,jpphy),trn(iii,jjj,kkk,jp15phy),trn(iii,jjj,kkk,jpphy)-trn(iii,jjj,kkk,jp15phy),trn(iii,jjj,kkk,jp15phy)/trn(iii,jjj,kkk,jpphy)
+        print*, tra(iii,jjj,kkk,jpphy),tra(iii,jjj,kkk,jp15phy),tra(iii,jjj,kkk,jpphy)-tra(iii,jjj,kkk,jp15phy),tra(iii,jjj,kkk,jp15phy)/tra(iii,jjj,kkk,jpphy)
+        print*, "PHY2 "                                                                                                                                     
+        print*, trb(iii,jjj,kkk,jpdia),trb(iii,jjj,kkk,jp15dia),trb(iii,jjj,kkk,jpdia)-trb(iii,jjj,kkk,jp15dia),trb(iii,jjj,kkk,jp15dia)/trb(iii,jjj,kkk,jpdia)
+        print*, trn(iii,jjj,kkk,jpdia),trn(iii,jjj,kkk,jp15dia),trn(iii,jjj,kkk,jpdia)-trn(iii,jjj,kkk,jp15dia),trn(iii,jjj,kkk,jp15dia)/trn(iii,jjj,kkk,jpdia)
+        print*, tra(iii,jjj,kkk,jpdia),tra(iii,jjj,kkk,jp15dia),tra(iii,jjj,kkk,jpdia)-tra(iii,jjj,kkk,jp15dia),tra(iii,jjj,kkk,jp15dia)/tra(iii,jjj,kkk,jpdia)
+        print*, "ZOO "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpzoo),trb(iii,jjj,kkk,jp15zoo),trb(iii,jjj,kkk,jpzoo)-trb(iii,jjj,kkk,jp15zoo),trb(iii,jjj,kkk,jp15zoo)/trb(iii,jjj,kkk,jpzoo)
+        print*, trn(iii,jjj,kkk,jpzoo),trn(iii,jjj,kkk,jp15zoo),trn(iii,jjj,kkk,jpzoo)-trn(iii,jjj,kkk,jp15zoo),trn(iii,jjj,kkk,jp15zoo)/trn(iii,jjj,kkk,jpzoo)
+        print*, tra(iii,jjj,kkk,jpzoo),tra(iii,jjj,kkk,jp15zoo),tra(iii,jjj,kkk,jpzoo)-tra(iii,jjj,kkk,jp15zoo),tra(iii,jjj,kkk,jp15zoo)/tra(iii,jjj,kkk,jpzoo)
+        print*, "ZOO2 "                                                                                                                                     
+        print*, trb(iii,jjj,kkk,jpmes),trb(iii,jjj,kkk,jp15mes),trb(iii,jjj,kkk,jpmes)-trb(iii,jjj,kkk,jp15mes),trb(iii,jjj,kkk,jp15mes)/trb(iii,jjj,kkk,jpmes)
+        print*, trn(iii,jjj,kkk,jpmes),trn(iii,jjj,kkk,jp15mes),trn(iii,jjj,kkk,jpmes)-trn(iii,jjj,kkk,jp15mes),trn(iii,jjj,kkk,jp15mes)/trn(iii,jjj,kkk,jpmes)
+        print*, tra(iii,jjj,kkk,jpmes),tra(iii,jjj,kkk,jp15mes),tra(iii,jjj,kkk,jpmes)-tra(iii,jjj,kkk,jp15mes),tra(iii,jjj,kkk,jp15mes)/tra(iii,jjj,kkk,jpmes)
         print*, " "
       ENDIF
          !                             ! (for each element : C, Si, Fe, Chl )
@@ -304,41 +304,41 @@ CONTAINS
         print*, " " 
         print*, " after calls to p4zmort routines " 
         print*, "NO3 " 
-        print*, trb(iii,jjj,kkk,jpno3), trb(iii,jjj,kkk,jp15no3),trb(iii,jjj,kkk,jpno3)-trb(iii,jjj,kkk,jp15no3)
-        print*, trn(iii,jjj,kkk,jpno3), trn(iii,jjj,kkk,jp15no3),trn(iii,jjj,kkk,jpno3)-trn(iii,jjj,kkk,jp15no3)
-        print*, tra(iii,jjj,kkk,jpno3), tra(iii,jjj,kkk,jp15no3),tra(iii,jjj,kkk,jpno3)-tra(iii,jjj,kkk,jp15no3)
-        print*, "NH4 " 
-        print*, trb(iii,jjj,kkk,jpnh4), trb(iii,jjj,kkk,jp15nh4),trb(iii,jjj,kkk,jpnh4)-trb(iii,jjj,kkk,jp15nh4)
-        print*, trn(iii,jjj,kkk,jpnh4), trn(iii,jjj,kkk,jp15nh4),trn(iii,jjj,kkk,jpnh4)-trn(iii,jjj,kkk,jp15nh4)
-        print*, tra(iii,jjj,kkk,jpnh4), tra(iii,jjj,kkk,jp15nh4),tra(iii,jjj,kkk,jpnh4)-tra(iii,jjj,kkk,jp15nh4)
-        print*, "DOC " 
-        print*, trb(iii,jjj,kkk,jpdoc), trb(iii,jjj,kkk,jp15doc),trb(iii,jjj,kkk,jpdoc)-trb(iii,jjj,kkk,jp15doc)
-        print*, trn(iii,jjj,kkk,jpdoc), trn(iii,jjj,kkk,jp15doc),trn(iii,jjj,kkk,jpdoc)-trn(iii,jjj,kkk,jp15doc)
-        print*, tra(iii,jjj,kkk,jpdoc), tra(iii,jjj,kkk,jp15doc),tra(iii,jjj,kkk,jpdoc)-tra(iii,jjj,kkk,jp15doc)
-        print*, "POC " 
-        print*, trb(iii,jjj,kkk,jppoc), trb(iii,jjj,kkk,jp15poc),trb(iii,jjj,kkk,jppoc)-trb(iii,jjj,kkk,jp15poc)
-        print*, trn(iii,jjj,kkk,jppoc), trn(iii,jjj,kkk,jp15poc),trn(iii,jjj,kkk,jppoc)-trn(iii,jjj,kkk,jp15poc)
-        print*, tra(iii,jjj,kkk,jppoc), tra(iii,jjj,kkk,jp15poc),tra(iii,jjj,kkk,jppoc)-tra(iii,jjj,kkk,jp15poc)
-        print*, "GOC " 
-        print*, trb(iii,jjj,kkk,jpgoc), trb(iii,jjj,kkk,jp15goc),trb(iii,jjj,kkk,jpgoc)-trb(iii,jjj,kkk,jp15goc)
-        print*, trn(iii,jjj,kkk,jpgoc), trn(iii,jjj,kkk,jp15goc),trn(iii,jjj,kkk,jpgoc)-trn(iii,jjj,kkk,jp15goc)
-        print*, tra(iii,jjj,kkk,jpgoc), tra(iii,jjj,kkk,jp15goc),tra(iii,jjj,kkk,jpgoc)-tra(iii,jjj,kkk,jp15goc)
-        print*, "PHY " 
-        print*, trb(iii,jjj,kkk,jpphy), trb(iii,jjj,kkk,jp15phy),trb(iii,jjj,kkk,jpphy)-trb(iii,jjj,kkk,jp15phy)
-        print*, trn(iii,jjj,kkk,jpphy), trn(iii,jjj,kkk,jp15phy),trn(iii,jjj,kkk,jpphy)-trn(iii,jjj,kkk,jp15phy)
-        print*, tra(iii,jjj,kkk,jpphy), tra(iii,jjj,kkk,jp15phy),tra(iii,jjj,kkk,jpphy)-tra(iii,jjj,kkk,jp15phy)
-        print*, "PHY2 " 
-        print*, trb(iii,jjj,kkk,jpdia), trb(iii,jjj,kkk,jp15dia),trb(iii,jjj,kkk,jpdia)-trb(iii,jjj,kkk,jp15dia)
-        print*, trn(iii,jjj,kkk,jpdia), trn(iii,jjj,kkk,jp15dia),trn(iii,jjj,kkk,jpdia)-trn(iii,jjj,kkk,jp15dia)
-        print*, tra(iii,jjj,kkk,jpdia), tra(iii,jjj,kkk,jp15dia),tra(iii,jjj,kkk,jpdia)-tra(iii,jjj,kkk,jp15dia)
-        print*, "ZOO " 
-        print*, trb(iii,jjj,kkk,jpzoo), trb(iii,jjj,kkk,jp15zoo),trb(iii,jjj,kkk,jpzoo)-trb(iii,jjj,kkk,jp15zoo)
-        print*, trn(iii,jjj,kkk,jpzoo), trn(iii,jjj,kkk,jp15zoo),trn(iii,jjj,kkk,jpzoo)-trn(iii,jjj,kkk,jp15zoo)
-        print*, tra(iii,jjj,kkk,jpzoo), tra(iii,jjj,kkk,jp15zoo),tra(iii,jjj,kkk,jpzoo)-tra(iii,jjj,kkk,jp15zoo)
-        print*, "ZOO2 " 
-        print*, trb(iii,jjj,kkk,jpmes), trb(iii,jjj,kkk,jp15mes),trb(iii,jjj,kkk,jpmes)-trb(iii,jjj,kkk,jp15mes)
-        print*, trn(iii,jjj,kkk,jpmes), trn(iii,jjj,kkk,jp15mes),trn(iii,jjj,kkk,jpmes)-trn(iii,jjj,kkk,jp15mes)
-        print*, tra(iii,jjj,kkk,jpmes), tra(iii,jjj,kkk,jp15mes),tra(iii,jjj,kkk,jpmes)-tra(iii,jjj,kkk,jp15mes)
+        print*, trb(iii,jjj,kkk,jpno3),trb(iii,jjj,kkk,jp15no3),trb(iii,jjj,kkk,jpno3)-trb(iii,jjj,kkk,jp15no3),trb(iii,jjj,kkk,jp15no3)/trb(iii,jjj,kkk,jpno3)
+        print*, trn(iii,jjj,kkk,jpno3),trn(iii,jjj,kkk,jp15no3),trn(iii,jjj,kkk,jpno3)-trn(iii,jjj,kkk,jp15no3),trn(iii,jjj,kkk,jp15no3)/trn(iii,jjj,kkk,jpno3)
+        print*, tra(iii,jjj,kkk,jpno3),tra(iii,jjj,kkk,jp15no3),tra(iii,jjj,kkk,jpno3)-tra(iii,jjj,kkk,jp15no3),tra(iii,jjj,kkk,jp15no3)/tra(iii,jjj,kkk,jpno3)
+        print*, "NH4 "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpnh4),trb(iii,jjj,kkk,jp15nh4),trb(iii,jjj,kkk,jpnh4)-trb(iii,jjj,kkk,jp15nh4),trb(iii,jjj,kkk,jp15nh4)/trb(iii,jjj,kkk,jpnh4)
+        print*, trn(iii,jjj,kkk,jpnh4),trn(iii,jjj,kkk,jp15nh4),trn(iii,jjj,kkk,jpnh4)-trn(iii,jjj,kkk,jp15nh4),trn(iii,jjj,kkk,jp15nh4)/trn(iii,jjj,kkk,jpnh4)
+        print*, tra(iii,jjj,kkk,jpnh4),tra(iii,jjj,kkk,jp15nh4),tra(iii,jjj,kkk,jpnh4)-tra(iii,jjj,kkk,jp15nh4),tra(iii,jjj,kkk,jp15nh4)/tra(iii,jjj,kkk,jpnh4)
+        print*, "DOC "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpdoc),trb(iii,jjj,kkk,jp15doc),trb(iii,jjj,kkk,jpdoc)-trb(iii,jjj,kkk,jp15doc),trb(iii,jjj,kkk,jp15doc)/trb(iii,jjj,kkk,jpdoc)
+        print*, trn(iii,jjj,kkk,jpdoc),trn(iii,jjj,kkk,jp15doc),trn(iii,jjj,kkk,jpdoc)-trn(iii,jjj,kkk,jp15doc),trn(iii,jjj,kkk,jp15doc)/trn(iii,jjj,kkk,jpdoc)
+        print*, tra(iii,jjj,kkk,jpdoc),tra(iii,jjj,kkk,jp15doc),tra(iii,jjj,kkk,jpdoc)-tra(iii,jjj,kkk,jp15doc),tra(iii,jjj,kkk,jp15doc)/tra(iii,jjj,kkk,jpdoc)
+        print*, "POC "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jppoc),trb(iii,jjj,kkk,jp15poc),trb(iii,jjj,kkk,jppoc)-trb(iii,jjj,kkk,jp15poc),trb(iii,jjj,kkk,jp15poc)/trb(iii,jjj,kkk,jppoc)
+        print*, trn(iii,jjj,kkk,jppoc),trn(iii,jjj,kkk,jp15poc),trn(iii,jjj,kkk,jppoc)-trn(iii,jjj,kkk,jp15poc),trn(iii,jjj,kkk,jp15poc)/trn(iii,jjj,kkk,jppoc)
+        print*, tra(iii,jjj,kkk,jppoc),tra(iii,jjj,kkk,jp15poc),tra(iii,jjj,kkk,jppoc)-tra(iii,jjj,kkk,jp15poc),tra(iii,jjj,kkk,jp15poc)/tra(iii,jjj,kkk,jppoc)
+        print*, "GOC "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpgoc),trb(iii,jjj,kkk,jp15goc),trb(iii,jjj,kkk,jpgoc)-trb(iii,jjj,kkk,jp15goc),trb(iii,jjj,kkk,jp15goc)/trb(iii,jjj,kkk,jpgoc)
+        print*, trn(iii,jjj,kkk,jpgoc),trn(iii,jjj,kkk,jp15goc),trn(iii,jjj,kkk,jpgoc)-trn(iii,jjj,kkk,jp15goc),trn(iii,jjj,kkk,jp15goc)/trn(iii,jjj,kkk,jpgoc)
+        print*, tra(iii,jjj,kkk,jpgoc),tra(iii,jjj,kkk,jp15goc),tra(iii,jjj,kkk,jpgoc)-tra(iii,jjj,kkk,jp15goc),tra(iii,jjj,kkk,jp15goc)/tra(iii,jjj,kkk,jpgoc)
+        print*, "PHY "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpphy),trb(iii,jjj,kkk,jp15phy),trb(iii,jjj,kkk,jpphy)-trb(iii,jjj,kkk,jp15phy),trb(iii,jjj,kkk,jp15phy)/trb(iii,jjj,kkk,jpphy)
+        print*, trn(iii,jjj,kkk,jpphy),trn(iii,jjj,kkk,jp15phy),trn(iii,jjj,kkk,jpphy)-trn(iii,jjj,kkk,jp15phy),trn(iii,jjj,kkk,jp15phy)/trn(iii,jjj,kkk,jpphy)
+        print*, tra(iii,jjj,kkk,jpphy),tra(iii,jjj,kkk,jp15phy),tra(iii,jjj,kkk,jpphy)-tra(iii,jjj,kkk,jp15phy),tra(iii,jjj,kkk,jp15phy)/tra(iii,jjj,kkk,jpphy)
+        print*, "PHY2 "                                                                                                                                     
+        print*, trb(iii,jjj,kkk,jpdia),trb(iii,jjj,kkk,jp15dia),trb(iii,jjj,kkk,jpdia)-trb(iii,jjj,kkk,jp15dia),trb(iii,jjj,kkk,jp15dia)/trb(iii,jjj,kkk,jpdia)
+        print*, trn(iii,jjj,kkk,jpdia),trn(iii,jjj,kkk,jp15dia),trn(iii,jjj,kkk,jpdia)-trn(iii,jjj,kkk,jp15dia),trn(iii,jjj,kkk,jp15dia)/trn(iii,jjj,kkk,jpdia)
+        print*, tra(iii,jjj,kkk,jpdia),tra(iii,jjj,kkk,jp15dia),tra(iii,jjj,kkk,jpdia)-tra(iii,jjj,kkk,jp15dia),tra(iii,jjj,kkk,jp15dia)/tra(iii,jjj,kkk,jpdia)
+        print*, "ZOO "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpzoo),trb(iii,jjj,kkk,jp15zoo),trb(iii,jjj,kkk,jpzoo)-trb(iii,jjj,kkk,jp15zoo),trb(iii,jjj,kkk,jp15zoo)/trb(iii,jjj,kkk,jpzoo)
+        print*, trn(iii,jjj,kkk,jpzoo),trn(iii,jjj,kkk,jp15zoo),trn(iii,jjj,kkk,jpzoo)-trn(iii,jjj,kkk,jp15zoo),trn(iii,jjj,kkk,jp15zoo)/trn(iii,jjj,kkk,jpzoo)
+        print*, tra(iii,jjj,kkk,jpzoo),tra(iii,jjj,kkk,jp15zoo),tra(iii,jjj,kkk,jpzoo)-tra(iii,jjj,kkk,jp15zoo),tra(iii,jjj,kkk,jp15zoo)/tra(iii,jjj,kkk,jpzoo)
+        print*, "ZOO2 "                                                                                                                                     
+        print*, trb(iii,jjj,kkk,jpmes),trb(iii,jjj,kkk,jp15mes),trb(iii,jjj,kkk,jpmes)-trb(iii,jjj,kkk,jp15mes),trb(iii,jjj,kkk,jp15mes)/trb(iii,jjj,kkk,jpmes)
+        print*, trn(iii,jjj,kkk,jpmes),trn(iii,jjj,kkk,jp15mes),trn(iii,jjj,kkk,jpmes)-trn(iii,jjj,kkk,jp15mes),trn(iii,jjj,kkk,jp15mes)/trn(iii,jjj,kkk,jpmes)
+        print*, tra(iii,jjj,kkk,jpmes),tra(iii,jjj,kkk,jp15mes),tra(iii,jjj,kkk,jpmes)-tra(iii,jjj,kkk,jp15mes),tra(iii,jjj,kkk,jp15mes)/tra(iii,jjj,kkk,jpmes)
         print*, " "
       ENDIF
          !                             ! zooplankton sources/sinks routines 
@@ -347,41 +347,41 @@ CONTAINS
         print*, " " 
         print*, " after calls to p4zmicro routines " 
         print*, "NO3 " 
-        print*, trb(iii,jjj,kkk,jpno3), trb(iii,jjj,kkk,jp15no3),trb(iii,jjj,kkk,jpno3)-trb(iii,jjj,kkk,jp15no3)
-        print*, trn(iii,jjj,kkk,jpno3), trn(iii,jjj,kkk,jp15no3),trn(iii,jjj,kkk,jpno3)-trn(iii,jjj,kkk,jp15no3)
-        print*, tra(iii,jjj,kkk,jpno3), tra(iii,jjj,kkk,jp15no3),tra(iii,jjj,kkk,jpno3)-tra(iii,jjj,kkk,jp15no3)
-        print*, "NH4 " 
-        print*, trb(iii,jjj,kkk,jpnh4), trb(iii,jjj,kkk,jp15nh4),trb(iii,jjj,kkk,jpnh4)-trb(iii,jjj,kkk,jp15nh4)
-        print*, trn(iii,jjj,kkk,jpnh4), trn(iii,jjj,kkk,jp15nh4),trn(iii,jjj,kkk,jpnh4)-trn(iii,jjj,kkk,jp15nh4)
-        print*, tra(iii,jjj,kkk,jpnh4), tra(iii,jjj,kkk,jp15nh4),tra(iii,jjj,kkk,jpnh4)-tra(iii,jjj,kkk,jp15nh4)
-        print*, "DOC " 
-        print*, trb(iii,jjj,kkk,jpdoc), trb(iii,jjj,kkk,jp15doc),trb(iii,jjj,kkk,jpdoc)-trb(iii,jjj,kkk,jp15doc)
-        print*, trn(iii,jjj,kkk,jpdoc), trn(iii,jjj,kkk,jp15doc),trn(iii,jjj,kkk,jpdoc)-trn(iii,jjj,kkk,jp15doc)
-        print*, tra(iii,jjj,kkk,jpdoc), tra(iii,jjj,kkk,jp15doc),tra(iii,jjj,kkk,jpdoc)-tra(iii,jjj,kkk,jp15doc)
-        print*, "POC " 
-        print*, trb(iii,jjj,kkk,jppoc), trb(iii,jjj,kkk,jp15poc),trb(iii,jjj,kkk,jppoc)-trb(iii,jjj,kkk,jp15poc)
-        print*, trn(iii,jjj,kkk,jppoc), trn(iii,jjj,kkk,jp15poc),trn(iii,jjj,kkk,jppoc)-trn(iii,jjj,kkk,jp15poc)
-        print*, tra(iii,jjj,kkk,jppoc), tra(iii,jjj,kkk,jp15poc),tra(iii,jjj,kkk,jppoc)-tra(iii,jjj,kkk,jp15poc)
-        print*, "GOC " 
-        print*, trb(iii,jjj,kkk,jpgoc), trb(iii,jjj,kkk,jp15goc),trb(iii,jjj,kkk,jpgoc)-trb(iii,jjj,kkk,jp15goc)
-        print*, trn(iii,jjj,kkk,jpgoc), trn(iii,jjj,kkk,jp15goc),trn(iii,jjj,kkk,jpgoc)-trn(iii,jjj,kkk,jp15goc)
-        print*, tra(iii,jjj,kkk,jpgoc), tra(iii,jjj,kkk,jp15goc),tra(iii,jjj,kkk,jpgoc)-tra(iii,jjj,kkk,jp15goc)
-        print*, "PHY " 
-        print*, trb(iii,jjj,kkk,jpphy), trb(iii,jjj,kkk,jp15phy),trb(iii,jjj,kkk,jpphy)-trb(iii,jjj,kkk,jp15phy)
-        print*, trn(iii,jjj,kkk,jpphy), trn(iii,jjj,kkk,jp15phy),trn(iii,jjj,kkk,jpphy)-trn(iii,jjj,kkk,jp15phy)
-        print*, tra(iii,jjj,kkk,jpphy), tra(iii,jjj,kkk,jp15phy),tra(iii,jjj,kkk,jpphy)-tra(iii,jjj,kkk,jp15phy)
-        print*, "PHY2 " 
-        print*, trb(iii,jjj,kkk,jpdia), trb(iii,jjj,kkk,jp15dia),trb(iii,jjj,kkk,jpdia)-trb(iii,jjj,kkk,jp15dia)
-        print*, trn(iii,jjj,kkk,jpdia), trn(iii,jjj,kkk,jp15dia),trn(iii,jjj,kkk,jpdia)-trn(iii,jjj,kkk,jp15dia)
-        print*, tra(iii,jjj,kkk,jpdia), tra(iii,jjj,kkk,jp15dia),tra(iii,jjj,kkk,jpdia)-tra(iii,jjj,kkk,jp15dia)
-        print*, "ZOO " 
-        print*, trb(iii,jjj,kkk,jpzoo), trb(iii,jjj,kkk,jp15zoo),trb(iii,jjj,kkk,jpzoo)-trb(iii,jjj,kkk,jp15zoo)
-        print*, trn(iii,jjj,kkk,jpzoo), trn(iii,jjj,kkk,jp15zoo),trn(iii,jjj,kkk,jpzoo)-trn(iii,jjj,kkk,jp15zoo)
-        print*, tra(iii,jjj,kkk,jpzoo), tra(iii,jjj,kkk,jp15zoo),tra(iii,jjj,kkk,jpzoo)-tra(iii,jjj,kkk,jp15zoo)
-        print*, "ZOO2 " 
-        print*, trb(iii,jjj,kkk,jpmes), trb(iii,jjj,kkk,jp15mes),trb(iii,jjj,kkk,jpmes)-trb(iii,jjj,kkk,jp15mes)
-        print*, trn(iii,jjj,kkk,jpmes), trn(iii,jjj,kkk,jp15mes),trn(iii,jjj,kkk,jpmes)-trn(iii,jjj,kkk,jp15mes)
-        print*, tra(iii,jjj,kkk,jpmes), tra(iii,jjj,kkk,jp15mes),tra(iii,jjj,kkk,jpmes)-tra(iii,jjj,kkk,jp15mes)
+        print*, trb(iii,jjj,kkk,jpno3),trb(iii,jjj,kkk,jp15no3),trb(iii,jjj,kkk,jpno3)-trb(iii,jjj,kkk,jp15no3),trb(iii,jjj,kkk,jp15no3)/trb(iii,jjj,kkk,jpno3)
+        print*, trn(iii,jjj,kkk,jpno3),trn(iii,jjj,kkk,jp15no3),trn(iii,jjj,kkk,jpno3)-trn(iii,jjj,kkk,jp15no3),trn(iii,jjj,kkk,jp15no3)/trn(iii,jjj,kkk,jpno3)
+        print*, tra(iii,jjj,kkk,jpno3),tra(iii,jjj,kkk,jp15no3),tra(iii,jjj,kkk,jpno3)-tra(iii,jjj,kkk,jp15no3),tra(iii,jjj,kkk,jp15no3)/tra(iii,jjj,kkk,jpno3)
+        print*, "NH4 "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpnh4),trb(iii,jjj,kkk,jp15nh4),trb(iii,jjj,kkk,jpnh4)-trb(iii,jjj,kkk,jp15nh4),trb(iii,jjj,kkk,jp15nh4)/trb(iii,jjj,kkk,jpnh4)
+        print*, trn(iii,jjj,kkk,jpnh4),trn(iii,jjj,kkk,jp15nh4),trn(iii,jjj,kkk,jpnh4)-trn(iii,jjj,kkk,jp15nh4),trn(iii,jjj,kkk,jp15nh4)/trn(iii,jjj,kkk,jpnh4)
+        print*, tra(iii,jjj,kkk,jpnh4),tra(iii,jjj,kkk,jp15nh4),tra(iii,jjj,kkk,jpnh4)-tra(iii,jjj,kkk,jp15nh4),tra(iii,jjj,kkk,jp15nh4)/tra(iii,jjj,kkk,jpnh4)
+        print*, "DOC "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpdoc),trb(iii,jjj,kkk,jp15doc),trb(iii,jjj,kkk,jpdoc)-trb(iii,jjj,kkk,jp15doc),trb(iii,jjj,kkk,jp15doc)/trb(iii,jjj,kkk,jpdoc)
+        print*, trn(iii,jjj,kkk,jpdoc),trn(iii,jjj,kkk,jp15doc),trn(iii,jjj,kkk,jpdoc)-trn(iii,jjj,kkk,jp15doc),trn(iii,jjj,kkk,jp15doc)/trn(iii,jjj,kkk,jpdoc)
+        print*, tra(iii,jjj,kkk,jpdoc),tra(iii,jjj,kkk,jp15doc),tra(iii,jjj,kkk,jpdoc)-tra(iii,jjj,kkk,jp15doc),tra(iii,jjj,kkk,jp15doc)/tra(iii,jjj,kkk,jpdoc)
+        print*, "POC "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jppoc),trb(iii,jjj,kkk,jp15poc),trb(iii,jjj,kkk,jppoc)-trb(iii,jjj,kkk,jp15poc),trb(iii,jjj,kkk,jp15poc)/trb(iii,jjj,kkk,jppoc)
+        print*, trn(iii,jjj,kkk,jppoc),trn(iii,jjj,kkk,jp15poc),trn(iii,jjj,kkk,jppoc)-trn(iii,jjj,kkk,jp15poc),trn(iii,jjj,kkk,jp15poc)/trn(iii,jjj,kkk,jppoc)
+        print*, tra(iii,jjj,kkk,jppoc),tra(iii,jjj,kkk,jp15poc),tra(iii,jjj,kkk,jppoc)-tra(iii,jjj,kkk,jp15poc),tra(iii,jjj,kkk,jp15poc)/tra(iii,jjj,kkk,jppoc)
+        print*, "GOC "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpgoc),trb(iii,jjj,kkk,jp15goc),trb(iii,jjj,kkk,jpgoc)-trb(iii,jjj,kkk,jp15goc),trb(iii,jjj,kkk,jp15goc)/trb(iii,jjj,kkk,jpgoc)
+        print*, trn(iii,jjj,kkk,jpgoc),trn(iii,jjj,kkk,jp15goc),trn(iii,jjj,kkk,jpgoc)-trn(iii,jjj,kkk,jp15goc),trn(iii,jjj,kkk,jp15goc)/trn(iii,jjj,kkk,jpgoc)
+        print*, tra(iii,jjj,kkk,jpgoc),tra(iii,jjj,kkk,jp15goc),tra(iii,jjj,kkk,jpgoc)-tra(iii,jjj,kkk,jp15goc),tra(iii,jjj,kkk,jp15goc)/tra(iii,jjj,kkk,jpgoc)
+        print*, "PHY "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpphy),trb(iii,jjj,kkk,jp15phy),trb(iii,jjj,kkk,jpphy)-trb(iii,jjj,kkk,jp15phy),trb(iii,jjj,kkk,jp15phy)/trb(iii,jjj,kkk,jpphy)
+        print*, trn(iii,jjj,kkk,jpphy),trn(iii,jjj,kkk,jp15phy),trn(iii,jjj,kkk,jpphy)-trn(iii,jjj,kkk,jp15phy),trn(iii,jjj,kkk,jp15phy)/trn(iii,jjj,kkk,jpphy)
+        print*, tra(iii,jjj,kkk,jpphy),tra(iii,jjj,kkk,jp15phy),tra(iii,jjj,kkk,jpphy)-tra(iii,jjj,kkk,jp15phy),tra(iii,jjj,kkk,jp15phy)/tra(iii,jjj,kkk,jpphy)
+        print*, "PHY2 "                                                                                                                                     
+        print*, trb(iii,jjj,kkk,jpdia),trb(iii,jjj,kkk,jp15dia),trb(iii,jjj,kkk,jpdia)-trb(iii,jjj,kkk,jp15dia),trb(iii,jjj,kkk,jp15dia)/trb(iii,jjj,kkk,jpdia)
+        print*, trn(iii,jjj,kkk,jpdia),trn(iii,jjj,kkk,jp15dia),trn(iii,jjj,kkk,jpdia)-trn(iii,jjj,kkk,jp15dia),trn(iii,jjj,kkk,jp15dia)/trn(iii,jjj,kkk,jpdia)
+        print*, tra(iii,jjj,kkk,jpdia),tra(iii,jjj,kkk,jp15dia),tra(iii,jjj,kkk,jpdia)-tra(iii,jjj,kkk,jp15dia),tra(iii,jjj,kkk,jp15dia)/tra(iii,jjj,kkk,jpdia)
+        print*, "ZOO "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpzoo),trb(iii,jjj,kkk,jp15zoo),trb(iii,jjj,kkk,jpzoo)-trb(iii,jjj,kkk,jp15zoo),trb(iii,jjj,kkk,jp15zoo)/trb(iii,jjj,kkk,jpzoo)
+        print*, trn(iii,jjj,kkk,jpzoo),trn(iii,jjj,kkk,jp15zoo),trn(iii,jjj,kkk,jpzoo)-trn(iii,jjj,kkk,jp15zoo),trn(iii,jjj,kkk,jp15zoo)/trn(iii,jjj,kkk,jpzoo)
+        print*, tra(iii,jjj,kkk,jpzoo),tra(iii,jjj,kkk,jp15zoo),tra(iii,jjj,kkk,jpzoo)-tra(iii,jjj,kkk,jp15zoo),tra(iii,jjj,kkk,jp15zoo)/tra(iii,jjj,kkk,jpzoo)
+        print*, "ZOO2 "                                                                                                                                     
+        print*, trb(iii,jjj,kkk,jpmes),trb(iii,jjj,kkk,jp15mes),trb(iii,jjj,kkk,jpmes)-trb(iii,jjj,kkk,jp15mes),trb(iii,jjj,kkk,jp15mes)/trb(iii,jjj,kkk,jpmes)
+        print*, trn(iii,jjj,kkk,jpmes),trn(iii,jjj,kkk,jp15mes),trn(iii,jjj,kkk,jpmes)-trn(iii,jjj,kkk,jp15mes),trn(iii,jjj,kkk,jp15mes)/trn(iii,jjj,kkk,jpmes)
+        print*, tra(iii,jjj,kkk,jpmes),tra(iii,jjj,kkk,jp15mes),tra(iii,jjj,kkk,jpmes)-tra(iii,jjj,kkk,jp15mes),tra(iii,jjj,kkk,jp15mes)/tra(iii,jjj,kkk,jpmes)
         print*, " "
       ENDIF
          CALL p4z_meso ( kt, knt )           ! mesozooplankton
@@ -389,41 +389,41 @@ CONTAINS
         print*, " " 
         print*, " after calls to p4zmeso routines " 
         print*, "NO3 " 
-        print*, trb(iii,jjj,kkk,jpno3), trb(iii,jjj,kkk,jp15no3),trb(iii,jjj,kkk,jpno3)-trb(iii,jjj,kkk,jp15no3)
-        print*, trn(iii,jjj,kkk,jpno3), trn(iii,jjj,kkk,jp15no3),trn(iii,jjj,kkk,jpno3)-trn(iii,jjj,kkk,jp15no3)
-        print*, tra(iii,jjj,kkk,jpno3), tra(iii,jjj,kkk,jp15no3),tra(iii,jjj,kkk,jpno3)-tra(iii,jjj,kkk,jp15no3)
-        print*, "NH4 " 
-        print*, trb(iii,jjj,kkk,jpnh4), trb(iii,jjj,kkk,jp15nh4),trb(iii,jjj,kkk,jpnh4)-trb(iii,jjj,kkk,jp15nh4)
-        print*, trn(iii,jjj,kkk,jpnh4), trn(iii,jjj,kkk,jp15nh4),trn(iii,jjj,kkk,jpnh4)-trn(iii,jjj,kkk,jp15nh4)
-        print*, tra(iii,jjj,kkk,jpnh4), tra(iii,jjj,kkk,jp15nh4),tra(iii,jjj,kkk,jpnh4)-tra(iii,jjj,kkk,jp15nh4)
-        print*, "DOC " 
-        print*, trb(iii,jjj,kkk,jpdoc), trb(iii,jjj,kkk,jp15doc),trb(iii,jjj,kkk,jpdoc)-trb(iii,jjj,kkk,jp15doc)
-        print*, trn(iii,jjj,kkk,jpdoc), trn(iii,jjj,kkk,jp15doc),trn(iii,jjj,kkk,jpdoc)-trn(iii,jjj,kkk,jp15doc)
-        print*, tra(iii,jjj,kkk,jpdoc), tra(iii,jjj,kkk,jp15doc),tra(iii,jjj,kkk,jpdoc)-tra(iii,jjj,kkk,jp15doc)
-        print*, "POC " 
-        print*, trb(iii,jjj,kkk,jppoc), trb(iii,jjj,kkk,jp15poc),trb(iii,jjj,kkk,jppoc)-trb(iii,jjj,kkk,jp15poc)
-        print*, trn(iii,jjj,kkk,jppoc), trn(iii,jjj,kkk,jp15poc),trn(iii,jjj,kkk,jppoc)-trn(iii,jjj,kkk,jp15poc)
-        print*, tra(iii,jjj,kkk,jppoc), tra(iii,jjj,kkk,jp15poc),tra(iii,jjj,kkk,jppoc)-tra(iii,jjj,kkk,jp15poc)
-        print*, "GOC " 
-        print*, trb(iii,jjj,kkk,jpgoc), trb(iii,jjj,kkk,jp15goc),trb(iii,jjj,kkk,jpgoc)-trb(iii,jjj,kkk,jp15goc)
-        print*, trn(iii,jjj,kkk,jpgoc), trn(iii,jjj,kkk,jp15goc),trn(iii,jjj,kkk,jpgoc)-trn(iii,jjj,kkk,jp15goc)
-        print*, tra(iii,jjj,kkk,jpgoc), tra(iii,jjj,kkk,jp15goc),tra(iii,jjj,kkk,jpgoc)-tra(iii,jjj,kkk,jp15goc)
-        print*, "PHY " 
-        print*, trb(iii,jjj,kkk,jpphy), trb(iii,jjj,kkk,jp15phy),trb(iii,jjj,kkk,jpphy)-trb(iii,jjj,kkk,jp15phy)
-        print*, trn(iii,jjj,kkk,jpphy), trn(iii,jjj,kkk,jp15phy),trn(iii,jjj,kkk,jpphy)-trn(iii,jjj,kkk,jp15phy)
-        print*, tra(iii,jjj,kkk,jpphy), tra(iii,jjj,kkk,jp15phy),tra(iii,jjj,kkk,jpphy)-tra(iii,jjj,kkk,jp15phy)
-        print*, "PHY2 " 
-        print*, trb(iii,jjj,kkk,jpdia), trb(iii,jjj,kkk,jp15dia),trb(iii,jjj,kkk,jpdia)-trb(iii,jjj,kkk,jp15dia)
-        print*, trn(iii,jjj,kkk,jpdia), trn(iii,jjj,kkk,jp15dia),trn(iii,jjj,kkk,jpdia)-trn(iii,jjj,kkk,jp15dia)
-        print*, tra(iii,jjj,kkk,jpdia), tra(iii,jjj,kkk,jp15dia),tra(iii,jjj,kkk,jpdia)-tra(iii,jjj,kkk,jp15dia)
-        print*, "ZOO " 
-        print*, trb(iii,jjj,kkk,jpzoo), trb(iii,jjj,kkk,jp15zoo),trb(iii,jjj,kkk,jpzoo)-trb(iii,jjj,kkk,jp15zoo)
-        print*, trn(iii,jjj,kkk,jpzoo), trn(iii,jjj,kkk,jp15zoo),trn(iii,jjj,kkk,jpzoo)-trn(iii,jjj,kkk,jp15zoo)
-        print*, tra(iii,jjj,kkk,jpzoo), tra(iii,jjj,kkk,jp15zoo),tra(iii,jjj,kkk,jpzoo)-tra(iii,jjj,kkk,jp15zoo)
-        print*, "ZOO2 " 
-        print*, trb(iii,jjj,kkk,jpmes), trb(iii,jjj,kkk,jp15mes),trb(iii,jjj,kkk,jpmes)-trb(iii,jjj,kkk,jp15mes)
-        print*, trn(iii,jjj,kkk,jpmes), trn(iii,jjj,kkk,jp15mes),trn(iii,jjj,kkk,jpmes)-trn(iii,jjj,kkk,jp15mes)
-        print*, tra(iii,jjj,kkk,jpmes), tra(iii,jjj,kkk,jp15mes),tra(iii,jjj,kkk,jpmes)-tra(iii,jjj,kkk,jp15mes)
+        print*, trb(iii,jjj,kkk,jpno3),trb(iii,jjj,kkk,jp15no3),trb(iii,jjj,kkk,jpno3)-trb(iii,jjj,kkk,jp15no3),trb(iii,jjj,kkk,jp15no3)/trb(iii,jjj,kkk,jpno3)
+        print*, trn(iii,jjj,kkk,jpno3),trn(iii,jjj,kkk,jp15no3),trn(iii,jjj,kkk,jpno3)-trn(iii,jjj,kkk,jp15no3),trn(iii,jjj,kkk,jp15no3)/trn(iii,jjj,kkk,jpno3)
+        print*, tra(iii,jjj,kkk,jpno3),tra(iii,jjj,kkk,jp15no3),tra(iii,jjj,kkk,jpno3)-tra(iii,jjj,kkk,jp15no3),tra(iii,jjj,kkk,jp15no3)/tra(iii,jjj,kkk,jpno3)
+        print*, "NH4 "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpnh4),trb(iii,jjj,kkk,jp15nh4),trb(iii,jjj,kkk,jpnh4)-trb(iii,jjj,kkk,jp15nh4),trb(iii,jjj,kkk,jp15nh4)/trb(iii,jjj,kkk,jpnh4)
+        print*, trn(iii,jjj,kkk,jpnh4),trn(iii,jjj,kkk,jp15nh4),trn(iii,jjj,kkk,jpnh4)-trn(iii,jjj,kkk,jp15nh4),trn(iii,jjj,kkk,jp15nh4)/trn(iii,jjj,kkk,jpnh4)
+        print*, tra(iii,jjj,kkk,jpnh4),tra(iii,jjj,kkk,jp15nh4),tra(iii,jjj,kkk,jpnh4)-tra(iii,jjj,kkk,jp15nh4),tra(iii,jjj,kkk,jp15nh4)/tra(iii,jjj,kkk,jpnh4)
+        print*, "DOC "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpdoc),trb(iii,jjj,kkk,jp15doc),trb(iii,jjj,kkk,jpdoc)-trb(iii,jjj,kkk,jp15doc),trb(iii,jjj,kkk,jp15doc)/trb(iii,jjj,kkk,jpdoc)
+        print*, trn(iii,jjj,kkk,jpdoc),trn(iii,jjj,kkk,jp15doc),trn(iii,jjj,kkk,jpdoc)-trn(iii,jjj,kkk,jp15doc),trn(iii,jjj,kkk,jp15doc)/trn(iii,jjj,kkk,jpdoc)
+        print*, tra(iii,jjj,kkk,jpdoc),tra(iii,jjj,kkk,jp15doc),tra(iii,jjj,kkk,jpdoc)-tra(iii,jjj,kkk,jp15doc),tra(iii,jjj,kkk,jp15doc)/tra(iii,jjj,kkk,jpdoc)
+        print*, "POC "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jppoc),trb(iii,jjj,kkk,jp15poc),trb(iii,jjj,kkk,jppoc)-trb(iii,jjj,kkk,jp15poc),trb(iii,jjj,kkk,jp15poc)/trb(iii,jjj,kkk,jppoc)
+        print*, trn(iii,jjj,kkk,jppoc),trn(iii,jjj,kkk,jp15poc),trn(iii,jjj,kkk,jppoc)-trn(iii,jjj,kkk,jp15poc),trn(iii,jjj,kkk,jp15poc)/trn(iii,jjj,kkk,jppoc)
+        print*, tra(iii,jjj,kkk,jppoc),tra(iii,jjj,kkk,jp15poc),tra(iii,jjj,kkk,jppoc)-tra(iii,jjj,kkk,jp15poc),tra(iii,jjj,kkk,jp15poc)/tra(iii,jjj,kkk,jppoc)
+        print*, "GOC "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpgoc),trb(iii,jjj,kkk,jp15goc),trb(iii,jjj,kkk,jpgoc)-trb(iii,jjj,kkk,jp15goc),trb(iii,jjj,kkk,jp15goc)/trb(iii,jjj,kkk,jpgoc)
+        print*, trn(iii,jjj,kkk,jpgoc),trn(iii,jjj,kkk,jp15goc),trn(iii,jjj,kkk,jpgoc)-trn(iii,jjj,kkk,jp15goc),trn(iii,jjj,kkk,jp15goc)/trn(iii,jjj,kkk,jpgoc)
+        print*, tra(iii,jjj,kkk,jpgoc),tra(iii,jjj,kkk,jp15goc),tra(iii,jjj,kkk,jpgoc)-tra(iii,jjj,kkk,jp15goc),tra(iii,jjj,kkk,jp15goc)/tra(iii,jjj,kkk,jpgoc)
+        print*, "PHY "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpphy),trb(iii,jjj,kkk,jp15phy),trb(iii,jjj,kkk,jpphy)-trb(iii,jjj,kkk,jp15phy),trb(iii,jjj,kkk,jp15phy)/trb(iii,jjj,kkk,jpphy)
+        print*, trn(iii,jjj,kkk,jpphy),trn(iii,jjj,kkk,jp15phy),trn(iii,jjj,kkk,jpphy)-trn(iii,jjj,kkk,jp15phy),trn(iii,jjj,kkk,jp15phy)/trn(iii,jjj,kkk,jpphy)
+        print*, tra(iii,jjj,kkk,jpphy),tra(iii,jjj,kkk,jp15phy),tra(iii,jjj,kkk,jpphy)-tra(iii,jjj,kkk,jp15phy),tra(iii,jjj,kkk,jp15phy)/tra(iii,jjj,kkk,jpphy)
+        print*, "PHY2 "                                                                                                                                     
+        print*, trb(iii,jjj,kkk,jpdia),trb(iii,jjj,kkk,jp15dia),trb(iii,jjj,kkk,jpdia)-trb(iii,jjj,kkk,jp15dia),trb(iii,jjj,kkk,jp15dia)/trb(iii,jjj,kkk,jpdia)
+        print*, trn(iii,jjj,kkk,jpdia),trn(iii,jjj,kkk,jp15dia),trn(iii,jjj,kkk,jpdia)-trn(iii,jjj,kkk,jp15dia),trn(iii,jjj,kkk,jp15dia)/trn(iii,jjj,kkk,jpdia)
+        print*, tra(iii,jjj,kkk,jpdia),tra(iii,jjj,kkk,jp15dia),tra(iii,jjj,kkk,jpdia)-tra(iii,jjj,kkk,jp15dia),tra(iii,jjj,kkk,jp15dia)/tra(iii,jjj,kkk,jpdia)
+        print*, "ZOO "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpzoo),trb(iii,jjj,kkk,jp15zoo),trb(iii,jjj,kkk,jpzoo)-trb(iii,jjj,kkk,jp15zoo),trb(iii,jjj,kkk,jp15zoo)/trb(iii,jjj,kkk,jpzoo)
+        print*, trn(iii,jjj,kkk,jpzoo),trn(iii,jjj,kkk,jp15zoo),trn(iii,jjj,kkk,jpzoo)-trn(iii,jjj,kkk,jp15zoo),trn(iii,jjj,kkk,jp15zoo)/trn(iii,jjj,kkk,jpzoo)
+        print*, tra(iii,jjj,kkk,jpzoo),tra(iii,jjj,kkk,jp15zoo),tra(iii,jjj,kkk,jpzoo)-tra(iii,jjj,kkk,jp15zoo),tra(iii,jjj,kkk,jp15zoo)/tra(iii,jjj,kkk,jpzoo)
+        print*, "ZOO2 "                                                                                                                                     
+        print*, trb(iii,jjj,kkk,jpmes),trb(iii,jjj,kkk,jp15mes),trb(iii,jjj,kkk,jpmes)-trb(iii,jjj,kkk,jp15mes),trb(iii,jjj,kkk,jp15mes)/trb(iii,jjj,kkk,jpmes)
+        print*, trn(iii,jjj,kkk,jpmes),trn(iii,jjj,kkk,jp15mes),trn(iii,jjj,kkk,jpmes)-trn(iii,jjj,kkk,jp15mes),trn(iii,jjj,kkk,jp15mes)/trn(iii,jjj,kkk,jpmes)
+        print*, tra(iii,jjj,kkk,jpmes),tra(iii,jjj,kkk,jp15mes),tra(iii,jjj,kkk,jpmes)-tra(iii,jjj,kkk,jp15mes),tra(iii,jjj,kkk,jp15mes)/tra(iii,jjj,kkk,jpmes)
         print*, " "
       ENDIF
       ELSE
@@ -439,41 +439,41 @@ CONTAINS
         print*, " " 
         print*, " after calls to biological routines " 
         print*, "NO3 " 
-        print*, trb(iii,jjj,kkk,jpno3), trb(iii,jjj,kkk,jp15no3),trb(iii,jjj,kkk,jpno3)-trb(iii,jjj,kkk,jp15no3)
-        print*, trn(iii,jjj,kkk,jpno3), trn(iii,jjj,kkk,jp15no3),trn(iii,jjj,kkk,jpno3)-trn(iii,jjj,kkk,jp15no3)
-        print*, tra(iii,jjj,kkk,jpno3), tra(iii,jjj,kkk,jp15no3),tra(iii,jjj,kkk,jpno3)-tra(iii,jjj,kkk,jp15no3)
-        print*, "NH4 " 
-        print*, trb(iii,jjj,kkk,jpnh4), trb(iii,jjj,kkk,jp15nh4),trb(iii,jjj,kkk,jpnh4)-trb(iii,jjj,kkk,jp15nh4)
-        print*, trn(iii,jjj,kkk,jpnh4), trn(iii,jjj,kkk,jp15nh4),trn(iii,jjj,kkk,jpnh4)-trn(iii,jjj,kkk,jp15nh4)
-        print*, tra(iii,jjj,kkk,jpnh4), tra(iii,jjj,kkk,jp15nh4),tra(iii,jjj,kkk,jpnh4)-tra(iii,jjj,kkk,jp15nh4)
-        print*, "DOC " 
-        print*, trb(iii,jjj,kkk,jpdoc), trb(iii,jjj,kkk,jp15doc),trb(iii,jjj,kkk,jpdoc)-trb(iii,jjj,kkk,jp15doc)
-        print*, trn(iii,jjj,kkk,jpdoc), trn(iii,jjj,kkk,jp15doc),trn(iii,jjj,kkk,jpdoc)-trn(iii,jjj,kkk,jp15doc)
-        print*, tra(iii,jjj,kkk,jpdoc), tra(iii,jjj,kkk,jp15doc),tra(iii,jjj,kkk,jpdoc)-tra(iii,jjj,kkk,jp15doc)
-        print*, "POC " 
-        print*, trb(iii,jjj,kkk,jppoc), trb(iii,jjj,kkk,jp15poc),trb(iii,jjj,kkk,jppoc)-trb(iii,jjj,kkk,jp15poc)
-        print*, trn(iii,jjj,kkk,jppoc), trn(iii,jjj,kkk,jp15poc),trn(iii,jjj,kkk,jppoc)-trn(iii,jjj,kkk,jp15poc)
-        print*, tra(iii,jjj,kkk,jppoc), tra(iii,jjj,kkk,jp15poc),tra(iii,jjj,kkk,jppoc)-tra(iii,jjj,kkk,jp15poc)
-        print*, "GOC " 
-        print*, trb(iii,jjj,kkk,jpgoc), trb(iii,jjj,kkk,jp15goc),trb(iii,jjj,kkk,jpgoc)-trb(iii,jjj,kkk,jp15goc)
-        print*, trn(iii,jjj,kkk,jpgoc), trn(iii,jjj,kkk,jp15goc),trn(iii,jjj,kkk,jpgoc)-trn(iii,jjj,kkk,jp15goc)
-        print*, tra(iii,jjj,kkk,jpgoc), tra(iii,jjj,kkk,jp15goc),tra(iii,jjj,kkk,jpgoc)-tra(iii,jjj,kkk,jp15goc)
-        print*, "PHY " 
-        print*, trb(iii,jjj,kkk,jpphy), trb(iii,jjj,kkk,jp15phy),trb(iii,jjj,kkk,jpphy)-trb(iii,jjj,kkk,jp15phy)
-        print*, trn(iii,jjj,kkk,jpphy), trn(iii,jjj,kkk,jp15phy),trn(iii,jjj,kkk,jpphy)-trn(iii,jjj,kkk,jp15phy)
-        print*, tra(iii,jjj,kkk,jpphy), tra(iii,jjj,kkk,jp15phy),tra(iii,jjj,kkk,jpphy)-tra(iii,jjj,kkk,jp15phy)
-        print*, "PHY2 " 
-        print*, trb(iii,jjj,kkk,jpdia), trb(iii,jjj,kkk,jp15dia),trb(iii,jjj,kkk,jpdia)-trb(iii,jjj,kkk,jp15dia)
-        print*, trn(iii,jjj,kkk,jpdia), trn(iii,jjj,kkk,jp15dia),trn(iii,jjj,kkk,jpdia)-trn(iii,jjj,kkk,jp15dia)
-        print*, tra(iii,jjj,kkk,jpdia), tra(iii,jjj,kkk,jp15dia),tra(iii,jjj,kkk,jpdia)-tra(iii,jjj,kkk,jp15dia)
-        print*, "ZOO " 
-        print*, trb(iii,jjj,kkk,jpzoo), trb(iii,jjj,kkk,jp15zoo),trb(iii,jjj,kkk,jpzoo)-trb(iii,jjj,kkk,jp15zoo)
-        print*, trn(iii,jjj,kkk,jpzoo), trn(iii,jjj,kkk,jp15zoo),trn(iii,jjj,kkk,jpzoo)-trn(iii,jjj,kkk,jp15zoo)
-        print*, tra(iii,jjj,kkk,jpzoo), tra(iii,jjj,kkk,jp15zoo),tra(iii,jjj,kkk,jpzoo)-tra(iii,jjj,kkk,jp15zoo)
-        print*, "ZOO2 " 
-        print*, trb(iii,jjj,kkk,jpmes), trb(iii,jjj,kkk,jp15mes),trb(iii,jjj,kkk,jpmes)-trb(iii,jjj,kkk,jp15mes)
-        print*, trn(iii,jjj,kkk,jpmes), trn(iii,jjj,kkk,jp15mes),trn(iii,jjj,kkk,jpmes)-trn(iii,jjj,kkk,jp15mes)
-        print*, tra(iii,jjj,kkk,jpmes), tra(iii,jjj,kkk,jp15mes),tra(iii,jjj,kkk,jpmes)-tra(iii,jjj,kkk,jp15mes)
+        print*, trb(iii,jjj,kkk,jpno3),trb(iii,jjj,kkk,jp15no3),trb(iii,jjj,kkk,jpno3)-trb(iii,jjj,kkk,jp15no3),trb(iii,jjj,kkk,jp15no3)/trb(iii,jjj,kkk,jpno3)
+        print*, trn(iii,jjj,kkk,jpno3),trn(iii,jjj,kkk,jp15no3),trn(iii,jjj,kkk,jpno3)-trn(iii,jjj,kkk,jp15no3),trn(iii,jjj,kkk,jp15no3)/trn(iii,jjj,kkk,jpno3)
+        print*, tra(iii,jjj,kkk,jpno3),tra(iii,jjj,kkk,jp15no3),tra(iii,jjj,kkk,jpno3)-tra(iii,jjj,kkk,jp15no3),tra(iii,jjj,kkk,jp15no3)/tra(iii,jjj,kkk,jpno3)
+        print*, "NH4 "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpnh4),trb(iii,jjj,kkk,jp15nh4),trb(iii,jjj,kkk,jpnh4)-trb(iii,jjj,kkk,jp15nh4),trb(iii,jjj,kkk,jp15nh4)/trb(iii,jjj,kkk,jpnh4)
+        print*, trn(iii,jjj,kkk,jpnh4),trn(iii,jjj,kkk,jp15nh4),trn(iii,jjj,kkk,jpnh4)-trn(iii,jjj,kkk,jp15nh4),trn(iii,jjj,kkk,jp15nh4)/trn(iii,jjj,kkk,jpnh4)
+        print*, tra(iii,jjj,kkk,jpnh4),tra(iii,jjj,kkk,jp15nh4),tra(iii,jjj,kkk,jpnh4)-tra(iii,jjj,kkk,jp15nh4),tra(iii,jjj,kkk,jp15nh4)/tra(iii,jjj,kkk,jpnh4)
+        print*, "DOC "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpdoc),trb(iii,jjj,kkk,jp15doc),trb(iii,jjj,kkk,jpdoc)-trb(iii,jjj,kkk,jp15doc),trb(iii,jjj,kkk,jp15doc)/trb(iii,jjj,kkk,jpdoc)
+        print*, trn(iii,jjj,kkk,jpdoc),trn(iii,jjj,kkk,jp15doc),trn(iii,jjj,kkk,jpdoc)-trn(iii,jjj,kkk,jp15doc),trn(iii,jjj,kkk,jp15doc)/trn(iii,jjj,kkk,jpdoc)
+        print*, tra(iii,jjj,kkk,jpdoc),tra(iii,jjj,kkk,jp15doc),tra(iii,jjj,kkk,jpdoc)-tra(iii,jjj,kkk,jp15doc),tra(iii,jjj,kkk,jp15doc)/tra(iii,jjj,kkk,jpdoc)
+        print*, "POC "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jppoc),trb(iii,jjj,kkk,jp15poc),trb(iii,jjj,kkk,jppoc)-trb(iii,jjj,kkk,jp15poc),trb(iii,jjj,kkk,jp15poc)/trb(iii,jjj,kkk,jppoc)
+        print*, trn(iii,jjj,kkk,jppoc),trn(iii,jjj,kkk,jp15poc),trn(iii,jjj,kkk,jppoc)-trn(iii,jjj,kkk,jp15poc),trn(iii,jjj,kkk,jp15poc)/trn(iii,jjj,kkk,jppoc)
+        print*, tra(iii,jjj,kkk,jppoc),tra(iii,jjj,kkk,jp15poc),tra(iii,jjj,kkk,jppoc)-tra(iii,jjj,kkk,jp15poc),tra(iii,jjj,kkk,jp15poc)/tra(iii,jjj,kkk,jppoc)
+        print*, "GOC "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpgoc),trb(iii,jjj,kkk,jp15goc),trb(iii,jjj,kkk,jpgoc)-trb(iii,jjj,kkk,jp15goc),trb(iii,jjj,kkk,jp15goc)/trb(iii,jjj,kkk,jpgoc)
+        print*, trn(iii,jjj,kkk,jpgoc),trn(iii,jjj,kkk,jp15goc),trn(iii,jjj,kkk,jpgoc)-trn(iii,jjj,kkk,jp15goc),trn(iii,jjj,kkk,jp15goc)/trn(iii,jjj,kkk,jpgoc)
+        print*, tra(iii,jjj,kkk,jpgoc),tra(iii,jjj,kkk,jp15goc),tra(iii,jjj,kkk,jpgoc)-tra(iii,jjj,kkk,jp15goc),tra(iii,jjj,kkk,jp15goc)/tra(iii,jjj,kkk,jpgoc)
+        print*, "PHY "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpphy),trb(iii,jjj,kkk,jp15phy),trb(iii,jjj,kkk,jpphy)-trb(iii,jjj,kkk,jp15phy),trb(iii,jjj,kkk,jp15phy)/trb(iii,jjj,kkk,jpphy)
+        print*, trn(iii,jjj,kkk,jpphy),trn(iii,jjj,kkk,jp15phy),trn(iii,jjj,kkk,jpphy)-trn(iii,jjj,kkk,jp15phy),trn(iii,jjj,kkk,jp15phy)/trn(iii,jjj,kkk,jpphy)
+        print*, tra(iii,jjj,kkk,jpphy),tra(iii,jjj,kkk,jp15phy),tra(iii,jjj,kkk,jpphy)-tra(iii,jjj,kkk,jp15phy),tra(iii,jjj,kkk,jp15phy)/tra(iii,jjj,kkk,jpphy)
+        print*, "PHY2 "                                                                                                                                     
+        print*, trb(iii,jjj,kkk,jpdia),trb(iii,jjj,kkk,jp15dia),trb(iii,jjj,kkk,jpdia)-trb(iii,jjj,kkk,jp15dia),trb(iii,jjj,kkk,jp15dia)/trb(iii,jjj,kkk,jpdia)
+        print*, trn(iii,jjj,kkk,jpdia),trn(iii,jjj,kkk,jp15dia),trn(iii,jjj,kkk,jpdia)-trn(iii,jjj,kkk,jp15dia),trn(iii,jjj,kkk,jp15dia)/trn(iii,jjj,kkk,jpdia)
+        print*, tra(iii,jjj,kkk,jpdia),tra(iii,jjj,kkk,jp15dia),tra(iii,jjj,kkk,jpdia)-tra(iii,jjj,kkk,jp15dia),tra(iii,jjj,kkk,jp15dia)/tra(iii,jjj,kkk,jpdia)
+        print*, "ZOO "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpzoo),trb(iii,jjj,kkk,jp15zoo),trb(iii,jjj,kkk,jpzoo)-trb(iii,jjj,kkk,jp15zoo),trb(iii,jjj,kkk,jp15zoo)/trb(iii,jjj,kkk,jpzoo)
+        print*, trn(iii,jjj,kkk,jpzoo),trn(iii,jjj,kkk,jp15zoo),trn(iii,jjj,kkk,jpzoo)-trn(iii,jjj,kkk,jp15zoo),trn(iii,jjj,kkk,jp15zoo)/trn(iii,jjj,kkk,jpzoo)
+        print*, tra(iii,jjj,kkk,jpzoo),tra(iii,jjj,kkk,jp15zoo),tra(iii,jjj,kkk,jpzoo)-tra(iii,jjj,kkk,jp15zoo),tra(iii,jjj,kkk,jp15zoo)/tra(iii,jjj,kkk,jpzoo)
+        print*, "ZOO2 "                                                                                                                                     
+        print*, trb(iii,jjj,kkk,jpmes),trb(iii,jjj,kkk,jp15mes),trb(iii,jjj,kkk,jpmes)-trb(iii,jjj,kkk,jp15mes),trb(iii,jjj,kkk,jp15mes)/trb(iii,jjj,kkk,jpmes)
+        print*, trn(iii,jjj,kkk,jpmes),trn(iii,jjj,kkk,jp15mes),trn(iii,jjj,kkk,jpmes)-trn(iii,jjj,kkk,jp15mes),trn(iii,jjj,kkk,jp15mes)/trn(iii,jjj,kkk,jpmes)
+        print*, tra(iii,jjj,kkk,jpmes),tra(iii,jjj,kkk,jp15mes),tra(iii,jjj,kkk,jpmes)-tra(iii,jjj,kkk,jp15mes),tra(iii,jjj,kkk,jp15mes)/tra(iii,jjj,kkk,jpmes)
         print*, " "
       ENDIF
       !
@@ -482,41 +482,41 @@ CONTAINS
         print*, " " 
         print*, " after call to p4zagg " 
         print*, "NO3 " 
-        print*, trb(iii,jjj,kkk,jpno3), trb(iii,jjj,kkk,jp15no3),trb(iii,jjj,kkk,jpno3)-trb(iii,jjj,kkk,jp15no3)
-        print*, trn(iii,jjj,kkk,jpno3), trn(iii,jjj,kkk,jp15no3),trn(iii,jjj,kkk,jpno3)-trn(iii,jjj,kkk,jp15no3)
-        print*, tra(iii,jjj,kkk,jpno3), tra(iii,jjj,kkk,jp15no3),tra(iii,jjj,kkk,jpno3)-tra(iii,jjj,kkk,jp15no3)
-        print*, "NH4 " 
-        print*, trb(iii,jjj,kkk,jpnh4), trb(iii,jjj,kkk,jp15nh4),trb(iii,jjj,kkk,jpnh4)-trb(iii,jjj,kkk,jp15nh4)
-        print*, trn(iii,jjj,kkk,jpnh4), trn(iii,jjj,kkk,jp15nh4),trn(iii,jjj,kkk,jpnh4)-trn(iii,jjj,kkk,jp15nh4)
-        print*, tra(iii,jjj,kkk,jpnh4), tra(iii,jjj,kkk,jp15nh4),tra(iii,jjj,kkk,jpnh4)-tra(iii,jjj,kkk,jp15nh4)
-        print*, "DOC " 
-        print*, trb(iii,jjj,kkk,jpdoc), trb(iii,jjj,kkk,jp15doc),trb(iii,jjj,kkk,jpdoc)-trb(iii,jjj,kkk,jp15doc)
-        print*, trn(iii,jjj,kkk,jpdoc), trn(iii,jjj,kkk,jp15doc),trn(iii,jjj,kkk,jpdoc)-trn(iii,jjj,kkk,jp15doc)
-        print*, tra(iii,jjj,kkk,jpdoc), tra(iii,jjj,kkk,jp15doc),tra(iii,jjj,kkk,jpdoc)-tra(iii,jjj,kkk,jp15doc)
-        print*, "POC " 
-        print*, trb(iii,jjj,kkk,jppoc), trb(iii,jjj,kkk,jp15poc),trb(iii,jjj,kkk,jppoc)-trb(iii,jjj,kkk,jp15poc)
-        print*, trn(iii,jjj,kkk,jppoc), trn(iii,jjj,kkk,jp15poc),trn(iii,jjj,kkk,jppoc)-trn(iii,jjj,kkk,jp15poc)
-        print*, tra(iii,jjj,kkk,jppoc), tra(iii,jjj,kkk,jp15poc),tra(iii,jjj,kkk,jppoc)-tra(iii,jjj,kkk,jp15poc)
-        print*, "GOC " 
-        print*, trb(iii,jjj,kkk,jpgoc), trb(iii,jjj,kkk,jp15goc),trb(iii,jjj,kkk,jpgoc)-trb(iii,jjj,kkk,jp15goc)
-        print*, trn(iii,jjj,kkk,jpgoc), trn(iii,jjj,kkk,jp15goc),trn(iii,jjj,kkk,jpgoc)-trn(iii,jjj,kkk,jp15goc)
-        print*, tra(iii,jjj,kkk,jpgoc), tra(iii,jjj,kkk,jp15goc),tra(iii,jjj,kkk,jpgoc)-tra(iii,jjj,kkk,jp15goc)
-        print*, "PHY " 
-        print*, trb(iii,jjj,kkk,jpphy), trb(iii,jjj,kkk,jp15phy),trb(iii,jjj,kkk,jpphy)-trb(iii,jjj,kkk,jp15phy)
-        print*, trn(iii,jjj,kkk,jpphy), trn(iii,jjj,kkk,jp15phy),trn(iii,jjj,kkk,jpphy)-trn(iii,jjj,kkk,jp15phy)
-        print*, tra(iii,jjj,kkk,jpphy), tra(iii,jjj,kkk,jp15phy),tra(iii,jjj,kkk,jpphy)-tra(iii,jjj,kkk,jp15phy)
-        print*, "PHY2 " 
-        print*, trb(iii,jjj,kkk,jpdia), trb(iii,jjj,kkk,jp15dia),trb(iii,jjj,kkk,jpdia)-trb(iii,jjj,kkk,jp15dia)
-        print*, trn(iii,jjj,kkk,jpdia), trn(iii,jjj,kkk,jp15dia),trn(iii,jjj,kkk,jpdia)-trn(iii,jjj,kkk,jp15dia)
-        print*, tra(iii,jjj,kkk,jpdia), tra(iii,jjj,kkk,jp15dia),tra(iii,jjj,kkk,jpdia)-tra(iii,jjj,kkk,jp15dia)
-        print*, "ZOO " 
-        print*, trb(iii,jjj,kkk,jpzoo), trb(iii,jjj,kkk,jp15zoo),trb(iii,jjj,kkk,jpzoo)-trb(iii,jjj,kkk,jp15zoo)
-        print*, trn(iii,jjj,kkk,jpzoo), trn(iii,jjj,kkk,jp15zoo),trn(iii,jjj,kkk,jpzoo)-trn(iii,jjj,kkk,jp15zoo)
-        print*, tra(iii,jjj,kkk,jpzoo), tra(iii,jjj,kkk,jp15zoo),tra(iii,jjj,kkk,jpzoo)-tra(iii,jjj,kkk,jp15zoo)
-        print*, "ZOO2 " 
-        print*, trb(iii,jjj,kkk,jpmes), trb(iii,jjj,kkk,jp15mes),trb(iii,jjj,kkk,jpmes)-trb(iii,jjj,kkk,jp15mes)
-        print*, trn(iii,jjj,kkk,jpmes), trn(iii,jjj,kkk,jp15mes),trn(iii,jjj,kkk,jpmes)-trn(iii,jjj,kkk,jp15mes)
-        print*, tra(iii,jjj,kkk,jpmes), tra(iii,jjj,kkk,jp15mes),tra(iii,jjj,kkk,jpmes)-tra(iii,jjj,kkk,jp15mes)
+        print*, trb(iii,jjj,kkk,jpno3),trb(iii,jjj,kkk,jp15no3),trb(iii,jjj,kkk,jpno3)-trb(iii,jjj,kkk,jp15no3),trb(iii,jjj,kkk,jp15no3)/trb(iii,jjj,kkk,jpno3)
+        print*, trn(iii,jjj,kkk,jpno3),trn(iii,jjj,kkk,jp15no3),trn(iii,jjj,kkk,jpno3)-trn(iii,jjj,kkk,jp15no3),trn(iii,jjj,kkk,jp15no3)/trn(iii,jjj,kkk,jpno3)
+        print*, tra(iii,jjj,kkk,jpno3),tra(iii,jjj,kkk,jp15no3),tra(iii,jjj,kkk,jpno3)-tra(iii,jjj,kkk,jp15no3),tra(iii,jjj,kkk,jp15no3)/tra(iii,jjj,kkk,jpno3)
+        print*, "NH4 "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpnh4),trb(iii,jjj,kkk,jp15nh4),trb(iii,jjj,kkk,jpnh4)-trb(iii,jjj,kkk,jp15nh4),trb(iii,jjj,kkk,jp15nh4)/trb(iii,jjj,kkk,jpnh4)
+        print*, trn(iii,jjj,kkk,jpnh4),trn(iii,jjj,kkk,jp15nh4),trn(iii,jjj,kkk,jpnh4)-trn(iii,jjj,kkk,jp15nh4),trn(iii,jjj,kkk,jp15nh4)/trn(iii,jjj,kkk,jpnh4)
+        print*, tra(iii,jjj,kkk,jpnh4),tra(iii,jjj,kkk,jp15nh4),tra(iii,jjj,kkk,jpnh4)-tra(iii,jjj,kkk,jp15nh4),tra(iii,jjj,kkk,jp15nh4)/tra(iii,jjj,kkk,jpnh4)
+        print*, "DOC "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpdoc),trb(iii,jjj,kkk,jp15doc),trb(iii,jjj,kkk,jpdoc)-trb(iii,jjj,kkk,jp15doc),trb(iii,jjj,kkk,jp15doc)/trb(iii,jjj,kkk,jpdoc)
+        print*, trn(iii,jjj,kkk,jpdoc),trn(iii,jjj,kkk,jp15doc),trn(iii,jjj,kkk,jpdoc)-trn(iii,jjj,kkk,jp15doc),trn(iii,jjj,kkk,jp15doc)/trn(iii,jjj,kkk,jpdoc)
+        print*, tra(iii,jjj,kkk,jpdoc),tra(iii,jjj,kkk,jp15doc),tra(iii,jjj,kkk,jpdoc)-tra(iii,jjj,kkk,jp15doc),tra(iii,jjj,kkk,jp15doc)/tra(iii,jjj,kkk,jpdoc)
+        print*, "POC "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jppoc),trb(iii,jjj,kkk,jp15poc),trb(iii,jjj,kkk,jppoc)-trb(iii,jjj,kkk,jp15poc),trb(iii,jjj,kkk,jp15poc)/trb(iii,jjj,kkk,jppoc)
+        print*, trn(iii,jjj,kkk,jppoc),trn(iii,jjj,kkk,jp15poc),trn(iii,jjj,kkk,jppoc)-trn(iii,jjj,kkk,jp15poc),trn(iii,jjj,kkk,jp15poc)/trn(iii,jjj,kkk,jppoc)
+        print*, tra(iii,jjj,kkk,jppoc),tra(iii,jjj,kkk,jp15poc),tra(iii,jjj,kkk,jppoc)-tra(iii,jjj,kkk,jp15poc),tra(iii,jjj,kkk,jp15poc)/tra(iii,jjj,kkk,jppoc)
+        print*, "GOC "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpgoc),trb(iii,jjj,kkk,jp15goc),trb(iii,jjj,kkk,jpgoc)-trb(iii,jjj,kkk,jp15goc),trb(iii,jjj,kkk,jp15goc)/trb(iii,jjj,kkk,jpgoc)
+        print*, trn(iii,jjj,kkk,jpgoc),trn(iii,jjj,kkk,jp15goc),trn(iii,jjj,kkk,jpgoc)-trn(iii,jjj,kkk,jp15goc),trn(iii,jjj,kkk,jp15goc)/trn(iii,jjj,kkk,jpgoc)
+        print*, tra(iii,jjj,kkk,jpgoc),tra(iii,jjj,kkk,jp15goc),tra(iii,jjj,kkk,jpgoc)-tra(iii,jjj,kkk,jp15goc),tra(iii,jjj,kkk,jp15goc)/tra(iii,jjj,kkk,jpgoc)
+        print*, "PHY "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpphy),trb(iii,jjj,kkk,jp15phy),trb(iii,jjj,kkk,jpphy)-trb(iii,jjj,kkk,jp15phy),trb(iii,jjj,kkk,jp15phy)/trb(iii,jjj,kkk,jpphy)
+        print*, trn(iii,jjj,kkk,jpphy),trn(iii,jjj,kkk,jp15phy),trn(iii,jjj,kkk,jpphy)-trn(iii,jjj,kkk,jp15phy),trn(iii,jjj,kkk,jp15phy)/trn(iii,jjj,kkk,jpphy)
+        print*, tra(iii,jjj,kkk,jpphy),tra(iii,jjj,kkk,jp15phy),tra(iii,jjj,kkk,jpphy)-tra(iii,jjj,kkk,jp15phy),tra(iii,jjj,kkk,jp15phy)/tra(iii,jjj,kkk,jpphy)
+        print*, "PHY2 "                                                                                                                                     
+        print*, trb(iii,jjj,kkk,jpdia),trb(iii,jjj,kkk,jp15dia),trb(iii,jjj,kkk,jpdia)-trb(iii,jjj,kkk,jp15dia),trb(iii,jjj,kkk,jp15dia)/trb(iii,jjj,kkk,jpdia)
+        print*, trn(iii,jjj,kkk,jpdia),trn(iii,jjj,kkk,jp15dia),trn(iii,jjj,kkk,jpdia)-trn(iii,jjj,kkk,jp15dia),trn(iii,jjj,kkk,jp15dia)/trn(iii,jjj,kkk,jpdia)
+        print*, tra(iii,jjj,kkk,jpdia),tra(iii,jjj,kkk,jp15dia),tra(iii,jjj,kkk,jpdia)-tra(iii,jjj,kkk,jp15dia),tra(iii,jjj,kkk,jp15dia)/tra(iii,jjj,kkk,jpdia)
+        print*, "ZOO "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpzoo),trb(iii,jjj,kkk,jp15zoo),trb(iii,jjj,kkk,jpzoo)-trb(iii,jjj,kkk,jp15zoo),trb(iii,jjj,kkk,jp15zoo)/trb(iii,jjj,kkk,jpzoo)
+        print*, trn(iii,jjj,kkk,jpzoo),trn(iii,jjj,kkk,jp15zoo),trn(iii,jjj,kkk,jpzoo)-trn(iii,jjj,kkk,jp15zoo),trn(iii,jjj,kkk,jp15zoo)/trn(iii,jjj,kkk,jpzoo)
+        print*, tra(iii,jjj,kkk,jpzoo),tra(iii,jjj,kkk,jp15zoo),tra(iii,jjj,kkk,jpzoo)-tra(iii,jjj,kkk,jp15zoo),tra(iii,jjj,kkk,jp15zoo)/tra(iii,jjj,kkk,jpzoo)
+        print*, "ZOO2 "                                                                                                                                     
+        print*, trb(iii,jjj,kkk,jpmes),trb(iii,jjj,kkk,jp15mes),trb(iii,jjj,kkk,jpmes)-trb(iii,jjj,kkk,jp15mes),trb(iii,jjj,kkk,jp15mes)/trb(iii,jjj,kkk,jpmes)
+        print*, trn(iii,jjj,kkk,jpmes),trn(iii,jjj,kkk,jp15mes),trn(iii,jjj,kkk,jpmes)-trn(iii,jjj,kkk,jp15mes),trn(iii,jjj,kkk,jp15mes)/trn(iii,jjj,kkk,jpmes)
+        print*, tra(iii,jjj,kkk,jpmes),tra(iii,jjj,kkk,jp15mes),tra(iii,jjj,kkk,jpmes)-tra(iii,jjj,kkk,jp15mes),tra(iii,jjj,kkk,jp15mes)/tra(iii,jjj,kkk,jpmes)
         print*, " "
       ENDIF
       CALL p4z_rem     ( kt, knt )     ! remineralization terms of organic matter+scavenging of Fe
@@ -524,41 +524,41 @@ CONTAINS
         print*, " " 
         print*, " after call to p4zrem " 
         print*, "NO3 " 
-        print*, trb(iii,jjj,kkk,jpno3), trb(iii,jjj,kkk,jp15no3),trb(iii,jjj,kkk,jpno3)-trb(iii,jjj,kkk,jp15no3)
-        print*, trn(iii,jjj,kkk,jpno3), trn(iii,jjj,kkk,jp15no3),trn(iii,jjj,kkk,jpno3)-trn(iii,jjj,kkk,jp15no3)
-        print*, tra(iii,jjj,kkk,jpno3), tra(iii,jjj,kkk,jp15no3),tra(iii,jjj,kkk,jpno3)-tra(iii,jjj,kkk,jp15no3)
-        print*, "NH4 " 
-        print*, trb(iii,jjj,kkk,jpnh4), trb(iii,jjj,kkk,jp15nh4),trb(iii,jjj,kkk,jpnh4)-trb(iii,jjj,kkk,jp15nh4)
-        print*, trn(iii,jjj,kkk,jpnh4), trn(iii,jjj,kkk,jp15nh4),trn(iii,jjj,kkk,jpnh4)-trn(iii,jjj,kkk,jp15nh4)
-        print*, tra(iii,jjj,kkk,jpnh4), tra(iii,jjj,kkk,jp15nh4),tra(iii,jjj,kkk,jpnh4)-tra(iii,jjj,kkk,jp15nh4)
-        print*, "DOC " 
-        print*, trb(iii,jjj,kkk,jpdoc), trb(iii,jjj,kkk,jp15doc),trb(iii,jjj,kkk,jpdoc)-trb(iii,jjj,kkk,jp15doc)
-        print*, trn(iii,jjj,kkk,jpdoc), trn(iii,jjj,kkk,jp15doc),trn(iii,jjj,kkk,jpdoc)-trn(iii,jjj,kkk,jp15doc)
-        print*, tra(iii,jjj,kkk,jpdoc), tra(iii,jjj,kkk,jp15doc),tra(iii,jjj,kkk,jpdoc)-tra(iii,jjj,kkk,jp15doc)
-        print*, "POC " 
-        print*, trb(iii,jjj,kkk,jppoc), trb(iii,jjj,kkk,jp15poc),trb(iii,jjj,kkk,jppoc)-trb(iii,jjj,kkk,jp15poc)
-        print*, trn(iii,jjj,kkk,jppoc), trn(iii,jjj,kkk,jp15poc),trn(iii,jjj,kkk,jppoc)-trn(iii,jjj,kkk,jp15poc)
-        print*, tra(iii,jjj,kkk,jppoc), tra(iii,jjj,kkk,jp15poc),tra(iii,jjj,kkk,jppoc)-tra(iii,jjj,kkk,jp15poc)
-        print*, "GOC " 
-        print*, trb(iii,jjj,kkk,jpgoc), trb(iii,jjj,kkk,jp15goc),trb(iii,jjj,kkk,jpgoc)-trb(iii,jjj,kkk,jp15goc)
-        print*, trn(iii,jjj,kkk,jpgoc), trn(iii,jjj,kkk,jp15goc),trn(iii,jjj,kkk,jpgoc)-trn(iii,jjj,kkk,jp15goc)
-        print*, tra(iii,jjj,kkk,jpgoc), tra(iii,jjj,kkk,jp15goc),tra(iii,jjj,kkk,jpgoc)-tra(iii,jjj,kkk,jp15goc)
-        print*, "PHY " 
-        print*, trb(iii,jjj,kkk,jpphy), trb(iii,jjj,kkk,jp15phy),trb(iii,jjj,kkk,jpphy)-trb(iii,jjj,kkk,jp15phy)
-        print*, trn(iii,jjj,kkk,jpphy), trn(iii,jjj,kkk,jp15phy),trn(iii,jjj,kkk,jpphy)-trn(iii,jjj,kkk,jp15phy)
-        print*, tra(iii,jjj,kkk,jpphy), tra(iii,jjj,kkk,jp15phy),tra(iii,jjj,kkk,jpphy)-tra(iii,jjj,kkk,jp15phy)
-        print*, "PHY2 " 
-        print*, trb(iii,jjj,kkk,jpdia), trb(iii,jjj,kkk,jp15dia),trb(iii,jjj,kkk,jpdia)-trb(iii,jjj,kkk,jp15dia)
-        print*, trn(iii,jjj,kkk,jpdia), trn(iii,jjj,kkk,jp15dia),trn(iii,jjj,kkk,jpdia)-trn(iii,jjj,kkk,jp15dia)
-        print*, tra(iii,jjj,kkk,jpdia), tra(iii,jjj,kkk,jp15dia),tra(iii,jjj,kkk,jpdia)-tra(iii,jjj,kkk,jp15dia)
-        print*, "ZOO " 
-        print*, trb(iii,jjj,kkk,jpzoo), trb(iii,jjj,kkk,jp15zoo),trb(iii,jjj,kkk,jpzoo)-trb(iii,jjj,kkk,jp15zoo)
-        print*, trn(iii,jjj,kkk,jpzoo), trn(iii,jjj,kkk,jp15zoo),trn(iii,jjj,kkk,jpzoo)-trn(iii,jjj,kkk,jp15zoo)
-        print*, tra(iii,jjj,kkk,jpzoo), tra(iii,jjj,kkk,jp15zoo),tra(iii,jjj,kkk,jpzoo)-tra(iii,jjj,kkk,jp15zoo)
-        print*, "ZOO2 " 
-        print*, trb(iii,jjj,kkk,jpmes), trb(iii,jjj,kkk,jp15mes),trb(iii,jjj,kkk,jpmes)-trb(iii,jjj,kkk,jp15mes)
-        print*, trn(iii,jjj,kkk,jpmes), trn(iii,jjj,kkk,jp15mes),trn(iii,jjj,kkk,jpmes)-trn(iii,jjj,kkk,jp15mes)
-        print*, tra(iii,jjj,kkk,jpmes), tra(iii,jjj,kkk,jp15mes),tra(iii,jjj,kkk,jpmes)-tra(iii,jjj,kkk,jp15mes)
+        print*, trb(iii,jjj,kkk,jpno3),trb(iii,jjj,kkk,jp15no3),trb(iii,jjj,kkk,jpno3)-trb(iii,jjj,kkk,jp15no3),trb(iii,jjj,kkk,jp15no3)/trb(iii,jjj,kkk,jpno3)
+        print*, trn(iii,jjj,kkk,jpno3),trn(iii,jjj,kkk,jp15no3),trn(iii,jjj,kkk,jpno3)-trn(iii,jjj,kkk,jp15no3),trn(iii,jjj,kkk,jp15no3)/trn(iii,jjj,kkk,jpno3)
+        print*, tra(iii,jjj,kkk,jpno3),tra(iii,jjj,kkk,jp15no3),tra(iii,jjj,kkk,jpno3)-tra(iii,jjj,kkk,jp15no3),tra(iii,jjj,kkk,jp15no3)/tra(iii,jjj,kkk,jpno3)
+        print*, "NH4 "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpnh4),trb(iii,jjj,kkk,jp15nh4),trb(iii,jjj,kkk,jpnh4)-trb(iii,jjj,kkk,jp15nh4),trb(iii,jjj,kkk,jp15nh4)/trb(iii,jjj,kkk,jpnh4)
+        print*, trn(iii,jjj,kkk,jpnh4),trn(iii,jjj,kkk,jp15nh4),trn(iii,jjj,kkk,jpnh4)-trn(iii,jjj,kkk,jp15nh4),trn(iii,jjj,kkk,jp15nh4)/trn(iii,jjj,kkk,jpnh4)
+        print*, tra(iii,jjj,kkk,jpnh4),tra(iii,jjj,kkk,jp15nh4),tra(iii,jjj,kkk,jpnh4)-tra(iii,jjj,kkk,jp15nh4),tra(iii,jjj,kkk,jp15nh4)/tra(iii,jjj,kkk,jpnh4)
+        print*, "DOC "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpdoc),trb(iii,jjj,kkk,jp15doc),trb(iii,jjj,kkk,jpdoc)-trb(iii,jjj,kkk,jp15doc),trb(iii,jjj,kkk,jp15doc)/trb(iii,jjj,kkk,jpdoc)
+        print*, trn(iii,jjj,kkk,jpdoc),trn(iii,jjj,kkk,jp15doc),trn(iii,jjj,kkk,jpdoc)-trn(iii,jjj,kkk,jp15doc),trn(iii,jjj,kkk,jp15doc)/trn(iii,jjj,kkk,jpdoc)
+        print*, tra(iii,jjj,kkk,jpdoc),tra(iii,jjj,kkk,jp15doc),tra(iii,jjj,kkk,jpdoc)-tra(iii,jjj,kkk,jp15doc),tra(iii,jjj,kkk,jp15doc)/tra(iii,jjj,kkk,jpdoc)
+        print*, "POC "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jppoc),trb(iii,jjj,kkk,jp15poc),trb(iii,jjj,kkk,jppoc)-trb(iii,jjj,kkk,jp15poc),trb(iii,jjj,kkk,jp15poc)/trb(iii,jjj,kkk,jppoc)
+        print*, trn(iii,jjj,kkk,jppoc),trn(iii,jjj,kkk,jp15poc),trn(iii,jjj,kkk,jppoc)-trn(iii,jjj,kkk,jp15poc),trn(iii,jjj,kkk,jp15poc)/trn(iii,jjj,kkk,jppoc)
+        print*, tra(iii,jjj,kkk,jppoc),tra(iii,jjj,kkk,jp15poc),tra(iii,jjj,kkk,jppoc)-tra(iii,jjj,kkk,jp15poc),tra(iii,jjj,kkk,jp15poc)/tra(iii,jjj,kkk,jppoc)
+        print*, "GOC "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpgoc),trb(iii,jjj,kkk,jp15goc),trb(iii,jjj,kkk,jpgoc)-trb(iii,jjj,kkk,jp15goc),trb(iii,jjj,kkk,jp15goc)/trb(iii,jjj,kkk,jpgoc)
+        print*, trn(iii,jjj,kkk,jpgoc),trn(iii,jjj,kkk,jp15goc),trn(iii,jjj,kkk,jpgoc)-trn(iii,jjj,kkk,jp15goc),trn(iii,jjj,kkk,jp15goc)/trn(iii,jjj,kkk,jpgoc)
+        print*, tra(iii,jjj,kkk,jpgoc),tra(iii,jjj,kkk,jp15goc),tra(iii,jjj,kkk,jpgoc)-tra(iii,jjj,kkk,jp15goc),tra(iii,jjj,kkk,jp15goc)/tra(iii,jjj,kkk,jpgoc)
+        print*, "PHY "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpphy),trb(iii,jjj,kkk,jp15phy),trb(iii,jjj,kkk,jpphy)-trb(iii,jjj,kkk,jp15phy),trb(iii,jjj,kkk,jp15phy)/trb(iii,jjj,kkk,jpphy)
+        print*, trn(iii,jjj,kkk,jpphy),trn(iii,jjj,kkk,jp15phy),trn(iii,jjj,kkk,jpphy)-trn(iii,jjj,kkk,jp15phy),trn(iii,jjj,kkk,jp15phy)/trn(iii,jjj,kkk,jpphy)
+        print*, tra(iii,jjj,kkk,jpphy),tra(iii,jjj,kkk,jp15phy),tra(iii,jjj,kkk,jpphy)-tra(iii,jjj,kkk,jp15phy),tra(iii,jjj,kkk,jp15phy)/tra(iii,jjj,kkk,jpphy)
+        print*, "PHY2 "                                                                                                                                     
+        print*, trb(iii,jjj,kkk,jpdia),trb(iii,jjj,kkk,jp15dia),trb(iii,jjj,kkk,jpdia)-trb(iii,jjj,kkk,jp15dia),trb(iii,jjj,kkk,jp15dia)/trb(iii,jjj,kkk,jpdia)
+        print*, trn(iii,jjj,kkk,jpdia),trn(iii,jjj,kkk,jp15dia),trn(iii,jjj,kkk,jpdia)-trn(iii,jjj,kkk,jp15dia),trn(iii,jjj,kkk,jp15dia)/trn(iii,jjj,kkk,jpdia)
+        print*, tra(iii,jjj,kkk,jpdia),tra(iii,jjj,kkk,jp15dia),tra(iii,jjj,kkk,jpdia)-tra(iii,jjj,kkk,jp15dia),tra(iii,jjj,kkk,jp15dia)/tra(iii,jjj,kkk,jpdia)
+        print*, "ZOO "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpzoo),trb(iii,jjj,kkk,jp15zoo),trb(iii,jjj,kkk,jpzoo)-trb(iii,jjj,kkk,jp15zoo),trb(iii,jjj,kkk,jp15zoo)/trb(iii,jjj,kkk,jpzoo)
+        print*, trn(iii,jjj,kkk,jpzoo),trn(iii,jjj,kkk,jp15zoo),trn(iii,jjj,kkk,jpzoo)-trn(iii,jjj,kkk,jp15zoo),trn(iii,jjj,kkk,jp15zoo)/trn(iii,jjj,kkk,jpzoo)
+        print*, tra(iii,jjj,kkk,jpzoo),tra(iii,jjj,kkk,jp15zoo),tra(iii,jjj,kkk,jpzoo)-tra(iii,jjj,kkk,jp15zoo),tra(iii,jjj,kkk,jp15zoo)/tra(iii,jjj,kkk,jpzoo)
+        print*, "ZOO2 "                                                                                                                                     
+        print*, trb(iii,jjj,kkk,jpmes),trb(iii,jjj,kkk,jp15mes),trb(iii,jjj,kkk,jpmes)-trb(iii,jjj,kkk,jp15mes),trb(iii,jjj,kkk,jp15mes)/trb(iii,jjj,kkk,jpmes)
+        print*, trn(iii,jjj,kkk,jpmes),trn(iii,jjj,kkk,jp15mes),trn(iii,jjj,kkk,jpmes)-trn(iii,jjj,kkk,jp15mes),trn(iii,jjj,kkk,jp15mes)/trn(iii,jjj,kkk,jpmes)
+        print*, tra(iii,jjj,kkk,jpmes),tra(iii,jjj,kkk,jp15mes),tra(iii,jjj,kkk,jpmes)-tra(iii,jjj,kkk,jp15mes),tra(iii,jjj,kkk,jp15mes)/tra(iii,jjj,kkk,jpmes)
         print*, " "
       ENDIF
       CALL p4z_poc     ( kt, knt )     ! Remineralization of organic particles
@@ -566,41 +566,41 @@ CONTAINS
         print*, " " 
         print*, " after call to p4zpoc " 
         print*, "NO3 " 
-        print*, trb(iii,jjj,kkk,jpno3), trb(iii,jjj,kkk,jp15no3),trb(iii,jjj,kkk,jpno3)-trb(iii,jjj,kkk,jp15no3)
-        print*, trn(iii,jjj,kkk,jpno3), trn(iii,jjj,kkk,jp15no3),trn(iii,jjj,kkk,jpno3)-trn(iii,jjj,kkk,jp15no3)
-        print*, tra(iii,jjj,kkk,jpno3), tra(iii,jjj,kkk,jp15no3),tra(iii,jjj,kkk,jpno3)-tra(iii,jjj,kkk,jp15no3)
-        print*, "NH4 " 
-        print*, trb(iii,jjj,kkk,jpnh4), trb(iii,jjj,kkk,jp15nh4),trb(iii,jjj,kkk,jpnh4)-trb(iii,jjj,kkk,jp15nh4)
-        print*, trn(iii,jjj,kkk,jpnh4), trn(iii,jjj,kkk,jp15nh4),trn(iii,jjj,kkk,jpnh4)-trn(iii,jjj,kkk,jp15nh4)
-        print*, tra(iii,jjj,kkk,jpnh4), tra(iii,jjj,kkk,jp15nh4),tra(iii,jjj,kkk,jpnh4)-tra(iii,jjj,kkk,jp15nh4)
-        print*, "DOC " 
-        print*, trb(iii,jjj,kkk,jpdoc), trb(iii,jjj,kkk,jp15doc),trb(iii,jjj,kkk,jpdoc)-trb(iii,jjj,kkk,jp15doc)
-        print*, trn(iii,jjj,kkk,jpdoc), trn(iii,jjj,kkk,jp15doc),trn(iii,jjj,kkk,jpdoc)-trn(iii,jjj,kkk,jp15doc)
-        print*, tra(iii,jjj,kkk,jpdoc), tra(iii,jjj,kkk,jp15doc),tra(iii,jjj,kkk,jpdoc)-tra(iii,jjj,kkk,jp15doc)
-        print*, "POC " 
-        print*, trb(iii,jjj,kkk,jppoc), trb(iii,jjj,kkk,jp15poc),trb(iii,jjj,kkk,jppoc)-trb(iii,jjj,kkk,jp15poc)
-        print*, trn(iii,jjj,kkk,jppoc), trn(iii,jjj,kkk,jp15poc),trn(iii,jjj,kkk,jppoc)-trn(iii,jjj,kkk,jp15poc)
-        print*, tra(iii,jjj,kkk,jppoc), tra(iii,jjj,kkk,jp15poc),tra(iii,jjj,kkk,jppoc)-tra(iii,jjj,kkk,jp15poc)
-        print*, "GOC " 
-        print*, trb(iii,jjj,kkk,jpgoc), trb(iii,jjj,kkk,jp15goc),trb(iii,jjj,kkk,jpgoc)-trb(iii,jjj,kkk,jp15goc)
-        print*, trn(iii,jjj,kkk,jpgoc), trn(iii,jjj,kkk,jp15goc),trn(iii,jjj,kkk,jpgoc)-trn(iii,jjj,kkk,jp15goc)
-        print*, tra(iii,jjj,kkk,jpgoc), tra(iii,jjj,kkk,jp15goc),tra(iii,jjj,kkk,jpgoc)-tra(iii,jjj,kkk,jp15goc)
-        print*, "PHY " 
-        print*, trb(iii,jjj,kkk,jpphy), trb(iii,jjj,kkk,jp15phy),trb(iii,jjj,kkk,jpphy)-trb(iii,jjj,kkk,jp15phy)
-        print*, trn(iii,jjj,kkk,jpphy), trn(iii,jjj,kkk,jp15phy),trn(iii,jjj,kkk,jpphy)-trn(iii,jjj,kkk,jp15phy)
-        print*, tra(iii,jjj,kkk,jpphy), tra(iii,jjj,kkk,jp15phy),tra(iii,jjj,kkk,jpphy)-tra(iii,jjj,kkk,jp15phy)
-        print*, "PHY2 " 
-        print*, trb(iii,jjj,kkk,jpdia), trb(iii,jjj,kkk,jp15dia),trb(iii,jjj,kkk,jpdia)-trb(iii,jjj,kkk,jp15dia)
-        print*, trn(iii,jjj,kkk,jpdia), trn(iii,jjj,kkk,jp15dia),trn(iii,jjj,kkk,jpdia)-trn(iii,jjj,kkk,jp15dia)
-        print*, tra(iii,jjj,kkk,jpdia), tra(iii,jjj,kkk,jp15dia),tra(iii,jjj,kkk,jpdia)-tra(iii,jjj,kkk,jp15dia)
-        print*, "ZOO " 
-        print*, trb(iii,jjj,kkk,jpzoo), trb(iii,jjj,kkk,jp15zoo),trb(iii,jjj,kkk,jpzoo)-trb(iii,jjj,kkk,jp15zoo)
-        print*, trn(iii,jjj,kkk,jpzoo), trn(iii,jjj,kkk,jp15zoo),trn(iii,jjj,kkk,jpzoo)-trn(iii,jjj,kkk,jp15zoo)
-        print*, tra(iii,jjj,kkk,jpzoo), tra(iii,jjj,kkk,jp15zoo),tra(iii,jjj,kkk,jpzoo)-tra(iii,jjj,kkk,jp15zoo)
-        print*, "ZOO2 " 
-        print*, trb(iii,jjj,kkk,jpmes), trb(iii,jjj,kkk,jp15mes),trb(iii,jjj,kkk,jpmes)-trb(iii,jjj,kkk,jp15mes)
-        print*, trn(iii,jjj,kkk,jpmes), trn(iii,jjj,kkk,jp15mes),trn(iii,jjj,kkk,jpmes)-trn(iii,jjj,kkk,jp15mes)
-        print*, tra(iii,jjj,kkk,jpmes), tra(iii,jjj,kkk,jp15mes),tra(iii,jjj,kkk,jpmes)-tra(iii,jjj,kkk,jp15mes)
+        print*, trb(iii,jjj,kkk,jpno3),trb(iii,jjj,kkk,jp15no3),trb(iii,jjj,kkk,jpno3)-trb(iii,jjj,kkk,jp15no3),trb(iii,jjj,kkk,jp15no3)/trb(iii,jjj,kkk,jpno3)
+        print*, trn(iii,jjj,kkk,jpno3),trn(iii,jjj,kkk,jp15no3),trn(iii,jjj,kkk,jpno3)-trn(iii,jjj,kkk,jp15no3),trn(iii,jjj,kkk,jp15no3)/trn(iii,jjj,kkk,jpno3)
+        print*, tra(iii,jjj,kkk,jpno3),tra(iii,jjj,kkk,jp15no3),tra(iii,jjj,kkk,jpno3)-tra(iii,jjj,kkk,jp15no3),tra(iii,jjj,kkk,jp15no3)/tra(iii,jjj,kkk,jpno3)
+        print*, "NH4 "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpnh4),trb(iii,jjj,kkk,jp15nh4),trb(iii,jjj,kkk,jpnh4)-trb(iii,jjj,kkk,jp15nh4),trb(iii,jjj,kkk,jp15nh4)/trb(iii,jjj,kkk,jpnh4)
+        print*, trn(iii,jjj,kkk,jpnh4),trn(iii,jjj,kkk,jp15nh4),trn(iii,jjj,kkk,jpnh4)-trn(iii,jjj,kkk,jp15nh4),trn(iii,jjj,kkk,jp15nh4)/trn(iii,jjj,kkk,jpnh4)
+        print*, tra(iii,jjj,kkk,jpnh4),tra(iii,jjj,kkk,jp15nh4),tra(iii,jjj,kkk,jpnh4)-tra(iii,jjj,kkk,jp15nh4),tra(iii,jjj,kkk,jp15nh4)/tra(iii,jjj,kkk,jpnh4)
+        print*, "DOC "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpdoc),trb(iii,jjj,kkk,jp15doc),trb(iii,jjj,kkk,jpdoc)-trb(iii,jjj,kkk,jp15doc),trb(iii,jjj,kkk,jp15doc)/trb(iii,jjj,kkk,jpdoc)
+        print*, trn(iii,jjj,kkk,jpdoc),trn(iii,jjj,kkk,jp15doc),trn(iii,jjj,kkk,jpdoc)-trn(iii,jjj,kkk,jp15doc),trn(iii,jjj,kkk,jp15doc)/trn(iii,jjj,kkk,jpdoc)
+        print*, tra(iii,jjj,kkk,jpdoc),tra(iii,jjj,kkk,jp15doc),tra(iii,jjj,kkk,jpdoc)-tra(iii,jjj,kkk,jp15doc),tra(iii,jjj,kkk,jp15doc)/tra(iii,jjj,kkk,jpdoc)
+        print*, "POC "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jppoc),trb(iii,jjj,kkk,jp15poc),trb(iii,jjj,kkk,jppoc)-trb(iii,jjj,kkk,jp15poc),trb(iii,jjj,kkk,jp15poc)/trb(iii,jjj,kkk,jppoc)
+        print*, trn(iii,jjj,kkk,jppoc),trn(iii,jjj,kkk,jp15poc),trn(iii,jjj,kkk,jppoc)-trn(iii,jjj,kkk,jp15poc),trn(iii,jjj,kkk,jp15poc)/trn(iii,jjj,kkk,jppoc)
+        print*, tra(iii,jjj,kkk,jppoc),tra(iii,jjj,kkk,jp15poc),tra(iii,jjj,kkk,jppoc)-tra(iii,jjj,kkk,jp15poc),tra(iii,jjj,kkk,jp15poc)/tra(iii,jjj,kkk,jppoc)
+        print*, "GOC "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpgoc),trb(iii,jjj,kkk,jp15goc),trb(iii,jjj,kkk,jpgoc)-trb(iii,jjj,kkk,jp15goc),trb(iii,jjj,kkk,jp15goc)/trb(iii,jjj,kkk,jpgoc)
+        print*, trn(iii,jjj,kkk,jpgoc),trn(iii,jjj,kkk,jp15goc),trn(iii,jjj,kkk,jpgoc)-trn(iii,jjj,kkk,jp15goc),trn(iii,jjj,kkk,jp15goc)/trn(iii,jjj,kkk,jpgoc)
+        print*, tra(iii,jjj,kkk,jpgoc),tra(iii,jjj,kkk,jp15goc),tra(iii,jjj,kkk,jpgoc)-tra(iii,jjj,kkk,jp15goc),tra(iii,jjj,kkk,jp15goc)/tra(iii,jjj,kkk,jpgoc)
+        print*, "PHY "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpphy),trb(iii,jjj,kkk,jp15phy),trb(iii,jjj,kkk,jpphy)-trb(iii,jjj,kkk,jp15phy),trb(iii,jjj,kkk,jp15phy)/trb(iii,jjj,kkk,jpphy)
+        print*, trn(iii,jjj,kkk,jpphy),trn(iii,jjj,kkk,jp15phy),trn(iii,jjj,kkk,jpphy)-trn(iii,jjj,kkk,jp15phy),trn(iii,jjj,kkk,jp15phy)/trn(iii,jjj,kkk,jpphy)
+        print*, tra(iii,jjj,kkk,jpphy),tra(iii,jjj,kkk,jp15phy),tra(iii,jjj,kkk,jpphy)-tra(iii,jjj,kkk,jp15phy),tra(iii,jjj,kkk,jp15phy)/tra(iii,jjj,kkk,jpphy)
+        print*, "PHY2 "                                                                                                                                     
+        print*, trb(iii,jjj,kkk,jpdia),trb(iii,jjj,kkk,jp15dia),trb(iii,jjj,kkk,jpdia)-trb(iii,jjj,kkk,jp15dia),trb(iii,jjj,kkk,jp15dia)/trb(iii,jjj,kkk,jpdia)
+        print*, trn(iii,jjj,kkk,jpdia),trn(iii,jjj,kkk,jp15dia),trn(iii,jjj,kkk,jpdia)-trn(iii,jjj,kkk,jp15dia),trn(iii,jjj,kkk,jp15dia)/trn(iii,jjj,kkk,jpdia)
+        print*, tra(iii,jjj,kkk,jpdia),tra(iii,jjj,kkk,jp15dia),tra(iii,jjj,kkk,jpdia)-tra(iii,jjj,kkk,jp15dia),tra(iii,jjj,kkk,jp15dia)/tra(iii,jjj,kkk,jpdia)
+        print*, "ZOO "                                                                                                                                      
+        print*, trb(iii,jjj,kkk,jpzoo),trb(iii,jjj,kkk,jp15zoo),trb(iii,jjj,kkk,jpzoo)-trb(iii,jjj,kkk,jp15zoo),trb(iii,jjj,kkk,jp15zoo)/trb(iii,jjj,kkk,jpzoo)
+        print*, trn(iii,jjj,kkk,jpzoo),trn(iii,jjj,kkk,jp15zoo),trn(iii,jjj,kkk,jpzoo)-trn(iii,jjj,kkk,jp15zoo),trn(iii,jjj,kkk,jp15zoo)/trn(iii,jjj,kkk,jpzoo)
+        print*, tra(iii,jjj,kkk,jpzoo),tra(iii,jjj,kkk,jp15zoo),tra(iii,jjj,kkk,jpzoo)-tra(iii,jjj,kkk,jp15zoo),tra(iii,jjj,kkk,jp15zoo)/tra(iii,jjj,kkk,jpzoo)
+        print*, "ZOO2 "                                                                                                                                     
+        print*, trb(iii,jjj,kkk,jpmes),trb(iii,jjj,kkk,jp15mes),trb(iii,jjj,kkk,jpmes)-trb(iii,jjj,kkk,jp15mes),trb(iii,jjj,kkk,jp15mes)/trb(iii,jjj,kkk,jpmes)
+        print*, trn(iii,jjj,kkk,jpmes),trn(iii,jjj,kkk,jp15mes),trn(iii,jjj,kkk,jpmes)-trn(iii,jjj,kkk,jp15mes),trn(iii,jjj,kkk,jp15mes)/trn(iii,jjj,kkk,jpmes)
+        print*, tra(iii,jjj,kkk,jpmes),tra(iii,jjj,kkk,jp15mes),tra(iii,jjj,kkk,jpmes)-tra(iii,jjj,kkk,jp15mes),tra(iii,jjj,kkk,jp15mes)/tra(iii,jjj,kkk,jpmes)
         print*, " "
       ENDIF
       !
