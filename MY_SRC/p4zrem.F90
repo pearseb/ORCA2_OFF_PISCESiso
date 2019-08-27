@@ -67,6 +67,8 @@ CONTAINS
       REAL(wp) ::   zbactfer, zolimit, zrfact2
       REAL(wp) ::   zammonic, zoxyremc, zoxyremn, zoxyremp
       REAL(wp) ::   zosil, ztem, zdenitnh4, zolimic, zolimin, zolimip, zdenitrn, zdenitrp
+      REAL(wp) ::   zr15_doc, zr15_no3
+      REAL(wp) ::   zr13_doc
       CHARACTER (len=25) :: charout
       REAL(wp), DIMENSION(jpi,jpj    ) :: ztempbac
       REAL(wp), DIMENSION(jpi,jpj,jpk) :: zdepbac, zolimi, zdepprod, zfacsi, zfacsib, zdepeff, zfebact
@@ -146,13 +148,21 @@ CONTAINS
                   &                     + ( rdenit + 1.) * denitr(ji,jj,jk) )
 
                   IF( ln_n15) THEN
-                     tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + ( zolimi(ji,jj,jk) + denitr(ji,jj,jk) + zoxyremc )  &
-                     &                       * ( trb(ji,jj,jk,jp15doc) + rtrn ) / ( trb(ji,jj,jk,jpdoc) + rtrn )
+                     zr15_doc = ( (trb(ji,jj,jk,jp15doc)+rtrn) / (trb(ji,jj,jk,jpdoc)+rtrn) )
+                     zr15_no3 = ( (trb(ji,jj,jk,jp15no3)+rtrn) / (trb(ji,jj,jk,jpno3)+rtrn) )
+                     tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) +  & 
+                     &                       ( zolimi(ji,jj,jk) + denitr(ji,jj,jk) + zoxyremc ) * zr15_doc
                      tra(ji,jj,jk,jp15no3) = tra(ji,jj,jk,jp15no3) - denitr (ji,jj,jk) * rdenit  &
-                     &                       * ( trb(ji,jj,jk,jp15no3) + rtrn ) / ( trb(ji,jj,jk,jpno3) + rtrn )  &
-                     &                       * ( 1.0 - e15n_den*1e-3 )
-                     tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) - ( zolimi(ji,jj,jk) + denitr(ji,jj,jk) + zoxyremc )  &
-                     &                       * ( trb(ji,jj,jk,jp15doc) + rtrn ) / ( trb(ji,jj,jk,jpdoc) + rtrn )
+                     &                       * ( 1.0 - e15n_den*1e-3 ) * zr15_no3
+                     tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) -  &
+                     &                       ( zolimi(ji,jj,jk) + denitr(ji,jj,jk) + zoxyremc ) * zr15_doc 
+                  ENDIF
+                  IF( ln_c13) THEN
+                     zr13_doc = ( (trb(ji,jj,jk,jp13doc)+rtrn) / (trb(ji,jj,jk,jpdoc)+rtrn) )
+                     tra(ji,jj,jk,jp13doc) = tra(ji,jj,jk,jp13doc) -  &
+                     &                       ( zolimi(ji,jj,jk) + denitr(ji,jj,jk) + zoxyremc ) * zr13_doc 
+                     tra(ji,jj,jk,jp13dic) = tra(ji,jj,jk,jp13dic) +  &
+                     &                       ( zolimi(ji,jj,jk) + denitr(ji,jj,jk) + zoxyremc ) * zr13_doc 
                   ENDIF
 
                END DO

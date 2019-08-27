@@ -46,7 +46,7 @@ MODULE p4zsbc
    REAL(wp), PUBLIC ::   d15n_fix     !: delta15N signature of N2 fixation
    REAL(wp), PUBLIC ::   d15n_riv     !: delta15N signature of river input
    REAL(wp), PUBLIC ::   d15n_dep     !: delta15N signature of atmospheric deposition
-
+   
    LOGICAL , PUBLIC ::   ll_sbc
    LOGICAL          ::   ll_solub
 

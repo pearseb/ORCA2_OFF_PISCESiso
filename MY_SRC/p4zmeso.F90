@@ -72,8 +72,11 @@ CONTAINS
       REAL(wp) :: zrespz, ztortz, zgrazd, zgrazz, zgrazpof
       REAL(wp) :: zgrazn, zgrazpoc, zgraznf, zgrazf
       REAL(wp) :: zgrazn15, zgrazd15, zgrazz15, zgrazpoc15, zgrazffp15, zgrazffg15
+      REAL(wp) :: zgrazn13, zgrazd13, zgrazz13, zgrazpoc13, zgrazffp13, zgrazffg13
       REAL(wp) :: zmortz15, zfrac15, zgraztotc15
+      REAL(wp) :: zmortz13, zfrac13, zgraztotc13
       REAL(wp) :: zgrarem2_15, zgrapoc2_15, zgrasig2_15, zgrasigex2_15, zmortzgoc_15 
+      REAL(wp) :: zgrarem2_13, zgrapoc2_13, zgrasig2_13, zmortzgoc_13, zr13_dic, zr13_cal
       REAL(wp) :: zgrazfffp, zgrazfffg, zgrazffep, zgrazffeg
       CHARACTER (len=25) :: charout
       REAL(wp), DIMENSION(jpi,jpj,jpk) :: zgrazing, zfezoo2
@@ -156,12 +159,21 @@ CONTAINS
                
                ! get the d15N signature of the food sources
                IF ( ln_n15 ) THEN
-                  zgrazn15 = zgrazn * ( trb(ji,jj,jk,jp15phy) + rtrn ) / ( trb(ji,jj,jk,jpphy) + rtrn )
-                  zgrazd15 = zgrazd * ( trb(ji,jj,jk,jp15dia) + rtrn ) / ( trb(ji,jj,jk,jpdia) + rtrn )
-                  zgrazz15 = zgrazz * ( trb(ji,jj,jk,jp15zoo) + rtrn ) / ( trb(ji,jj,jk,jpzoo) + rtrn )
-                  zgrazpoc15 = zgrazpoc * ( trb(ji,jj,jk,jp15poc) + rtrn ) / ( trb(ji,jj,jk,jppoc) + rtrn )
-                  zgrazffg15 = zgrazffeg * ( trb(ji,jj,jk,jp15goc) + rtrn ) / ( trb(ji,jj,jk,jpgoc) + rtrn )
-                  zgrazffp15 = zgrazffep * ( trb(ji,jj,jk,jp15poc) + rtrn ) / ( trb(ji,jj,jk,jppoc) + rtrn )
+                  zgrazn15 = zgrazn * ( (trb(ji,jj,jk,jp15phy)+rtrn) / (trb(ji,jj,jk,jpphy)+rtrn) )
+                  zgrazd15 = zgrazd * ( (trb(ji,jj,jk,jp15dia)+rtrn) / (trb(ji,jj,jk,jpdia)+rtrn) )
+                  zgrazz15 = zgrazz * ( (trb(ji,jj,jk,jp15zoo)+rtrn) / (trb(ji,jj,jk,jpzoo)+rtrn) )
+                  zgrazpoc15 = zgrazpoc * ( (trb(ji,jj,jk,jp15poc)+rtrn) / (trb(ji,jj,jk,jppoc)+rtrn) )
+                  zgrazffg15 = zgrazffeg * ( (trb(ji,jj,jk,jp15goc)+rtrn) / (trb(ji,jj,jk,jpgoc)+rtrn) )
+                  zgrazffp15 = zgrazffep * ( (trb(ji,jj,jk,jp15poc)+rtrn) / (trb(ji,jj,jk,jppoc)+rtrn) )
+               ENDIF
+               ! get the d13C signature of the food sources
+               IF ( ln_c13 ) THEN
+                  zgrazn13 = zgrazn * ( (trb(ji,jj,jk,jp13phy)+rtrn) / (trb(ji,jj,jk,jpphy)+rtrn) )
+                  zgrazd13 = zgrazd * ( (trb(ji,jj,jk,jp13dia)+rtrn) / (trb(ji,jj,jk,jpdia)+rtrn) )
+                  zgrazz13 = zgrazz * ( (trb(ji,jj,jk,jp13zoo)+rtrn) / (trb(ji,jj,jk,jpzoo)+rtrn) )
+                  zgrazpoc13 = zgrazpoc * ( (trb(ji,jj,jk,jp13poc)+rtrn) / (trb(ji,jj,jk,jppoc)+rtrn) ) 
+                  zgrazffg13 = zgrazffeg * ( (trb(ji,jj,jk,jp13goc)+rtrn) / (trb(ji,jj,jk,jpgoc)+rtrn) )
+                  zgrazffp13 = zgrazffep * ( (trb(ji,jj,jk,jp13poc)+rtrn) / (trb(ji,jj,jk,jppoc)+rtrn) )
                ENDIF
 
                !!! COMPUTE THE FRACTIONATION OF POC INTO GOC BY FILTER FEEDINGi [GOC] --> [POC]
@@ -196,10 +208,16 @@ CONTAINS
                
                ! calculate the fractionation of particulates by filter feeders
                IF ( ln_n15 ) THEN
-                  zfrac15     = zfrac * ( trb(ji,jj,jk,jp15goc) + rtrn ) / ( trb(ji,jj,jk,jpgoc) + rtrn )
+                  zfrac15     = zfrac * ( (trb(ji,jj,jk,jp15goc)+rtrn) / (trb(ji,jj,jk,jpgoc)+rtrn) )
                   zgrazffg15  = zgrazffg15 * zproport
                   zgrazffp15  = zgrazffp15 * zproport
                   zgraztotc15 = zgrazn15 + zgrazd15 + zgrazz15 + zgrazpoc15 + zgrazffp15 + zgrazffg15
+               ENDIF
+               IF ( ln_c13 ) THEN
+                  zfrac13     = zfrac * ( (trb(ji,jj,jk,jp13goc)+rtrn) / (trb(ji,jj,jk,jpgoc)+rtrn) )
+                  zgrazffg13  = zgrazffg13 * zproport
+                  zgrazffp13  = zgrazffp13 * zproport
+                  zgraztotc13 = zgrazn13 + zgrazd13 + zgrazz13 + zgrazpoc13 + zgrazffp13 + zgrazffg13
                ENDIF
 
                ! Total grazing ( grazing by microzoo is already computed in p4zmicro )
@@ -254,12 +272,21 @@ CONTAINS
                IF ( ln_n15 ) THEN
                   zgrarem2_15   = zgraztotc15 * ( 1. - zepsherv - unass2 ) &  ! [food] --> [NH4/DOC]
                   &               + ztortz * ( 1. - epsher2 - unass2 ) / ( 1. - epsher2 )  & ![mes] --> [NH4/DOC]
-                  &               * ( trb(ji,jj,jk,jp15mes) + rtrn ) / ( trb(ji,jj,jk,jpmes) + rtrn )
+                  &               * ( (trb(ji,jj,jk,jp15mes)+rtrn) / (trb(ji,jj,jk,jpmes)+rtrn) )
                   zgrapoc2_15   = zgraztotc15 * unass2 ! [food] --> [GOC]
                   zgrasig2_15   = zgrarem2_15 * sigma2 ! [food/mes] --> [NH4]
                   zgrasigex2_15 = zgraztotc15 * ( 1. - epsher2 - unass2 ) * sigma2 * zgrasratn ![food] --> [NH4]
                   zmortzgoc_15  = ( unass2 / ( 1. - epsher2 ) * ztortz + zrespz )  & ! [mes] --> [GOC]
-                  &               * ( trb(ji,jj,jk,jp15mes) + rtrn ) / ( trb(ji,jj,jk,jpmes) + rtrn )
+                  &               * ( (trb(ji,jj,jk,jp15mes)+rtrn) / (trb(ji,jj,jk,jpmes)+rtrn) )
+               ENDIF
+               IF ( ln_c13 ) THEN
+                  zgrarem2_13   = zgraztotc13 * ( 1. - zepsherv - unass2 ) &  ! [food] --> [NH4/DOC]
+                  &               + ztortz * ( 1. - epsher2 - unass2 ) / ( 1. - epsher2 )  & ![mes] --> [NH4/DOC]
+                  &               * ( (trb(ji,jj,jk,jp13mes)+rtrn) / (trb(ji,jj,jk,jpmes)+rtrn) )
+                  zgrapoc2_13   = zgraztotc13 * unass2 ! [food] --> [GOC]
+                  zgrasig2_13   = zgrarem2_13 * sigma2 ! [food/mes] --> [NH4]
+                  zmortzgoc_13  = ( unass2 / ( 1. - epsher2 ) * ztortz + zrespz )  & ! [mes] --> [GOC]
+                  &               * ( (trb(ji,jj,jk,jp13mes)+rtrn) / (trb(ji,jj,jk,jpmes)+rtrn) )
                ENDIF
 
                !   Update the arrays TRA which contain the biological sources and sinks
@@ -267,6 +294,17 @@ CONTAINS
                tra(ji,jj,jk,jppo4) = tra(ji,jj,jk,jppo4) + zgrarsig
                tra(ji,jj,jk,jpnh4) = tra(ji,jj,jk,jpnh4) + zgrarsig
                tra(ji,jj,jk,jpdoc) = tra(ji,jj,jk,jpdoc) + zgrarem2 - zgrarsig
+               
+               IF( ln_ligand ) THEN 
+                  tra(ji,jj,jk,jplgw) = tra(ji,jj,jk,jplgw) + (zgrarem2 - zgrarsig) * ldocz
+                  zz2ligprod(ji,jj,jk) = (zgrarem2 - zgrarsig) * ldocz
+               ENDIF
+               
+               tra(ji,jj,jk,jpoxy) = tra(ji,jj,jk,jpoxy) - o2ut * zgrarsig
+               tra(ji,jj,jk,jpfer) = tra(ji,jj,jk,jpfer) + zgrafer2
+               zfezoo2(ji,jj,jk)   = zgrafer2
+               tra(ji,jj,jk,jpdic) = tra(ji,jj,jk,jpdic) + zgrarsig
+               tra(ji,jj,jk,jptal) = tra(ji,jj,jk,jptal) + rno3 * zgrarsig              
                
                IF ( ln_n15 ) THEN
                   tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zgrasigex2_15 * ( 1. - e15n_ex2/1000.0 )  &
@@ -279,17 +317,10 @@ CONTAINS
                   ! So, zgrasigex is the amount of carbon excreted to NH4 due to N content of food
                   tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) + zgrarem2_15 - zgrasig2_15
                ENDIF
-               !
-               IF( ln_ligand ) THEN 
-                  tra(ji,jj,jk,jplgw) = tra(ji,jj,jk,jplgw) + (zgrarem2 - zgrarsig) * ldocz
-                  zz2ligprod(ji,jj,jk) = (zgrarem2 - zgrarsig) * ldocz
+               IF ( ln_c13 ) THEN
+                  tra(ji,jj,jk,jp13doc) = tra(ji,jj,jk,jp13doc) + zgrarem2_13 - zgrasig2_13
+                  tra(ji,jj,jk,jp13dic) = tra(ji,jj,jk,jp13dic) + zgrasig2_13
                ENDIF
-               !
-               tra(ji,jj,jk,jpoxy) = tra(ji,jj,jk,jpoxy) - o2ut * zgrarsig
-               tra(ji,jj,jk,jpfer) = tra(ji,jj,jk,jpfer) + zgrafer2
-               zfezoo2(ji,jj,jk)   = zgrafer2
-               tra(ji,jj,jk,jpdic) = tra(ji,jj,jk,jpdic) + zgrarsig
-               tra(ji,jj,jk,jptal) = tra(ji,jj,jk,jptal) + rno3 * zgrarsig              
 
                zmortz = ztortz + zrespz
                zmortzgoc = unass2 / ( 1. - epsher2 ) * ztortz + zrespz
@@ -312,20 +343,24 @@ CONTAINS
                consgoc(ji,jj,jk) = consgoc(ji,jj,jk) - zgrazffeg - zfrac
                tra(ji,jj,jk,jpsfe) = tra(ji,jj,jk,jpsfe) - zgrazpof - zgrazfffp + zfracfe
                tra(ji,jj,jk,jpbfe) = tra(ji,jj,jk,jpbfe) + ferat3 * zmortzgoc - zgrazfffg     &
-                 &                + zgraztotf * unass2 - zfracfe
+                 &                 + zgraztotf * unass2 - zfracfe
+
                zfracal = trb(ji,jj,jk,jpcal) / (trb(ji,jj,jk,jppoc) + trb(ji,jj,jk,jpgoc) + rtrn )
-               zgrazcal = (zgrazffeg + zgrazpoc) * (1. - part2) * zfracal
+               zgrazcal = (zgrazffeg + zgrazpoc) * (1. - part2) * zfracal !fraction calcite from GOC/POC dissolved in zooplankton guts
                ! calcite production
                zprcaca = xfracal(ji,jj,jk) * zgrazn
                prodcal(ji,jj,jk) = prodcal(ji,jj,jk) + zprcaca  ! prodcal=prodcal(nanophy)+prodcal(microzoo)+prodcal(mesozoo)
                !
                zprcaca = part2 * zprcaca
+
+               ! zgrazcal [GOC/POC] --> [MES] --> [DIC]
+               ! zprcaca [PHY] --> [MES] --> [CAL]
                tra(ji,jj,jk,jpdic) = tra(ji,jj,jk,jpdic) + zgrazcal - zprcaca
                tra(ji,jj,jk,jptal) = tra(ji,jj,jk,jptal) - 2. * ( zgrazcal + zprcaca )
                tra(ji,jj,jk,jpcal) = tra(ji,jj,jk,jpcal) - zgrazcal + zprcaca
 
-               IF( ln_n15 ) THEN
-                  zmortz15 = zmortz * ( trb(ji,jj,jk,jp15mes) + rtrn ) / ( trb(ji,jj,jk,jpmes) + rtrn )
+               IF ( ln_n15 ) THEN
+                  zmortz15 = zmortz * ( (trb(ji,jj,jk,jp15mes)+rtrn) / (trb(ji,jj,jk,jpmes)+rtrn) )
                   tra(ji,jj,jk,jp15mes) = tra(ji,jj,jk,jp15mes) - zmortz15 + zepsherv * zgraztotc15    &
                   &                       + zgrasigex2_15 * e15n_ex2/1000.0                            &
                   &                       + zgrapoc2_15 * e15n_in2/1000.0
@@ -336,6 +371,20 @@ CONTAINS
                   tra(ji,jj,jk,jp15goc) = tra(ji,jj,jk,jp15goc) + zmortzgoc_15 - zgrazffg15 - zfrac15  &
                   &                       + zgrapoc2_15 * ( 1. - e15n_in2/1000.0 )
                   ! zgrasigex2_15 therefore enriches meso in N15 during excretion of NH4
+               ENDIF
+               IF ( ln_c13 ) THEN
+                  zmortz13 = zmortz * ( (trb(ji,jj,jk,jp13mes)+rtrn) / (trb(ji,jj,jk,jpmes)+rtrn) )
+                  tra(ji,jj,jk,jp13mes) = tra(ji,jj,jk,jp13mes) - zmortz13 + zepsherv * zgraztotc13
+                  tra(ji,jj,jk,jp13dia) = tra(ji,jj,jk,jp13dia) - zgrazd13
+                  tra(ji,jj,jk,jp13zoo) = tra(ji,jj,jk,jp13zoo) - zgrazz13
+                  tra(ji,jj,jk,jp13phy) = tra(ji,jj,jk,jp13phy) - zgrazn13
+                  tra(ji,jj,jk,jp13poc) = tra(ji,jj,jk,jp13poc) - zgrazpoc13 - zgrazffp13 + zfrac13
+                  tra(ji,jj,jk,jp13goc) = tra(ji,jj,jk,jp13goc) + zmortzgoc_13 - zgrazffg13 - zfrac13 + zgrapoc2_13 
+
+                  zr13_dic = ( (trb(ji,jj,jk,jp13dic)+rtrn) / (trb(ji,jj,jk,jpdic)+rtrn) )
+                  zr13_cal = ( (trb(ji,jj,jk,jp13cal)+rtrn) / (trb(ji,jj,jk,jpcal)+rtrn) )
+                  tra(ji,jj,jk,jp13dic) = tra(ji,jj,jk,jp13dic) + zgrazcal * zr13_cal - zprcaca * zr13_dic
+                  tra(ji,jj,jk,jp13cal) = tra(ji,jj,jk,jp13cal) - zgrazcal * zr13_cal + zprcaca * zr13_dic
                ENDIF
 
             END DO

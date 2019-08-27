@@ -51,7 +51,8 @@ CONTAINS
       REAL(wp) ::   zaggpon , zaggdon, zaggdon2, zaggdon3
       REAL(wp) ::   zaggpop, zaggdop, zaggdop2, zaggdop3
       REAL(wp) ::   zaggtmp, zfact, zmax
-      REAL(wp) ::   zagg_15
+      REAL(wp) ::   zagg_15, zr15_doc
+      REAL(wp) ::   zagg_13, zr13_doc
       CHARACTER (len=25) :: charout
       !!---------------------------------------------------------------------
       !
@@ -104,13 +105,18 @@ CONTAINS
                      ! zaggdoc = aggregation of DOC --> POC
                      ! zaggdoc2 = aggregation of DOC --> GOC
                      ! zaggdoc3 = aggregation of DOC --> POC
+                     zr15_doc = ( (trb(ji,jj,jk,jp15doc)+rtrn) / (trb(ji,jj,jk,jpdoc)+rtrn) )
                      zagg_15 = zagg * ( trb(ji,jj,jk,jp15poc) + rtrn ) / ( trb(ji,jj,jk,jppoc) + rtrn )
-                     tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) - zagg_15 + ( zaggdoc + zaggdoc3 )    &
-                     &                       * ( trb(ji,jj,jk,jp15doc) + rtrn ) / ( trb(ji,jj,jk,jpdoc) + rtrn )
-                     tra(ji,jj,jk,jp15goc) = tra(ji,jj,jk,jp15goc) + zagg_15 + zaggdoc2                  &
-                     &                       * ( trb(ji,jj,jk,jp15doc) + rtrn ) / ( trb(ji,jj,jk,jpdoc) + rtrn )
-                     tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) - ( zaggdoc + zaggdoc2 + zaggdoc3 )   &
-                     &                       * ( trb(ji,jj,jk,jp15doc) + rtrn ) / ( trb(ji,jj,jk,jpdoc) + rtrn )
+                     tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) - zagg_15 + ( zaggdoc + zaggdoc3 ) * zr15_doc
+                     tra(ji,jj,jk,jp15goc) = tra(ji,jj,jk,jp15goc) + zagg_15 + zaggdoc2 * zr15_doc
+                     tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) - ( zaggdoc + zaggdoc2 + zaggdoc3 ) * zr15_doc
+                  ENDIF
+                  IF ( ln_c13 ) THEN
+                     zr13_doc = ( (trb(ji,jj,jk,jp13doc)+rtrn) / (trb(ji,jj,jk,jpdoc)+rtrn) )
+                     zagg_13 = zagg * ( (trb(ji,jj,jk,jp13poc)+rtrn) / (trb(ji,jj,jk,jppoc)+rtrn) )
+                     tra(ji,jj,jk,jp13poc) = tra(ji,jj,jk,jp13poc) - zagg_13 + ( zaggdoc + zaggdoc3 ) * zr13_doc
+                     tra(ji,jj,jk,jp13goc) = tra(ji,jj,jk,jp13goc) + zagg_13 + zaggdoc2 * zr13_doc 
+                     tra(ji,jj,jk,jp13doc) = tra(ji,jj,jk,jp13doc) - ( zaggdoc + zaggdoc2 + zaggdoc3 ) * zr13_doc
                   ENDIF
                   !
                   conspoc(ji,jj,jk) = conspoc(ji,jj,jk) - zagg + zaggdoc + zaggdoc3

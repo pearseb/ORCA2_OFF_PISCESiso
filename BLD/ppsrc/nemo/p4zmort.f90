@@ -70,6 +70,8 @@ CONTAINS
       REAL(wp) ::   zsizerat, zcompaph
       REAL(wp) ::   zfactfe, zfactch, zprcaca, zfracal
       REAL(wp) ::   ztortp , zrespp , zmortp 
+      REAL(wp) ::   zr15_phy 
+      REAL(wp) ::   zr13_phy, zr13_dic 
       CHARACTER (len=25) ::   charout
       !!---------------------------------------------------------------------
       !
@@ -119,12 +121,19 @@ CONTAINS
                tra(ji,jj,jk,jpbfe) = tra(ji,jj,jk,jpbfe) + zfracal * zmortp * zfactfe
 
                IF( ln_n15 ) THEN
-                  tra(ji,jj,jk,jp15phy) = tra(ji,jj,jk,jp15phy) - zmortp                      &
-                  &                       *( trb(ji,jj,jk,jp15phy) + rtrn ) / ( trb(ji,jj,jk,jpphy) + rtrn ) 
-                  tra(ji,jj,jk,jp15goc) = tra(ji,jj,jk,jp15goc) + zfracal * zmortp            &
-                  &                       *( trb(ji,jj,jk,jp15phy) + rtrn ) / ( trb(ji,jj,jk,jpphy) + rtrn ) 
-                  tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) + ( 1. - zfracal ) * zmortp   &
-                  &                       *( trb(ji,jj,jk,jp15phy) + rtrn ) / ( trb(ji,jj,jk,jpphy) + rtrn ) 
+                  zr15_phy = ( (trb(ji,jj,jk,jp15phy)+rtrn) / (trb(ji,jj,jk,jpphy)+rtrn) )
+                  tra(ji,jj,jk,jp15phy) = tra(ji,jj,jk,jp15phy) - zmortp * zr15_phy 
+                  tra(ji,jj,jk,jp15goc) = tra(ji,jj,jk,jp15goc) + zfracal * zmortp * zr15_phy 
+                  tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) + ( 1. - zfracal ) * zmortp * zr15_phy 
+               ENDIF
+               IF( ln_c13 ) THEN
+                  zr13_phy = ( (trb(ji,jj,jk,jp13phy)+rtrn) / (trb(ji,jj,jk,jpphy)+rtrn) )
+                  zr13_dic = ( (trb(ji,jj,jk,jp13dic)+rtrn) / (trb(ji,jj,jk,jpdic)+rtrn) )
+                  tra(ji,jj,jk,jp13phy) = tra(ji,jj,jk,jp13phy) - zmortp * zr13_phy 
+                  tra(ji,jj,jk,jp13goc) = tra(ji,jj,jk,jp13goc) + zfracal * zmortp * zr13_phy 
+                  tra(ji,jj,jk,jp13poc) = tra(ji,jj,jk,jp13poc) + ( 1. - zfracal ) * zmortp * zr13_phy 
+                  tra(ji,jj,jk,jp13dic) = tra(ji,jj,jk,jp13dic) - zprcaca * zr13_dic
+                  tra(ji,jj,jk,jp13cal) = tra(ji,jj,jk,jp13cal) + zprcaca * zr13_dic
                ENDIF
 
             END DO
@@ -154,6 +163,7 @@ CONTAINS
       REAL(wp) ::   zfactfe,zfactsi,zfactch, zcompadi
       REAL(wp) ::   zrespp2, ztortp2, zmortp2
       REAL(wp) ::   zlim2, zlim1
+      REAL(wp) ::   zr15_dia, zr13_dia
       CHARACTER (len=25) ::   charout
       !!---------------------------------------------------------------------
       !
@@ -203,13 +213,17 @@ CONTAINS
                tra(ji,jj,jk,jpsfe) = tra(ji,jj,jk,jpsfe) + 0.5 * ztortp2 * zfactfe
                tra(ji,jj,jk,jpbfe) = tra(ji,jj,jk,jpbfe) + ( zrespp2 + 0.5 * ztortp2 ) * zfactfe
 
-               IF( ln_n15 ) THEN
-                  tra(ji,jj,jk,jp15dia) = tra(ji,jj,jk,jp15dia) - zmortp2                       &
-               &                          *( trb(ji,jj,jk,jp15dia) + rtrn ) / ( trb(ji,jj,jk,jpdia) + rtrn )
-                  tra(ji,jj,jk,jp15goc) = tra(ji,jj,jk,jp15goc) + ( zrespp2 + 0.5 * ztortp2 )   &
-               &                          *( trb(ji,jj,jk,jp15dia) + rtrn ) / ( trb(ji,jj,jk,jpdia) + rtrn )
-                  tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) +  0.5 * ztortp2                &
-               &                          *( trb(ji,jj,jk,jp15dia) + rtrn ) / ( trb(ji,jj,jk,jpdia) + rtrn )
+               IF ( ln_n15 ) THEN
+                  zr15_dia = ( (trb(ji,jj,jk,jp15dia)+rtrn) / (trb(ji,jj,jk,jpdia)+rtrn) )
+                  tra(ji,jj,jk,jp15dia) = tra(ji,jj,jk,jp15dia) - zmortp2 * zr15_dia                      
+                  tra(ji,jj,jk,jp15goc) = tra(ji,jj,jk,jp15goc) + ( zrespp2 + 0.5 * ztortp2 ) * zr15_dia
+                  tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) +  0.5 * ztortp2 * zr15_dia
+               ENDIF
+               IF ( ln_c13 ) THEN
+                  zr13_dia = ( (trb(ji,jj,jk,jp13dia)+rtrn) / (trb(ji,jj,jk,jpdia)+rtrn) )
+                  tra(ji,jj,jk,jp13dia) = tra(ji,jj,jk,jp13dia) - zmortp2 * zr13_dia                      
+                  tra(ji,jj,jk,jp13goc) = tra(ji,jj,jk,jp13goc) + ( zrespp2 + 0.5 * ztortp2 ) * zr13_dia
+                  tra(ji,jj,jk,jp13poc) = tra(ji,jj,jk,jp13poc) +  0.5 * ztortp2 * zr13_dia
                ENDIF
 
             END DO

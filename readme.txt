@@ -1,9 +1,10 @@
-Files to be altered:
+Files to be altered for N15 routines:
 
    routines within /users/pearseb/NEMOv4.0/src/TOP/PISCES/
 ~	par_pisces.F90  -->  sets global parameters for PISCES and defines tracers [module] 
 ~	trcini_pisces.F90  -->  initialisation of the PISCES biogeochemical model 
 ~	trcwri_pisces.F90  -->  defines outputs of tracers
+~	sms_pisces.F90  -->  defines flags (ln_n15) and min/max of tracer (nn_n15min/nn_n15max)
 
    routines within /users/pearseb/NEMOv4.0/src/TOP/PISCES/P4Z/
 	p4zsms.F90  -->  calls biological routines to calculate PISCES tracers
@@ -71,4 +72,45 @@ STEPS TAKEN...
      
 	
 
+
+Files to be altered for C13 routines:
+
+   routines within /users/pearseb/NEMOv4.0/src/TOP/PISCES/
+~	par_pisces.F90  -->  sets global parameters for PISCES and defines tracers [module] 
+~	trcini_pisces.F90  -->  initialisation of the PISCES biogeochemical model 
+~	sms_pisces.F90  -->  defines flags (ln_c13)
+
+   routines within /users/pearseb/NEMOv4.0/src/TOP/PISCES/P4Z/
+	p4zsms.F90  -->  calls biological routines to calculate PISCES tracers
+	    CALLS:
+		p4zsbc.F90  -->  boundary conditions (atmospheric and riverine fluxes)
+		p4zbio.F90  -->  controls the interactions between compartments of PISCES
+	   	    CALLS:
+~			p4zsink.F90  -->  vertical flux of particulate organic matter
+                            CALLS:
+                                trcsink.F90 --> time splitting routine for sinking flux within/across depth levels
+~			p4zprod.F90  -->  growth rate of the 2 phytoplankton
+~			p4zmort.F90  -->  mortality of the 2 phytoplankton
+~			p4zmicro.F90  -->  sources and sinks of microzooplankton
+~			p4zmeso.F90  -->  sources and sinks of mesozooplankton
+~                       p4zagg.F90  -->  Aggregation of particles
+~			p4zrem.F90  -->  remineralisation of organic matter
+~			p4zpoc.F90  -->  remineralisation of organic particles
+~		p4zsed.F90  -->  sedimentary processes (NH4 release, denitrification, burial)
+~		p4zlys.F90  -->  Compute CaCO3 saturation
+~		p4zflx.F90  -->  Compute surface fluxes (gas exchange)
+
+
+STEPS TAKEN...
+	1. run model with dummy tracers and added namelist (logical) control of c13 routines:
+		- jp13dic	Dissolved inorganic carbon
+		- jp13cal	Calcite
+		- jp13phy	Nanophytoplankton
+		- jp13zoo	Microzooplankton
+		- jp13dia	Diatoms
+		- jp13mes	Mesozooplankton	
+		- jp13poc	Small particulate organic carbon
+		- jp13goc	Large particulate organic carbon
+		- jp13doc	Dissolved organic carbon
+	   result should be a run without change in d13c or d15n
 

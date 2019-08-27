@@ -46,7 +46,7 @@ CONTAINS
       INTEGER :: ios, ioptio         ! Local integer
       CHARACTER(LEN=20)::   clname
       !!
-      NAMELIST/nampismod/ln_p2z, ln_p4z, ln_p5z, ln_ligand, ln_sediment, ln_n15
+      NAMELIST/nampismod/ln_p2z, ln_p4z, ln_p5z, ln_ligand, ln_sediment, ln_n15, ln_c13
       !!----------------------------------------------------------------------
 
       IF(lwp) WRITE(numout,*)
@@ -74,6 +74,7 @@ CONTAINS
          WRITE(numout,*) '      Flag to ligand                       ln_ligand   = ', ln_ligand
          WRITE(numout,*) '      Flag to use sediment                 ln_sediment = ', ln_sediment
          WRITE(numout,*) '      Flag to use nitrogen isotopes        ln_n15      = ', ln_n15
+         WRITE(numout,*) '      Flag to use carbon isotopes          ln_c13      = ', ln_c13
       ENDIF
       !
       IF(lwp) THEN                         ! control print
@@ -84,6 +85,7 @@ CONTAINS
          IF( ln_ligand )  WRITE(numout,*) '   ==>>>   Compute remineralization/dissolution of organic ligands'
          IF( ln_sediment )  WRITE(numout,*) '   ==>>>   Sediment module is used'
          IF( ln_n15 )  WRITE(numout,*) '   ==>>>   Nitrogen isotope module is used'
+         IF( ln_c13 )  WRITE(numout,*) '   ==>>>   Carbon isotope module is used'
       ENDIF
     
       ioptio = 0

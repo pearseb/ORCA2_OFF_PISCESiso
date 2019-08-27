@@ -61,6 +61,7 @@ CONTAINS
       INTEGER  ::   ji, jj, jk, jn
       REAL(wp) ::   zdispot, zfact, zcalcon
       REAL(wp) ::   zomegaca, zexcess, zexcess0
+      REAL(wp) ::   zr13_cal
       CHARACTER (len=25) ::   charout
       REAL(wp), DIMENSION(jpi,jpj,jpk) ::   zco3, zcaldiss, zhinit, zhi, zco3sat
       !!---------------------------------------------------------------------
@@ -120,6 +121,11 @@ CONTAINS
               tra(ji,jj,jk,jptal) = tra(ji,jj,jk,jptal) + 2. * zcaldiss(ji,jj,jk)
               tra(ji,jj,jk,jpcal) = tra(ji,jj,jk,jpcal) -      zcaldiss(ji,jj,jk)
               tra(ji,jj,jk,jpdic) = tra(ji,jj,jk,jpdic) +      zcaldiss(ji,jj,jk)
+              IF ( ln_c13 ) THEN
+                 zr13_cal = ( (trb(ji,jj,jk,jp13cal)+rtrn) / (trb(ji,jj,jk,jpcal)+rtrn) )
+                 tra(ji,jj,jk,jp13cal) = tra(ji,jj,jk,jp13cal) - zcaldiss(ji,jj,jk) * zr13_cal
+                 tra(ji,jj,jk,jp13dic) = tra(ji,jj,jk,jp13dic) + zcaldiss(ji,jj,jk) * zr13_cal
+              ENDIF
             END DO
          END DO
       END DO

@@ -66,7 +66,16 @@ MODULE par_pisces
    INTEGER, PUBLIC ::   jp15no3   !: 15N Nitrates Concentration
    INTEGER, PUBLIC ::   jp15nh4   !: 15N Ammonium Concentration
    
-
+   INTEGER, PUBLIC ::   jp13poc   !: 13C small particulate organic concentration
+   INTEGER, PUBLIC ::   jp13phy   !: 13C phytoplankton concentration
+   INTEGER, PUBLIC ::   jp13zoo   !: 13C zooplankton concentration
+   INTEGER, PUBLIC ::   jp13doc   !: 13C dissolved organic matter concentration
+   INTEGER, PUBLIC ::   jp13dia   !: 13C diatoms concentration
+   INTEGER, PUBLIC ::   jp13mes   !: 13C mesozooplankton concentration
+   INTEGER, PUBLIC ::   jp13goc   !: 13C big particulate organic concentration
+   INTEGER, PUBLIC ::   jp13dic   !: 13C dissolved inorganic Concentration
+   INTEGER, PUBLIC ::   jp13cal   !: 13C calcite Concentration
+   
 
    !!---------------------------------------------------------------------
    !!   Default                                   No CFC geochemical model

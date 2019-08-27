@@ -63,6 +63,8 @@ CONTAINS
       REAL(wp) ::   zsizek, zsizek1, alphat, remint, solgoc, zpoc
       REAL(wp) ::   zofer2, zofer3
       REAL(wp) ::   zrfact2
+      REAL(wp) ::   zr15_goc, zr15_poc
+      REAL(wp) ::   zr13_goc, zr13_poc
       CHARACTER (len=25) :: charout
       REAL(wp), DIMENSION(jpi,jpj  )   :: totprod, totthick, totcons 
       REAL(wp), DIMENSION(jpi,jpj,jpk)   :: zremipoc, zremigoc, zorem3, ztremint, zfolimi
@@ -218,13 +220,17 @@ CONTAINS
                   tra(ji,jj,jk,jpfer) = tra(ji,jj,jk,jpfer) + zofer2
                   zfolimi(ji,jj,jk)   = zofer2
              
-                  IF( ln_n15 ) THEN
-                     tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) + zorem3(ji,jj,jk)              &
-                     &                       * ( trb(ji,jj,jk,jp15goc) + rtrn ) / ( trb(ji,jj,jk,jpgoc) + rtrn )
-                     tra(ji,jj,jk,jp15goc) = tra(ji,jj,jk,jp15goc) - ( zorem2 + zorem3(ji,jj,jk) ) &
-                     &                       * ( trb(ji,jj,jk,jp15goc) + rtrn ) / ( trb(ji,jj,jk,jpgoc) + rtrn )
-                     tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) + zorem2                        &
-                     &                       * ( trb(ji,jj,jk,jp15goc) + rtrn ) / ( trb(ji,jj,jk,jpgoc) + rtrn )
+                  IF ( ln_n15 ) THEN
+                     zr15_goc = ( (trb(ji,jj,jk,jp15goc)+rtrn) / (trb(ji,jj,jk,jpgoc)+rtrn) )
+                     tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) + zorem3(ji,jj,jk) * zr15_goc
+                     tra(ji,jj,jk,jp15goc) = tra(ji,jj,jk,jp15goc) - ( zorem2 + zorem3(ji,jj,jk) ) * zr15_goc
+                     tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) + zorem2 * zr15_goc 
+                  ENDIF
+                  IF ( ln_c13 ) THEN
+                     zr13_goc = ( (trb(ji,jj,jk,jp13goc)+rtrn) / (trb(ji,jj,jk,jpgoc)+rtrn) )
+                     tra(ji,jj,jk,jp13poc) = tra(ji,jj,jk,jp13poc) + zorem3(ji,jj,jk) * zr13_goc
+                     tra(ji,jj,jk,jp13goc) = tra(ji,jj,jk,jp13goc) - ( zorem2 + zorem3(ji,jj,jk) ) * zr13_goc
+                     tra(ji,jj,jk,jp13doc) = tra(ji,jj,jk,jp13doc) + zorem2 * zr13_goc 
                   ENDIF
                   
                END DO
@@ -436,10 +442,14 @@ CONTAINS
                     zfolimi(ji,jj,jk)   = zfolimi(ji,jj,jk) + zofer
 
                     IF ( ln_n15 ) THEN
-                       tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) + zorem  &
-                       &                       * ( trb(ji,jj,jk,jp15poc) + rtrn ) / ( trb(ji,jj,jk,jppoc) + rtrn )
-                       tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) - zorem  &
-                       &                       * ( trb(ji,jj,jk,jp15poc) + rtrn ) / ( trb(ji,jj,jk,jppoc) + rtrn )
+                       zr15_poc = ( (trb(ji,jj,jk,jp15poc)+rtrn) / (trb(ji,jj,jk,jppoc)+rtrn) )
+                       tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) + zorem * zr15_poc 
+                       tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) - zorem * zr15_poc
+                    ENDIF
+                    IF ( ln_c13 ) THEN
+                       zr13_poc = ( (trb(ji,jj,jk,jp13poc)+rtrn) / (trb(ji,jj,jk,jppoc)+rtrn) )
+                       tra(ji,jj,jk,jp13doc) = tra(ji,jj,jk,jp13doc) + zorem * zr13_poc 
+                       tra(ji,jj,jk,jp13poc) = tra(ji,jj,jk,jp13poc) - zorem * zr13_poc
                     ENDIF
                    
                   ENDIF

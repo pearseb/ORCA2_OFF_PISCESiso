@@ -35,6 +35,7 @@ MODULE p4zsink
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   sinkfer            !: Small BFe sinking fluxes
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   sinkfer2           !: Big iron sinking fluxes
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   sink15n, sink15n2  !: N15 POC sinking fluxes
+   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   sink13c, sink13c2, sink13c3  !: C13 sinking fluxes
 
    INTEGER  :: ik100
 
@@ -106,6 +107,11 @@ CONTAINS
          sink15n (:,:,:) = 0.e0
          sink15n2(:,:,:) = 0.e0
       ENDIF
+      IF ( ln_c13 ) THEN
+         sink13c (:,:,:) = 0.e0
+         sink13c2(:,:,:) = 0.e0
+         sink13c3(:,:,:) = 0.e0
+      ENDIF
 
       !   Compute the sedimentation term using p4zsink2 for all the sinking particles
       !   -----------------------------------------------------
@@ -125,6 +131,11 @@ CONTAINS
       IF ( ln_n15 ) THEN
          CALL trc_sink( kt, wsbio3, sink15n , jp15poc, rfact2 )
          CALL trc_sink( kt, wsbio4, sink15n2 , jp15goc, rfact2 )
+      ENDIF
+      IF ( ln_c13 ) THEN
+         CALL trc_sink( kt, wsbio3, sink13c , jp13poc, rfact2 )
+         CALL trc_sink( kt, wsbio4, sink13c2, jp13goc, rfact2 )
+         CALL trc_sink( kt, wsbio4, sink13c3, jp13cal, rfact2 )
       ENDIF
 
       IF( ln_p5z ) THEN
@@ -233,6 +244,8 @@ CONTAINS
          &      sinkfer(jpi,jpj,jpk)                                            , STAT=ierr(1) )                
          !
       IF( ln_n15    ) ALLOCATE( sink15n(jpi,jpj,jpk), sink15n2(jpi,jpj,jpk)     , STAT=ierr(2) )
+      IF( ln_c13    ) ALLOCATE( sink13c(jpi,jpj,jpk), sink13c2(jpi,jpj,jpk)     ,     &
+         &                      sink13c3(jpi,jpj,jpk)                           , STAT=ierr(2) )
       !
       IF( ln_p5z    ) ALLOCATE( sinkingn(jpi,jpj,jpk), sinking2n(jpi,jpj,jpk)   ,     &
          &                      sinkingp(jpi,jpj,jpk), sinking2p(jpi,jpj,jpk)   , STAT=ierr(2) )

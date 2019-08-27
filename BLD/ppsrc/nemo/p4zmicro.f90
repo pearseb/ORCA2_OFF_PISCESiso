@@ -74,7 +74,9 @@ CONTAINS
       REAL(wp) :: zrespz, ztortz, zgrasrat, zgrasratn
       REAL(wp) :: zgrazp, zgrazm, zgrazsd
       REAL(wp) :: zgrazp15, zgrazm15, zgrazsd15, zgraztotc15
+      REAL(wp) :: zgrazp13, zgrazm13, zgrazsd13, zgraztotc13
       REAL(wp) :: zgrarem_15, zgrapoc_15, zgrasig_15, zgrasigex_15, zmortz_15
+      REAL(wp) :: zgrarem_13, zgrapoc_13, zgrasig_13, zmortz_13, zr13_dic
       REAL(wp) :: zgrazmf, zgrazsf, zgrazpf
       REAL(wp), DIMENSION(jpi,jpj,jpk) :: zgrazing, zfezoo
       REAL(wp), DIMENSION(:,:,:), ALLOCATABLE :: zw3d, zzligprod
@@ -133,10 +135,16 @@ CONTAINS
                ! zgrazp/zgrazm/zgrazsd = the concentration (molC/L) of food type consumed by microzooplankton
                
                IF( ln_n15 ) THEN
-                  zgrazp15    = zgrazp  * ( trb(ji,jj,jk,jp15phy) + rtrn ) / (trb(ji,jj,jk,jpphy) + rtrn ) 
-                  zgrazm15    = zgrazm  * ( trb(ji,jj,jk,jp15poc) + rtrn ) / (trb(ji,jj,jk,jppoc) + rtrn ) 
-                  zgrazsd15   = zgrazsd * ( trb(ji,jj,jk,jp15dia) + rtrn ) / (trb(ji,jj,jk,jpdia) + rtrn )
+                  zgrazp15    = zgrazp  * ( (trb(ji,jj,jk,jp15phy)+rtrn) / (trb(ji,jj,jk,jpphy)+rtrn) ) 
+                  zgrazm15    = zgrazm  * ( (trb(ji,jj,jk,jp15poc)+rtrn) / (trb(ji,jj,jk,jppoc)+rtrn) )
+                  zgrazsd15   = zgrazsd * ( (trb(ji,jj,jk,jp15dia)+rtrn) / (trb(ji,jj,jk,jpdia)+rtrn) )
                   zgraztotc15 = zgrazp15 + zgrazm15 + zgrazsd15
+               ENDIF
+               IF( ln_c13 ) THEN
+                  zgrazp13    = zgrazp  * ( (trb(ji,jj,jk,jp13phy)+rtrn) / (trb(ji,jj,jk,jpphy)+rtrn) ) 
+                  zgrazm13    = zgrazm  * ( (trb(ji,jj,jk,jp13poc)+rtrn) / (trb(ji,jj,jk,jppoc)+rtrn) )
+                  zgrazsd13   = zgrazsd * ( (trb(ji,jj,jk,jp13dia)+rtrn) / (trb(ji,jj,jk,jpdia)+rtrn) )
+                  zgraztotc13 = zgrazp13 + zgrazm13 + zgrazsd13
                ENDIF
 
                zgrazpf   = zgrazp  * trb(ji,jj,jk,jpnfe) / (trb(ji,jj,jk,jpphy) + rtrn)
@@ -182,7 +190,7 @@ CONTAINS
                ! zgrazm   = amount of POC carbon removed by microzooplankton 
                ! zgrazsd  = amount of diatom carbon removed by microzooplankton 
 
-               IF( ln_n15 ) THEN
+               IF ( ln_n15 ) THEN
                   zgrarem_15 = zgraztotc15 * ( 1. - zepsherv - unass )
                   zgrapoc_15 = zgraztotc15 * unass
                   zgrasig_15 = zgrarem_15 * sigma1
@@ -190,7 +198,13 @@ CONTAINS
                     ! zgrasigex_15 = amount of NH4 excreted by zooplankton
                     ! according to measure of food quality [0,1] (zgrasratn) multiplied by 
                     ! the minimum possible excretion (( 1. - epsher - unass ) * zgraztotc15 * sigma1)
-                  zmortz_15  = (ztortz + zrespz) * ( trb(ji,jj,jk,jp15zoo) + rtrn ) / ( trb(ji,jj,jk,jpzoo) + rtrn )
+                  zmortz_15  = (ztortz + zrespz) * ( (trb(ji,jj,jk,jp15zoo)+rtrn) / (trb(ji,jj,jk,jpzoo)+rtrn) )
+               ENDIF
+               IF ( ln_c13 ) THEN
+                  zgrarem_13 = zgraztotc13 * ( 1. - zepsherv - unass )
+                  zgrapoc_13 = zgraztotc13 * unass
+                  zgrasig_13 = zgrarem_13 * sigma1
+                  zmortz_13  = (ztortz + zrespz) * ( (trb(ji,jj,jk,jp13zoo)+rtrn) / (trb(ji,jj,jk,jpzoo)+rtrn) )
                ENDIF
 
 
@@ -221,6 +235,11 @@ CONTAINS
                   tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) + zgrarem_15 - zgrasig_15
                   tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) + zgrapoc_15 * ( 1. - e15n_in*1e-3 )
                ENDIF
+               IF( ln_c13 ) THEN
+                  tra(ji,jj,jk,jp13doc) = tra(ji,jj,jk,jp13doc) + zgrarem_13 - zgrasig_13
+                  tra(ji,jj,jk,jp13poc) = tra(ji,jj,jk,jp13poc) + zgrapoc_13 
+                  tra(ji,jj,jk,jp13dic) = tra(ji,jj,jk,jp13dic) + zgrasig_13
+               ENDIF
                !
                !   Update the arrays TRA which contain the biological sources and sinks
                !   --------------------------------------------------------------------
@@ -248,13 +267,22 @@ CONTAINS
                tra(ji,jj,jk,jptal) = tra(ji,jj,jk,jptal) - 2. * zprcaca
                tra(ji,jj,jk,jpcal) = tra(ji,jj,jk,jpcal) + zprcaca
                !
-               IF( ln_n15 ) THEN
+               IF ( ln_n15 ) THEN
                   tra(ji,jj,jk,jp15zoo) = tra(ji,jj,jk,jp15zoo) - zmortz_15 + zepsherv * zgraztotc15  &
                   &                       + zgrasigex_15 * e15n_ex*1e-3                               &
                   &                       + zgrapoc_15 * e15n_in*1e-3
                   tra(ji,jj,jk,jp15phy) = tra(ji,jj,jk,jp15phy) - zgrazp15
                   tra(ji,jj,jk,jp15dia) = tra(ji,jj,jk,jp15dia) - zgrazsd15
                   tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) + zmortz_15 - zgrazm15
+               ENDIF
+               IF ( ln_c13 ) THEN
+                  zr13_dic = ( (trb(ji,jj,jk,jp13dic)+rtrn) / (trb(ji,jj,jk,jpdic)+rtrn) )
+                  tra(ji,jj,jk,jp13zoo) = tra(ji,jj,jk,jp13zoo) - zmortz_13 + zepsherv * zgraztotc13 
+                  tra(ji,jj,jk,jp13phy) = tra(ji,jj,jk,jp13phy) - zgrazp13
+                  tra(ji,jj,jk,jp13dia) = tra(ji,jj,jk,jp13dia) - zgrazsd13
+                  tra(ji,jj,jk,jp13poc) = tra(ji,jj,jk,jp13poc) + zmortz_13 - zgrazm13
+                  tra(ji,jj,jk,jp13dic) = tra(ji,jj,jk,jp13dic) - zprcaca * zr13_dic
+                  tra(ji,jj,jk,jp13cal) = tra(ji,jj,jk,jp13cal) + zprcaca * zr13_dic
                ENDIF
                !
             END DO

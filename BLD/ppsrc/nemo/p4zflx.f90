@@ -166,6 +166,9 @@ CONTAINS
             oce_co2(ji,jj) = ( zfld - zflu ) * rfact2 * e1e2t(ji,jj) * tmask(ji,jj,1) * 1000.
             ! compute the trend
             tra(ji,jj,1,jpdic) = tra(ji,jj,1,jpdic) + ( zfld - zflu ) * rfact2 / e3t_n(ji,jj,1) * tmask(ji,jj,1)
+            IF ( ln_c13 ) THEN
+               tra(ji,jj,1,jp13dic) = tra(ji,jj,1,jp13dic) + ( zfld - zflu ) * rfact2 / e3t_n(ji,jj,1) * tmask(ji,jj,1)
+            ENDIF
 
             ! Compute O2 flux 
             zfld16 = patm(ji,jj) * chemo2(ji,jj,1) * zkgo2(ji,jj)          ! (mol/L) * (m/s)

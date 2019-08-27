@@ -56,7 +56,8 @@ CONTAINS
       REAL(wp) ::  zo2, zno3, zflx, zpdenit, z1pdenit, zolimit
       REAL(wp) ::  zsiloss, zcaloss, zws3, zws4, zwsc, zdep
       REAL(wp) ::  zwstpoc, zwstpon, zwstpop
-      REAL(wp) ::  zwstpoc15
+      REAL(wp) ::  zwstpoc15, zr15_no3, zr15_rain
+      REAL(wp) ::  zwstpoc13, zr13_rain, zr13_cal
       REAL(wp) ::  ztrfer, ztrpo4s, ztrdp, zwdust, zmudia, ztemp
       REAL(wp) ::  xdiano3, xdianh4
       !
@@ -169,9 +170,13 @@ CONTAINS
                   tra(ji,jj,jk,jptal) = tra(ji,jj,jk,jptal) +  ( rivalk(ji,jj) - rno3 * rivdin(ji,jj) ) * rfact2
                   tra(ji,jj,jk,jpdoc) = tra(ji,jj,jk,jpdoc) +  rivdoc(ji,jj) * rfact2
 
-                  IF( ln_n15 ) THEN
+                  IF ( ln_n15 ) THEN
                      tra(ji,jj,jk,jp15no3) = tra(ji,jj,jk,jp15no3) + (1. + d15n_riv*1e-3)*rivdin(ji,jj) * rfact2
                      tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) + (1. + d15n_riv*1e-3)*rivdoc(ji,jj) * rfact2
+                  ENDIF 
+                  IF ( ln_c13 ) THEN
+                     tra(ji,jj,jk,jp13dic) = tra(ji,jj,jk,jp13dic) + rivdin(ji,jj) * rfact2
+                     tra(ji,jj,jk,jp13doc) = tra(ji,jj,jk,jp13doc) + rivdoc(ji,jj) * rfact2
                   ENDIF 
 
                ENDDO
@@ -204,7 +209,7 @@ CONTAINS
          tra(:,:,1,jpno3) = tra(:,:,1,jpno3) + nitdep(:,:) * rfact2
          tra(:,:,1,jptal) = tra(:,:,1,jptal) - rno3 * nitdep(:,:) * rfact2
 
-         IF( ln_n15 ) THEN
+         IF ( ln_n15 ) THEN
             tra(:,:,1,jp15no3) = tra(:,:,1,jp15no3) + (1. + d15n_dep*1e-3)*nitdep(:,:) * rfact2
          ENDIF
 
@@ -291,6 +296,10 @@ CONTAINS
             !
             tra(ji,jj,ikt,jpgsi) = tra(ji,jj,ikt,jpgsi) - zsiloss
             tra(ji,jj,ikt,jpcal) = tra(ji,jj,ikt,jpcal) - zcaloss
+            IF ( ln_c13 ) THEN
+               zr13_cal = ( (trb(ji,jj,ikt,jp13cal)+rtrn) / (trb(ji,jj,ikt,jpcal)+rtrn) )
+               tra(ji,jj,ikt,jp13cal) = tra(ji,jj,ikt,jp13cal) - zcaloss * zr13_cal
+            ENDIF
          END DO
       END DO
       !
@@ -311,6 +320,10 @@ CONTAINS
                tra(ji,jj,ikt,jpdic) =  tra(ji,jj,ikt,jpdic) + zcaloss * zrivalk
                zsedcal(ji,jj) = (1.0 - zrivalk) * zcaloss * e3t_n(ji,jj,ikt) 
                zsedsi (ji,jj) = (1.0 - zrivsil) * zsiloss * e3t_n(ji,jj,ikt) 
+               IF ( ln_c13 ) THEN
+                  zr13_cal = ( (trb(ji,jj,ikt,jp13cal)+rtrn) / (trb(ji,jj,ikt,jpcal)+rtrn) )
+                  tra(ji,jj,ikt,jp13dic) =  tra(ji,jj,ikt,jp13dic) + zcaloss * zrivalk * zr13_cal
+               ENDIF
             END DO
          END DO
       ENDIF
@@ -326,9 +339,13 @@ CONTAINS
             tra(ji,jj,ikt,jpbfe) = tra(ji,jj,ikt,jpbfe) - trb(ji,jj,ikt,jpbfe) * zws4 ! remove BFe from water column
             tra(ji,jj,ikt,jpsfe) = tra(ji,jj,ikt,jpsfe) - trb(ji,jj,ikt,jpsfe) * zws3 ! remove SFe from water column
 
-            IF( ln_n15 ) THEN
+            IF ( ln_n15 ) THEN
                tra(ji,jj,ikt,jp15goc) = tra(ji,jj,ikt,jp15goc) - trb(ji,jj,ikt,jp15goc) * zws4 ! remove previous GOC_15 
                tra(ji,jj,ikt,jp15poc) = tra(ji,jj,ikt,jp15poc) - trb(ji,jj,ikt,jp15poc) * zws3 ! remove previous POC_15
+            ENDIF
+            IF ( ln_c13 ) THEN
+               tra(ji,jj,ikt,jp13goc) = tra(ji,jj,ikt,jp13goc) - trb(ji,jj,ikt,jp13goc) * zws4 ! remove previous GOC_13 
+               tra(ji,jj,ikt,jp13poc) = tra(ji,jj,ikt,jp13poc) - trb(ji,jj,ikt,jp13poc) * zws3 ! remove previous POC_13
             ENDIF
 
          END DO
@@ -375,29 +392,36 @@ CONTAINS
                tra(ji,jj,ikt,jpnh4) = tra(ji,jj,ikt,jpnh4) + zpdenit + zolimit
                tra(ji,jj,ikt,jpno3) = tra(ji,jj,ikt,jpno3) - rdenit * zpdenit
           
-               IF( ln_n15 ) THEN
-                  zwstpoc15 = trb(ji,jj,ikt,jp15goc)*zws4 + trb(ji,jj,ikt,jp15poc)*zws3 !POC+GOC hitting sediment 
-                  tra(ji,jj,ikt,jp15doc) = tra(ji,jj,ikt,jp15doc) + zwstpoc15 * zrivno3           &
-                  &                        - zpdenit * ( zwstpoc15 + rtrn ) / ( zwstpoc + rtrn )  &
-                  &                        - zolimit * ( zwstpoc15 + rtrn ) / ( zwstpoc + rtrn )
-                  tra(ji,jj,ikt,jp15nh4) = tra(ji,jj,ikt,jp15nh4) + zpdenit * ( zwstpoc15 + rtrn ) / ( zwstpoc + rtrn ) &
-                  &                        + zolimit * ( zwstpoc15 + rtrn ) / ( zwstpoc + rtrn )
-                  tra(ji,jj,ikt,jp15no3) = tra(ji,jj,ikt,jp15no3) - rdenit * zpdenit  &
-                  &                        * ( 1.0 - e15n_ben*1e-3 )  &
-                  &                        * ( trb(ji,jj,jk,jp15no3) + rtrn ) / ( trb(ji,jj,jk,jpno3) + rtrn )
-               ENDIF 
-
                tra(ji,jj,ikt,jpoxy) = tra(ji,jj,ikt,jpoxy) - zolimit * o2ut
                tra(ji,jj,ikt,jptal) = tra(ji,jj,ikt,jptal) + rno3 * (zolimit + (1.+rdenit) * zpdenit )
                tra(ji,jj,ikt,jpdic) = tra(ji,jj,ikt,jpdic) + zpdenit + zolimit 
                sdenit(ji,jj) = rdenit * zpdenit * e3t_n(ji,jj,ikt)
                zsedc(ji,jj)   = (1. - zrivno3) * zwstpoc * e3t_n(ji,jj,ikt)
+
                IF( ln_p5z ) THEN
                   zwstpop              = trb(ji,jj,ikt,jpgop) * zws4 + trb(ji,jj,ikt,jppop) * zws3
                   zwstpon              = trb(ji,jj,ikt,jpgon) * zws4 + trb(ji,jj,ikt,jppon) * zws3
                   tra(ji,jj,ikt,jpdon) = tra(ji,jj,ikt,jpdon) + ( z1pdenit - zolimit ) * zwstpon / (zwstpoc + rtrn)
                   tra(ji,jj,ikt,jpdop) = tra(ji,jj,ikt,jpdop) + ( z1pdenit - zolimit ) * zwstpop / (zwstpoc + rtrn)
                ENDIF
+
+               IF ( ln_n15 ) THEN
+                  zr15_no3 = ( (trb(ji,jj,jk,jp15no3)+rtrn) / (trb(ji,jj,jk,jpno3)+rtrn) )
+                  zwstpoc15 = trb(ji,jj,ikt,jp15goc)*zws4 + trb(ji,jj,ikt,jp15poc)*zws3 !POC+GOC hitting sediment 
+                  zr15_rain = ( (zwstpoc15+rtrn) / (zwstpoc+rtrn) )
+                  tra(ji,jj,ikt,jp15doc) = tra(ji,jj,ikt,jp15doc) + zwstpoc15 * zrivno3           &
+                  &                        - zpdenit * zr15_rain - zolimit * zr15_rain
+                  tra(ji,jj,ikt,jp15nh4) = tra(ji,jj,ikt,jp15nh4) + zpdenit * zr15_rain + zolimit * zr15_rain
+                  tra(ji,jj,ikt,jp15no3) = tra(ji,jj,ikt,jp15no3) - rdenit * zpdenit * ( 1.0 - e15n_ben*1e-3 ) * zr15_no3 
+               ENDIF 
+               IF ( ln_c13 ) THEN
+                  zwstpoc13 = trb(ji,jj,ikt,jp13goc)*zws4 + trb(ji,jj,ikt,jp13poc)*zws3 !POC+GOC hitting sediment 
+                  zr13_rain = ( (zwstpoc13+rtrn) / (zwstpoc+rtrn) )
+                  tra(ji,jj,ikt,jp13doc) = tra(ji,jj,ikt,jp13doc) + zwstpoc13 * zrivno3           &
+                  &                        - zpdenit * zr13_rain - zolimit * zr13_rain
+                  tra(ji,jj,ikt,jp13dic) = tra(ji,jj,ikt,jp13dic) + zpdenit * zr13_rain + zolimit * zr13_rain
+               ENDIF 
+
             END DO
          END DO
        ENDIF
@@ -494,6 +518,11 @@ CONTAINS
                      tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) + zfact * (1. + d15n_fix*1e-3) * 1./3.
                      tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) + zfact * (1. + d15n_fix*1e-3) * 2./9.
                      tra(ji,jj,jk,jp15goc) = tra(ji,jj,jk,jp15goc) + zfact * (1. + d15n_fix*1e-3) * 1./9.
+                  ENDIF
+                  IF ( ln_c13 ) THEN
+                     tra(ji,jj,jk,jp13doc) = tra(ji,jj,jk,jp13doc) + zfact * 1./3.
+                     tra(ji,jj,jk,jp13poc) = tra(ji,jj,jk,jp13poc) + zfact * 2./9.
+                     tra(ji,jj,jk,jp13goc) = tra(ji,jj,jk,jp13goc) + zfact * 1./9.
                   ENDIF
 
               END DO

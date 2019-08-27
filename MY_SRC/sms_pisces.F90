@@ -25,6 +25,7 @@ MODULE sms_pisces
    LOGICAL  ::  ln_ligand         !: Flag to enable organic ligands
    LOGICAL  ::  ln_sediment       !: Flag to enable sediment module
    LOGICAL  ::  ln_n15            !: Flag to enable nitrogen isotope module
+   LOGICAL  ::  ln_c13            !: Flag to enable carbon isotope module
 
    !!*  Time variables
    INTEGER  ::   nrdttrc           !: ???

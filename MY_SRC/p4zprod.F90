@@ -73,6 +73,7 @@ CONTAINS
       REAL(wp) ::   zrum, zcodel, zargu, zval, zfeup, chlcnm_n, chlcdm_n
       REAL(wp) ::   zfact
       REAL(wp) ::   zu_15, zun_15, zr15_new, zr15_reg
+      REAL(wp) ::   zr13_dic
       CHARACTER (len=25) :: charout
       REAL(wp), ALLOCATABLE, DIMENSION(:,:) :: zw2d
       REAL(wp), ALLOCATABLE, DIMENSION(:,:,:) :: zw3d
@@ -343,6 +344,12 @@ CONTAINS
                  zproreg  = zprorcan(ji,jj,jk) - zpronewn(ji,jj,jk)
                  zproreg2 = zprorcad(ji,jj,jk) - zpronewd(ji,jj,jk)
                  zdocprod = excretd * zprorcad(ji,jj,jk) + excretn * zprorcan(ji,jj,jk)
+                 ! zprorcan & zprorcad are total DIC taken up by nano & diat
+                 ! zproreg & zproreg2 are total NH4 taken up by nano & diat
+                 ! zpronewn & zpronewd are total NO3 taken up by nano & diat
+                 ! zprorcan * texcretn = total carbon uptake after excretion [DIC] --> [PHY]
+                 ! zprorcad * texcretd = total carbon uptake after excretion [DIC] --> [PHY2]
+                 ! zdocprod = total carbon excreted as DOC [DIC] --> [PHY+PHY2] --> [DOC]
                  tra(ji,jj,jk,jppo4) = tra(ji,jj,jk,jppo4) - zprorcan(ji,jj,jk) - zprorcad(ji,jj,jk)
                  tra(ji,jj,jk,jpno3) = tra(ji,jj,jk,jpno3) - zpronewn(ji,jj,jk) - zpronewd(ji,jj,jk)
                  tra(ji,jj,jk,jpnh4) = tra(ji,jj,jk,jpnh4) - zproreg - zproreg2
@@ -362,7 +369,7 @@ CONTAINS
                  tra(ji,jj,jk,jptal) = tra(ji,jj,jk,jptal) + rno3 * ( zpronewn(ji,jj,jk) + zpronewd(ji,jj,jk) ) &
                  &                                         - rno3 * ( zproreg + zproreg2 )
 
-                 IF( ln_n15 ) THEN
+                 IF ( ln_n15 ) THEN
                     ! First, calculate utilisation factors for new and regenerated production.
                     zu_15 = MIN(1.0, MAX(0.0, 1.0 - (zpronewn(ji,jj,jk) + zpronewd(ji,jj,jk) + rtrn)   &
                     &                             / (trb(ji,jj,jk,jpno3) + rtrn) ) )
@@ -386,6 +393,13 @@ CONTAINS
                     &                                             + zr15_reg * zproreg2 * excretd 
                     tra(ji,jj,jk,jp15no3) = tra(ji,jj,jk,jp15no3) - zr15_new * ( zpronewn(ji,jj,jk) + zpronewd(ji,jj,jk) )
                     tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) - zr15_reg * ( zproreg + zproreg2 )
+                 ENDIF
+                 IF ( ln_c13 ) THEN
+                    zr13_dic = ( (trb(ji,jj,jk,jp13dic)+rtrn) / (trb(ji,jj,jk,jpdic)+rtrn) )
+                    tra(ji,jj,jk,jp13phy) = tra(ji,jj,jk,jp13phy) + zprorcan(ji,jj,jk) * texcretn * zr13_dic
+                    tra(ji,jj,jk,jp13dia) = tra(ji,jj,jk,jp13dia) + zprorcad(ji,jj,jk) * texcretd * zr13_dic
+                    tra(ji,jj,jk,jp13doc) = tra(ji,jj,jk,jp13doc) + zdocprod * zr13_dic
+                    tra(ji,jj,jk,jp13dic) = tra(ji,jj,jk,jp13dic) - (zprorcan(ji,jj,jk) + zprorcad(ji,jj,jk)) * zr13_dic 
                  ENDIF
 
               ENDIF

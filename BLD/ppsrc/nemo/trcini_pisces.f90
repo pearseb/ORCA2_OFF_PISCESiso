@@ -180,6 +180,15 @@ CONTAINS
         IF( cltra == 'ZOO2_15'  )   jp15mes = jn    !: 15N mesozooplankton concentration
         IF( cltra == 'NO3_15'   )   jp15no3 = jn    !: 15N nitrates concentration
         IF( cltra == 'NH4_15'   )   jp15nh4 = jn    !: 15N ammonium concentration
+        IF( cltra == 'POC_13'   )   jp13poc = jn    !: 13C small particulate organic concentration
+        IF( cltra == 'GOC_13'   )   jp13goc = jn    !: 13C large particulate organic concentration
+        IF( cltra == 'DOC_13'   )   jp13doc = jn    !: 13C dissolved ogranic carbon concentration
+        IF( cltra == 'PHY_13'   )   jp13phy = jn    !: 13C phytoplankton concentration
+        IF( cltra == 'PHY2_13'  )   jp13dia = jn    !: 13C diatom concentration
+        IF( cltra == 'ZOO_13'   )   jp13zoo = jn    !: 13C zooplankton concentration
+        IF( cltra == 'ZOO2_13'  )   jp13mes = jn    !: 13C mesozooplankton concentration
+        IF( cltra == 'DIC_13'   )   jp13dic = jn    !: 13C dissolved inorganic concentration
+        IF( cltra == 'CaCO3_13' )   jp13cal = jn    !: 13C calcite concentration
       END DO
 
       CALL p4z_sms_init       !  Maint routine
@@ -236,6 +245,18 @@ CONTAINS
             trn(:,:,:,jp15goc) = trn(:,:,:,jpgoc)
             trn(:,:,:,jp15no3) = trn(:,:,:,jpno3)
             trn(:,:,:,jp15nh4) = trn(:,:,:,jpnh4)
+         ENDIF
+         
+         IF ( ln_c13 ) THEN
+            trn(:,:,:,jp13poc) = trn(:,:,:,jppoc)
+            trn(:,:,:,jp13phy) = trn(:,:,:,jpphy)
+            trn(:,:,:,jp13zoo) = trn(:,:,:,jpzoo)
+            trn(:,:,:,jp13doc) = trn(:,:,:,jpdoc)
+            trn(:,:,:,jp13dia) = trn(:,:,:,jpdia)
+            trn(:,:,:,jp13mes) = trn(:,:,:,jpmes)
+            trn(:,:,:,jp13goc) = trn(:,:,:,jpgoc)
+            trn(:,:,:,jp13dic) = trn(:,:,:,jpdic)
+            trn(:,:,:,jp13cal) = trn(:,:,:,jpcal)
          ENDIF
  
          IF( ln_ligand) THEN
