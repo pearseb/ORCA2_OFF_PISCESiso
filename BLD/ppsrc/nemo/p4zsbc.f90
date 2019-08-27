@@ -46,6 +46,10 @@ MODULE p4zsbc
    REAL(wp), PUBLIC ::   d15n_fix     !: delta15N signature of N2 fixation
    REAL(wp), PUBLIC ::   d15n_riv     !: delta15N signature of river input
    REAL(wp), PUBLIC ::   d15n_dep     !: delta15N signature of atmospheric deposition
+
+   REAL(wp), PUBLIC ::   d13c_rivdic  !: delta13C signature of river DIC input
+   REAL(wp), PUBLIC ::   d13c_rivdoc  !: delta13C signature of river DOC input
+   REAL(wp), PUBLIC ::   d13c_fix     !: delta13C signature of N2 fixation input
    
    LOGICAL , PUBLIC ::   ll_sbc
    LOGICAL          ::   ll_solub
@@ -98,7 +102,7 @@ MODULE p4zsbc
    !! $Id: vectopt_loop_substitute.h90 10068 2018-08-28 14:09:04Z nicolasmartin $ 
    !! Software governed by the CeCILL license (see ./LICENSE)
    !!----------------------------------------------------------------------
-# 85 "p4zsbc.F90" 2
+# 89 "p4zsbc.F90" 2
    !!----------------------------------------------------------------------
    !! NEMO/TOP 4.0 , NEMO Consortium (2018)
    !! $Id: p4zsbc.F90 10868 2019-04-15 10:32:56Z cetlod $ 
@@ -242,7 +246,7 @@ CONTAINS
         &                sn_riverdip, sn_riverdop, sn_riverdsi, sn_ndepo, sn_ironsed, sn_hydrofe, &
         &                ln_dust, ln_solub, ln_river, ln_ndepo, ln_ironsed, ln_ironice, ln_hydrofe,    &
         &                sedfeinput, distcoast, dustsolub, icefeinput, wdust, mfrac, nitrfix, diazolight, concfediaz, &
-        &                hratio, lgw_rath, e15n_ben, d15n_fix, d15n_riv, d15n_dep
+        &                hratio, lgw_rath, e15n_ben, d15n_fix, d15n_riv, d15n_dep, d13c_rivdic, d13c_rivdoc, d13c_fix
       !!----------------------------------------------------------------------
       !
       IF(lwp) THEN
@@ -285,6 +289,9 @@ CONTAINS
           WRITE(numout,*) '    delta15N signature of N2 fixation            d15n_fix = ', d15n_fix
           WRITE(numout,*) '    delta15N signature of river input            d15n_riv = ', d15n_riv
           WRITE(numout,*) '    delta15N signature of atmospheric deposition d15n_dep = ', d15n_dep
+          WRITE(numout,*) '    delta13C signature of river DIC input        d13c_rivdic = ', d13c_rivdic
+          WRITE(numout,*) '    delta13C signature of river DOC input        d13c_rivdoc = ', d13c_rivdoc
+          WRITE(numout,*) '    delta13C signature of N2 fixation            d13c_fix = ', d13c_fix
       END IF
 
       IF( ln_dust .OR. ln_river .OR. ln_ndepo ) THEN   ;   ll_sbc = .TRUE.

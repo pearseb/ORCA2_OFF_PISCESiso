@@ -48,6 +48,7 @@ MODULE p4zmeso
    REAL(wp), PUBLIC ::  grazflux     !: mesozoo flux feeding rate
    REAL(wp), PUBLIC ::  e15n_ex2     !: N15 mesozoo excretion fractionation
    REAL(wp), PUBLIC ::  e15n_in2     !: N15 mesozoo ingestion fractionation
+   REAL(wp), PUBLIC ::  e13c_cal2    !: C13 mesozoo calcification fractionation
 
    !!----------------------------------------------------------------------
    !! NEMO/TOP 4.0 , NEMO Consortium (2018)
@@ -387,8 +388,10 @@ CONTAINS
 
                   zr13_dic = ( (trb(ji,jj,jk,jp13dic)+rtrn) / (trb(ji,jj,jk,jpdic)+rtrn) )
                   zr13_cal = ( (trb(ji,jj,jk,jp13cal)+rtrn) / (trb(ji,jj,jk,jpcal)+rtrn) )
-                  tra(ji,jj,jk,jp13dic) = tra(ji,jj,jk,jp13dic) + zgrazcal * zr13_cal - zprcaca * zr13_dic
-                  tra(ji,jj,jk,jp13cal) = tra(ji,jj,jk,jp13cal) - zgrazcal * zr13_cal + zprcaca * zr13_dic
+                  tra(ji,jj,jk,jp13dic) = tra(ji,jj,jk,jp13dic) + zgrazcal * zr13_cal                  &
+                  &                       - zprcaca * zr13_dic * (1. - e13c_cal2/1000.)
+                  tra(ji,jj,jk,jp13cal) = tra(ji,jj,jk,jp13cal) - zgrazcal * zr13_cal                  &
+                  &                       + zprcaca * zr13_dic * (1. - e13c_cal2/1000.)
                ENDIF
 
             END DO
@@ -445,7 +448,7 @@ CONTAINS
       NAMELIST/namp4zmes/ part2, grazrat2, resrat2, mzrat2, xpref2n, xpref2d, xpref2z,   &
          &                xpref2c, xthresh2dia, xthresh2phy, xthresh2zoo, xthresh2poc, &
          &                xthresh2, xkgraz2, epsher2, epsher2min, sigma2, unass2, grazflux, &
-         &                e15n_ex2, e15n_in2
+         &                e15n_ex2, e15n_in2, e13c_cal2
       !!----------------------------------------------------------------------
       !
       IF(lwp) THEN
@@ -485,6 +488,7 @@ CONTAINS
          WRITE(numout,*) '      half sturation constant for grazing 2          xkgraz2      =', xkgraz2
          WRITE(numout,*) '      N15 mesozoo excretion fractionation            e15n_ex2     =', e15n_ex2
          WRITE(numout,*) '      N15 mesozoo ingestion fractionation            e15n_in2     =', e15n_in2
+         WRITE(numout,*) '      C13 mesozoo calcification fractionation        e13c_cal2    =', e13c_cal2
       ENDIF
       !
    END SUBROUTINE p4z_meso_init

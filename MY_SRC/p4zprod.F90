@@ -38,6 +38,8 @@ MODULE p4zprod
    REAL(wp), PUBLIC ::   fecdm        !:
    REAL(wp), PUBLIC ::   grosip       !:
    REAL(wp), PUBLIC ::   e15n_prod    !:
+   REAL(wp), PUBLIC ::   e13c_min     !:
+   REAL(wp), PUBLIC ::   e13c_max     !:
 
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   quotan   !: proxy of N quota in Nanophyto
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   quotad   !: proxy of N quota in diatomee
@@ -379,9 +381,9 @@ CONTAINS
                     ! for new and regenerated production (same for now) and
                     ! multiply by the current ratio of 15Nno3 to total no3
                     zr15_new = (1.0 - e15n_prod*1e-3*zu_15)  &
-                    &          * ( trb(ji,jj,jk,jp15no3) + rtrn ) / ( trb(ji,jj,jk,jpno3) + rtrn )
+                    &          * ( (trb(ji,jj,jk,jp15no3)+rtrn) / (trb(ji,jj,jk,jpno3)+rtrn) )
                     zr15_reg = (1.0 - e15n_prod*1e-3*zun_15)  &
-                    &          * ( trb(ji,jj,jk,jp15nh4) + rtrn ) / ( trb(ji,jj,jk,jpnh4) + rtrn )
+                    &          * ( (trb(ji,jj,jk,jp15nh4)+rtrn) / (trb(ji,jj,jk,jpnh4)+rtrn) )
                     ! Third, apply the fractionation factors to the state variables
                     tra(ji,jj,jk,jp15phy) = tra(ji,jj,jk,jp15phy) + zr15_new * zpronewn(ji,jj,jk) * texcretn &
                     &                                             + zr15_reg * zproreg * texcretn
@@ -570,7 +572,7 @@ CONTAINS
       !
       NAMELIST/namp4zprod/ pislopen, pisloped, xadap, bresp, excretn, excretd,  &
          &                 chlcnm, chlcdm, chlcmin, fecnm, fecdm, grosip,       &
-         &                 e15n_prod
+         &                 e15n_prod, e13c_min, e13c_max
       !!----------------------------------------------------------------------
       !
       IF(lwp) THEN                         ! control print
@@ -602,6 +604,8 @@ CONTAINS
          WRITE(numout,*) '      Maximum Fe/C in nanophytoplankton         fecnm        =', fecnm
          WRITE(numout,*) '      Minimum Fe/C in diatoms                   fecdm        =', fecdm
          WRITE(numout,*) '      N15 fractionation by assimilation         e15n_prod    =', e15n_prod
+         WRITE(numout,*) '      C13 assimilation fractionation min        e13c_min     =', e13c_min
+         WRITE(numout,*) '      C13 assimilation fractionation max        e13c_max     =', e13c_max
       ENDIF
       !
       r1_rday   = 1._wp / rday 

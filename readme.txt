@@ -102,7 +102,7 @@ Files to be altered for C13 routines:
 
 
 STEPS TAKEN...
-	1. run model with dummy tracers and added namelist (logical) control of c13 routines:
+~	1. run model with dummy tracers and added namelist (logical) control of c13 routines:
 		- jp13dic	Dissolved inorganic carbon
 		- jp13cal	Calcite
 		- jp13phy	Nanophytoplankton
@@ -112,5 +112,19 @@ STEPS TAKEN...
 		- jp13poc	Small particulate organic carbon
 		- jp13goc	Large particulate organic carbon
 		- jp13doc	Dissolved organic carbon
-	   result should be a run without change in d13c or d15n
+~	2. added namelist variables for controlling d13c and e13c values
+		- p4zflx.F90 	(d13c_co2)
+		- p4zsbc.F90 	(d13c_rivdoc, d13c_rivdic, d13c_fix)
+		- p4zsed.F90	(d13c_rivdoc, d13c_rivdic, d13c_fix)
+		- p4zprod.F90	(e13c_min, e13c_max)
+		- p4zmort.F90	(e13c_cal)
+		- p4zmicro.F90	(e13c_calz)
+		- p4zmeso.F90	(e13c_cal2)
+	3. ensured that riverine fluxes do not bias d13c variables
+	4. added fractionation factors to inner carbon cycling
+		- p4zprod.F90
+		- p4zmort.F90
+		- p4zmicro.F90
+		- p4zmeso.F90
+
 

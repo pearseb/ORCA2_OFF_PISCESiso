@@ -42,6 +42,8 @@ MODULE p4zprod
    REAL(wp), PUBLIC ::   fecdm        !:
    REAL(wp), PUBLIC ::   grosip       !:
    REAL(wp), PUBLIC ::   e15n_prod    !:
+   REAL(wp), PUBLIC ::   e13c_min     !:
+   REAL(wp), PUBLIC ::   e13c_max     !:
 
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   quotan   !: proxy of N quota in Nanophyto
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   quotad   !: proxy of N quota in diatomee
@@ -574,7 +576,7 @@ CONTAINS
       !
       NAMELIST/namp4zprod/ pislopen, pisloped, xadap, bresp, excretn, excretd,  &
          &                 chlcnm, chlcdm, chlcmin, fecnm, fecdm, grosip,       &
-         &                 e15n_prod
+         &                 e15n_prod, e13c_min, e13c_max
       !!----------------------------------------------------------------------
       !
       IF(lwp) THEN                         ! control print
@@ -606,6 +608,8 @@ CONTAINS
          WRITE(numout,*) '      Maximum Fe/C in nanophytoplankton         fecnm        =', fecnm
          WRITE(numout,*) '      Minimum Fe/C in diatoms                   fecdm        =', fecdm
          WRITE(numout,*) '      N15 fractionation by assimilation         e15n_prod    =', e15n_prod
+         WRITE(numout,*) '      C13 assimilation fractionation min        e13c_min     =', e13c_min
+         WRITE(numout,*) '      C13 assimilation fractionation max        e13c_max     =', e13c_max
       ENDIF
       !
       r1_rday   = 1._wp / rday 

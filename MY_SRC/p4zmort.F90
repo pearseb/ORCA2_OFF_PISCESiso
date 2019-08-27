@@ -27,6 +27,7 @@ MODULE p4zmort
    REAL(wp), PUBLIC ::   wchldm   !:
    REAL(wp), PUBLIC ::   mprat    !:
    REAL(wp), PUBLIC ::   mprat2   !:
+   REAL(wp), PUBLIC ::   e13c_cal !:
 
    !!----------------------------------------------------------------------
    !! NEMO/TOP 4.0 , NEMO Consortium (2018)
@@ -128,8 +129,8 @@ CONTAINS
                   tra(ji,jj,jk,jp13phy) = tra(ji,jj,jk,jp13phy) - zmortp * zr13_phy 
                   tra(ji,jj,jk,jp13goc) = tra(ji,jj,jk,jp13goc) + zfracal * zmortp * zr13_phy 
                   tra(ji,jj,jk,jp13poc) = tra(ji,jj,jk,jp13poc) + ( 1. - zfracal ) * zmortp * zr13_phy 
-                  tra(ji,jj,jk,jp13dic) = tra(ji,jj,jk,jp13dic) - zprcaca * zr13_dic
-                  tra(ji,jj,jk,jp13cal) = tra(ji,jj,jk,jp13cal) + zprcaca * zr13_dic
+                  tra(ji,jj,jk,jp13dic) = tra(ji,jj,jk,jp13dic) - zprcaca * zr13_dic * (1. - e13c_cal/1000.)
+                  tra(ji,jj,jk,jp13cal) = tra(ji,jj,jk,jp13cal) + zprcaca * zr13_dic * (1. - e13c_cal/1000.)
                ENDIF
 
             END DO
@@ -251,7 +252,7 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER ::   ios   ! Local integer
       !
-      NAMELIST/namp4zmort/ wchl, wchld, wchldm, mprat, mprat2
+      NAMELIST/namp4zmort/ wchl, wchld, wchldm, mprat, mprat2, e13c_cal
       !!----------------------------------------------------------------------
       !
       IF(lwp) THEN
@@ -275,6 +276,7 @@ CONTAINS
          WRITE(numout,*) '      maximum quadratic mortality of diatoms      wchldm =', wchldm
          WRITE(numout,*) '      phytoplankton mortality rate                mprat  =', mprat
          WRITE(numout,*) '      Diatoms mortality rate                      mprat2 =', mprat2
+         WRITE(numout,*) '      C13 calcification fractionation             e13c_cal =', e13c_cal
       ENDIF
       !
    END SUBROUTINE p4z_mort_init

@@ -31,6 +31,7 @@ MODULE p4zflx
 
    !                                 !!** Namelist  nampisext  **
    REAL(wp)          ::   atcco2      !: pre-industrial atmospheric [co2] (ppm) 	
+   REAL(wp)          ::   d13c_co2    !: d13c of atmospheric [co2] (ppm) 	
    LOGICAL           ::   ln_co2int   !: flag to read in a file and interpolate atmospheric pco2 or not
    CHARACTER(len=34) ::   clname      !: filename of pco2 values
    INTEGER           ::   nn_offset   !: Offset model-data start year (default = 0) 
@@ -77,6 +78,7 @@ CONTAINS
       REAL(wp) ::   zvapsw, zsal, zfco2, zxc2, xCO2approx, ztkel, zfugcoeff
       REAL(wp) ::   zph, zdic, zsch_o2, zsch_co2
       REAL(wp) ::   zyr_dec, zdco2dt
+      REAL(wp) ::   zr13_dic
       CHARACTER (len=25) ::   charout
       REAL(wp), DIMENSION(jpi,jpj) ::   zkgco2, zkgo2, zh2co3, zoflx,  zpco2atm  
       REAL(wp), ALLOCATABLE, DIMENSION(:,:) ::   zw2d
@@ -163,7 +165,9 @@ CONTAINS
             ! compute the trend
             tra(ji,jj,1,jpdic) = tra(ji,jj,1,jpdic) + ( zfld - zflu ) * rfact2 / e3t_n(ji,jj,1) * tmask(ji,jj,1)
             IF ( ln_c13 ) THEN
-               tra(ji,jj,1,jp13dic) = tra(ji,jj,1,jp13dic) + ( zfld - zflu ) * rfact2 / e3t_n(ji,jj,1) * tmask(ji,jj,1)
+               zr13_dic = ( (trb(ji,jj,1,jp13dic)+rtrn) / (trb(ji,jj,1,jpdic)+rtrn) )
+               tra(ji,jj,1,jp13dic) = tra(ji,jj,1,jp13dic) + ( zfld * (1.0 + d13c_co2/1000.0)          &
+            &                         - zflu * zr13_dic ) * rfact2 / e3t_n(ji,jj,1) * tmask(ji,jj,1)
             ENDIF
 
             ! Compute O2 flux 
@@ -233,7 +237,7 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER ::   jm, ios   ! Local integer 
       !!
-      NAMELIST/nampisext/ln_co2int, atcco2, clname, nn_offset
+      NAMELIST/nampisext/ln_co2int, atcco2, d13c_co2, clname, nn_offset
       !!----------------------------------------------------------------------
       IF(lwp) THEN
          WRITE(numout,*)
@@ -259,11 +263,13 @@ CONTAINS
       IF( .NOT.ln_co2int .AND. .NOT.ln_presatmco2 ) THEN
          IF(lwp) THEN                         ! control print
             WRITE(numout,*) '         Constant Atmospheric pCO2 value               atcco2    =', atcco2
+            WRITE(numout,*) '         Constant Atm. d13C of pCO2 value              d13c_co2  =', d13c_co2
          ENDIF
          satmco2(:,:)  = atcco2      ! Initialisation of atmospheric pco2
       ELSEIF( ln_co2int .AND. .NOT.ln_presatmco2 ) THEN
          IF(lwp)  THEN
             WRITE(numout,*) '         Constant Atmospheric pCO2 value               atcco2    =', atcco2
+            WRITE(numout,*) '         Constant Atm. d13C of pCO2 value              d13c_co2  =', d13c_co2
             WRITE(numout,*) '         Atmospheric pCO2 value  from file             clname    =', TRIM( clname )
             WRITE(numout,*) '         Offset model-data start year                  nn_offset =', nn_offset
          ENDIF

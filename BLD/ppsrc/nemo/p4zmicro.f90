@@ -46,6 +46,7 @@ MODULE p4zmicro
    REAL(wp), PUBLIC ::   epshermin   !: minimum growth efficiency for grazing 1
    REAL(wp), PUBLIC ::   e15n_ex     !: N15 microzoo excretion fractionation
    REAL(wp), PUBLIC ::   e15n_in     !: N15 microzoo ingestion fractionation
+   REAL(wp), PUBLIC ::   e13c_calz   !: C13 microzoo calification fractionation
 
    !!----------------------------------------------------------------------
    !! NEMO/TOP 4.0 , NEMO Consortium (2018)
@@ -281,8 +282,8 @@ CONTAINS
                   tra(ji,jj,jk,jp13phy) = tra(ji,jj,jk,jp13phy) - zgrazp13
                   tra(ji,jj,jk,jp13dia) = tra(ji,jj,jk,jp13dia) - zgrazsd13
                   tra(ji,jj,jk,jp13poc) = tra(ji,jj,jk,jp13poc) + zmortz_13 - zgrazm13
-                  tra(ji,jj,jk,jp13dic) = tra(ji,jj,jk,jp13dic) - zprcaca * zr13_dic
-                  tra(ji,jj,jk,jp13cal) = tra(ji,jj,jk,jp13cal) + zprcaca * zr13_dic
+                  tra(ji,jj,jk,jp13dic) = tra(ji,jj,jk,jp13dic) - zprcaca * zr13_dic * (1. - e13c_calz/1000.)
+                  tra(ji,jj,jk,jp13cal) = tra(ji,jj,jk,jp13cal) + zprcaca * zr13_dic * (1. - e13c_calz/1000.)
                ENDIF
                !
             END DO
@@ -338,7 +339,7 @@ CONTAINS
       NAMELIST/namp4zzoo/ part, grazrat, resrat, mzrat, xprefn, xprefc, &
          &                xprefd,  xthreshdia,  xthreshphy,  xthreshpoc, &
          &                xthresh, xkgraz, epsher, epshermin, sigma1, unass, &
-         &                e15n_ex, e15n_in
+         &                e15n_ex, e15n_in, e13c_calz
       !!----------------------------------------------------------------------
       !
       IF(lwp) THEN
@@ -375,6 +376,7 @@ CONTAINS
          WRITE(numout,*) '      half sturation constant for grazing 1           xkgraz      =', xkgraz
          WRITE(numout,*) '      N15 microzoo excretion fractionation            e15n_ex     =', e15n_ex
          WRITE(numout,*) '      N15 microzoo ingestion fractionation            e15n_in     =', e15n_in
+         WRITE(numout,*) '      C13 microzoo calcification fractionation        e13c_calz   =', e13c_calz
       ENDIF
       !
    END SUBROUTINE p4z_micro_init

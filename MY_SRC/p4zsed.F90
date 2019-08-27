@@ -175,8 +175,8 @@ CONTAINS
                      tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) + (1. + d15n_riv*1e-3)*rivdoc(ji,jj) * rfact2
                   ENDIF 
                   IF ( ln_c13 ) THEN
-                     tra(ji,jj,jk,jp13dic) = tra(ji,jj,jk,jp13dic) + rivdin(ji,jj) * rfact2
-                     tra(ji,jj,jk,jp13doc) = tra(ji,jj,jk,jp13doc) + rivdoc(ji,jj) * rfact2
+                     tra(ji,jj,jk,jp13dic) = tra(ji,jj,jk,jp13dic) + (1. + d13c_rivdic*1e-3)*rivdin(ji,jj) * rfact2
+                     tra(ji,jj,jk,jp13doc) = tra(ji,jj,jk,jp13doc) + (1. + d13c_rivdoc*1e-3)*rivdoc(ji,jj) * rfact2
                   ENDIF 
 
                ENDDO
@@ -520,9 +520,9 @@ CONTAINS
                      tra(ji,jj,jk,jp15goc) = tra(ji,jj,jk,jp15goc) + zfact * (1. + d15n_fix*1e-3) * 1./9.
                   ENDIF
                   IF ( ln_c13 ) THEN
-                     tra(ji,jj,jk,jp13doc) = tra(ji,jj,jk,jp13doc) + zfact * 1./3.
-                     tra(ji,jj,jk,jp13poc) = tra(ji,jj,jk,jp13poc) + zfact * 2./9.
-                     tra(ji,jj,jk,jp13goc) = tra(ji,jj,jk,jp13goc) + zfact * 1./9.
+                     tra(ji,jj,jk,jp13doc) = tra(ji,jj,jk,jp13doc) + zfact * (1. + d13c_fix*1e-3) * 1./3.
+                     tra(ji,jj,jk,jp13poc) = tra(ji,jj,jk,jp13poc) + zfact * (1. + d13c_fix*1e-3) * 2./9.
+                     tra(ji,jj,jk,jp13goc) = tra(ji,jj,jk,jp13goc) + zfact * (1. + d13c_fix*1e-3) * 1./9.
                   ENDIF
 
               END DO
