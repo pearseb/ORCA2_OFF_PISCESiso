@@ -68,6 +68,8 @@ STEPS TAKEN...
                 - p4zprod.F90 (lines 366-370)
         16. bug found and corrected (lines 255-257), ratio of 15N:N missing for mortality of mesozooplankton
                 - p4zmeso.F90
+        17. bug found and corrected (line 413), variable zr15_no3 used incorrect k-level index (jk --> ikt)
+                - p4zsed.F90
 
      
 	

@@ -106,7 +106,7 @@ CONTAINS
                      ! zaggdoc2 = aggregation of DOC --> GOC
                      ! zaggdoc3 = aggregation of DOC --> POC
                      zr15_doc = ( (trb(ji,jj,jk,jp15doc)+rtrn) / (trb(ji,jj,jk,jpdoc)+rtrn) )
-                     zagg_15 = zagg * ( trb(ji,jj,jk,jp15poc) + rtrn ) / ( trb(ji,jj,jk,jppoc) + rtrn )
+                     zagg_15 = zagg * ( (trb(ji,jj,jk,jp15poc)+rtrn) / (trb(ji,jj,jk,jppoc)+rtrn) )
                      tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) - zagg_15 + ( zaggdoc + zaggdoc3 ) * zr15_doc
                      tra(ji,jj,jk,jp15goc) = tra(ji,jj,jk,jp15goc) + zagg_15 + zaggdoc2 * zr15_doc
                      tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) - ( zaggdoc + zaggdoc2 + zaggdoc3 ) * zr15_doc

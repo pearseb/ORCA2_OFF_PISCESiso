@@ -125,6 +125,8 @@ CONTAINS
                zfoodlim  = MAX( 0., zfood - MIN( 0.5 * zfood, xthresh2 ) )
                zdenom    = zfoodlim / ( xkgraz2 + zfoodlim )
                zdenom2   = zdenom / ( zfood + rtrn )
+
+               ! get grazing rate (increase with temperature and decrease with low O2)
                zgraze2   = grazrat2 * xstep * tgfunc2(ji,jj,jk) * trb(ji,jj,jk,jpmes) * (1. - nitrfac(ji,jj,jk)) 
 
                zgrazd    = zgraze2  * xpref2d  * zcompadi  * zdenom2 
@@ -177,7 +179,7 @@ CONTAINS
                   zgrazffp13 = zgrazffep * ( (trb(ji,jj,jk,jp13poc)+rtrn) / (trb(ji,jj,jk,jppoc)+rtrn) )
                ENDIF
 
-               !!! COMPUTE THE FRACTIONATION OF POC INTO GOC BY FILTER FEEDINGi [GOC] --> [POC]
+               !!! COMPUTE THE FRACTIONATION OF POC INTO GOC BY FILTER FEEDING [GOC] --> [POC]
                ! compute the proportion of filter feeding of total feeding rate
                zproport  = (zgrazffep + zgrazffeg + rtrn)/(zgraztotc + rtrn)
                ! Compute fractionation of aggregates. It is assumed that 
@@ -363,8 +365,8 @@ CONTAINS
                IF ( ln_n15 ) THEN
                   zmortz15 = zmortz * ( (trb(ji,jj,jk,jp15mes)+rtrn) / (trb(ji,jj,jk,jpmes)+rtrn) )
                   tra(ji,jj,jk,jp15mes) = tra(ji,jj,jk,jp15mes) - zmortz15 + zepsherv * zgraztotc15    &
-                  &                       + zgrasigex2_15 * e15n_ex2/1000.0                            &
-                  &                       + zgrapoc2_15 * e15n_in2/1000.0
+                  &                       + zgrasigex2_15 * (e15n_ex2/1000.0)                          &
+                  &                       + zgrapoc2_15 * (e15n_in2/1000.0)
                   tra(ji,jj,jk,jp15dia) = tra(ji,jj,jk,jp15dia) - zgrazd15
                   tra(ji,jj,jk,jp15zoo) = tra(ji,jj,jk,jp15zoo) - zgrazz15
                   tra(ji,jj,jk,jp15phy) = tra(ji,jj,jk,jp15phy) - zgrazn15

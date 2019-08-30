@@ -385,6 +385,10 @@ CONTAINS
                  ! z1pdenit = amount of material (POC+GOC) that is remineralised without denitrification (molC/L)
                zolimit = MIN( ( trb(ji,jj,ikt,jpoxy) - rtrn ) / o2ut, z1pdenit * ( 1.- nitrfac(ji,jj,ikt) ) )
                  ! zolimit = adjusted z1pdenit that occurs through oxic remineralisation
+
+               ! zpdenit + zolimit + (z1pdenit-zolimit) = zwstpoc * zrivno3
+               ! OM_denit + OM_oxy + OM_other_remin     = OM_total_hitting_sed_that_is_not_buried
+
                tra(ji,jj,ikt,jpdoc) = tra(ji,jj,ikt,jpdoc) + z1pdenit - zolimit
                  ! z1pdenit (non-nitrogeneous remineralisation) - zolimit (oxic remineralisation)
                  !  thus... the component of remineralisation that cannot be accommodated by N or O2 goes to DOC
@@ -406,13 +410,13 @@ CONTAINS
                ENDIF
 
                IF ( ln_n15 ) THEN
-                  zr15_no3 = ( (trb(ji,jj,jk,jp15no3)+rtrn) / (trb(ji,jj,jk,jpno3)+rtrn) )
+                  zr15_no3 = ( (trb(ji,jj,ikt,jp15no3)+rtrn) / (trb(ji,jj,ikt,jpno3)+rtrn) )
                   zwstpoc15 = trb(ji,jj,ikt,jp15goc)*zws4 + trb(ji,jj,ikt,jp15poc)*zws3 !POC+GOC hitting sediment 
                   zr15_rain = ( (zwstpoc15+rtrn) / (zwstpoc+rtrn) )
                   tra(ji,jj,ikt,jp15doc) = tra(ji,jj,ikt,jp15doc) + zwstpoc15 * zrivno3           &
                   &                        - zpdenit * zr15_rain - zolimit * zr15_rain
                   tra(ji,jj,ikt,jp15nh4) = tra(ji,jj,ikt,jp15nh4) + zpdenit * zr15_rain + zolimit * zr15_rain
-                  tra(ji,jj,ikt,jp15no3) = tra(ji,jj,ikt,jp15no3) - rdenit * zpdenit * ( 1.0 - e15n_ben*1e-3 ) * zr15_no3 
+                  tra(ji,jj,ikt,jp15no3) = tra(ji,jj,ikt,jp15no3) - rdenit * zpdenit * ( 1.0 - e15n_ben/1000.0 ) * zr15_no3 
                ENDIF 
                IF ( ln_c13 ) THEN
                   zwstpoc13 = trb(ji,jj,ikt,jp13goc)*zws4 + trb(ji,jj,ikt,jp13poc)*zws3 !POC+GOC hitting sediment 

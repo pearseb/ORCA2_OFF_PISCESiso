@@ -67,7 +67,7 @@ CONTAINS
       REAL(wp) ::   zbactfer, zolimit, zrfact2
       REAL(wp) ::   zammonic, zoxyremc, zoxyremn, zoxyremp
       REAL(wp) ::   zosil, ztem, zdenitnh4, zolimic, zolimin, zolimip, zdenitrn, zdenitrp
-      REAL(wp) ::   zr15_doc, zr15_no3
+      REAL(wp) ::   zr15_doc, zr15_no3, zr15_nh4
       REAL(wp) ::   zr13_doc
       CHARACTER (len=25) :: charout
       REAL(wp), DIMENSION(jpi,jpj    ) :: ztempbac
@@ -153,7 +153,7 @@ CONTAINS
                      tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) +  & 
                      &                       ( zolimi(ji,jj,jk) + denitr(ji,jj,jk) + zoxyremc ) * zr15_doc
                      tra(ji,jj,jk,jp15no3) = tra(ji,jj,jk,jp15no3) - denitr (ji,jj,jk) * rdenit  &
-                     &                       * ( 1.0 - e15n_den*1e-3 ) * zr15_no3
+                     &                       * ( 1.0 - e15n_den/1000.0 ) * zr15_no3
                      tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) -  &
                      &                       ( zolimi(ji,jj,jk) + denitr(ji,jj,jk) + zoxyremc ) * zr15_doc 
                   ENDIF
@@ -231,6 +231,8 @@ CONTAINS
                ! zonitri = nitrification of NH4 --> NO3 under oxic conditions
                ! zdenitnh4 = nitrification of NH4 under anoxic conditions NH4 --> NO3
                !             ... except that this NH4 is removed from the system (NH4 --> N2)
+               !             ... nitrifier-denitrification (NH4 --> NO2 --> NO  --> N2O --> N2),
+               !             ... or coupled nitrification-denitrification (NH4
                ! Update of the tracers trends
                ! ----------------------------
                tra(ji,jj,jk,jpnh4) = tra(ji,jj,jk,jpnh4) - zonitr(ji,jj,jk) - zdenitnh4
@@ -239,14 +241,13 @@ CONTAINS
                tra(ji,jj,jk,jptal) = tra(ji,jj,jk,jptal) - 2 * rno3 * zonitr(ji,jj,jk) + rno3 * ( rdenita - 1. ) * zdenitnh4
 
                IF( ln_n15 ) THEN
-                  tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) & 
-                  &                       - ( zonitr(ji,jj,jk) * ( 1.0 - e15n_nit*1e-3 ) + zdenitnh4 )   &
-                  &                       * ( trb(ji,jj,jk,jp15nh4) + rtrn ) / (trb(ji,jj,jk,jpnh4) + rtrn )   
-                  tra(ji,jj,jk,jp15no3) = tra(ji,jj,jk,jp15no3) + zonitr(ji,jj,jk)                 &
-                  &                       * ( trb(ji,jj,jk,jp15nh4) + rtrn ) / (trb(ji,jj,jk,jpnh4) + rtrn )  &
-                  &                       * ( 1.0 - e15n_nit*1e-3 )                                &
-                  &                       - rdenita * zdenitnh4                                    &
-                  &                       * ( trb(ji,jj,jk,jp15no3) + rtrn ) / (trb(ji,jj,jk,jpno3) + rtrn )  
+                  zr15_nh4 = ( (trb(ji,jj,jk,jp15nh4)+rtrn) / (trb(ji,jj,jk,jpnh4)+rtrn) )
+                  zr15_no3 = ( (trb(ji,jj,jk,jp15no3)+rtrn) / (trb(ji,jj,jk,jpno3)+rtrn) )
+                  tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4)                                      & 
+                  &                       - ( zonitr(ji,jj,jk) * ( 1.0 - e15n_nit/1000.0 ) + zdenitnh4 ) * zr15_nh4   
+                  tra(ji,jj,jk,jp15no3) = tra(ji,jj,jk,jp15no3)                                      &
+                  &                       + zonitr(ji,jj,jk) * zr15_nh4 * ( 1.0 - e15n_nit/1000.0 )  &
+                  &                       - rdenita * zdenitnh4 * zr15_no3                                     
                ENDIF
 
             END DO

@@ -91,6 +91,7 @@ CONTAINS
       REAL(wp), DIMENSION(jpi,jpj,jpk) :: zpronewn, zpronewd
       REAL(wp), DIMENSION(jpi,jpj,jpk) :: zmxl_fac, zmxl_chl
       REAL(wp), DIMENSION(jpi,jpj,jpk) :: zpligprod1, zpligprod2
+      REAL(wp), DIMENSION(jpi,jpj,jpk) :: ze15nprod1, ze15nprod2
       !!---------------------------------------------------------------------
       !
       IF( ln_timing )   CALL timing_start('p4z_prod')
@@ -104,6 +105,9 @@ CONTAINS
       zmxl_fac(:,:,:) = 0._wp ; zmxl_chl(:,:,:) = 0._wp 
       IF( ln_ligand ) THEN
            zpligprod1(:,:,:)  = 0.     ;      zpligprod2(:,:,:) = 0.
+      ENDIF
+      IF( ln_n15 ) THEN
+           ze15nprod1(:,:,:)  = 0.     ;      ze15nprod2(:,:,:) = 0.
       ENDIF
       ! Computation of the optimal production (function of temperature - Eppley curve)
       zprmaxn(:,:,:) = 0.8_wp * r1_rday * tgfunc(:,:,:)
@@ -384,10 +388,13 @@ CONTAINS
                     ! Second, apply utilisation factors to fractionation factors
                     ! for new and regenerated production (same for now) and
                     ! multiply by the current ratio of 15Nno3 to total no3
-                    zr15_new = (1.0 - e15n_prod*1e-3*zu_15)  &
-                    &          * ( trb(ji,jj,jk,jp15no3) + rtrn ) / ( trb(ji,jj,jk,jpno3) + rtrn )
-                    zr15_reg = (1.0 - e15n_prod*1e-3*zun_15)  &
-                    &          * ( trb(ji,jj,jk,jp15nh4) + rtrn ) / ( trb(ji,jj,jk,jpnh4) + rtrn )
+                    zr15_new = (1.0 - e15n_prod/1000.0 * zu_15)  &
+                    &          * ( (trb(ji,jj,jk,jp15no3)+rtrn) / (trb(ji,jj,jk,jpno3)+rtrn) )
+                    zr15_reg = (1.0 - e15n_prod/1000.0 * zun_15)  &
+                    &          * ( (trb(ji,jj,jk,jp15nh4)+rtrn) / (trb(ji,jj,jk,jpnh4)+rtrn) )
+                    ! save the fractionation factor due to new and regenerated production
+                    ze15nprod1(ji,jj,jk) = (1.0 - e15n_prod/1000.0 * zu_15)
+                    ze15nprod2(ji,jj,jk) = (1.0 - e15n_prod/1000.0 * zun_15)
                     ! Third, apply the fractionation factors to the state variables
                     tra(ji,jj,jk,jp15phy) = tra(ji,jj,jk,jp15phy) + zr15_new * zpronewn(ji,jj,jk) * texcretn &
                     &                                             + zr15_reg * zproreg * texcretn
@@ -472,6 +479,14 @@ CONTAINS
           IF( iom_use( "LDETP" ) )  THEN
               zw3d(:,:,:) = zpligprod2(:,:,:) * 1e9 * zfact * tmask(:,:,:)
               CALL iom_put( "LDETP"  , zw3d )
+          ENDIF
+          IF( iom_use( "E15Nnew" ) )  THEN
+              zw3d(:,:,:) = ze15nprod1(:,:,:) * tmask(:,:,:)
+              CALL iom_put( "E15Nnew"  , zw3d )
+          ENDIF
+          IF( iom_use( "E15Nreg" ) )  THEN
+              zw3d(:,:,:) = ze15nprod2(:,:,:) * tmask(:,:,:)
+              CALL iom_put( "E15Nreg"  , zw3d )
           ENDIF
           IF( iom_use( "Mumax" ) )  THEN
               zw3d(:,:,:) = zprmaxn(:,:,:) * tmask(:,:,:)   ! Maximum growth rate

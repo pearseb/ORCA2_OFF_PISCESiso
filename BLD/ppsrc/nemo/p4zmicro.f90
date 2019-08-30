@@ -124,6 +124,8 @@ CONTAINS
                zfoodlim  = MAX( 0. , zfood - min(xthresh,0.5*zfood) ) ! zfoodlim increases as food availability increases 
                zdenom    = zfoodlim / ( xkgraz + zfoodlim )  ! [0,1] , closer to 1 when food availability greater 
                zdenom2   = zdenom / ( zfood + rtrn ) ! [0 --> 1], closer to 1 when food availability high
+               
+               ! get grazing rate (increase with temp and decrease with low O2)
                zgraze    = grazrat * xstep * tgfunc2(ji,jj,jk) * trb(ji,jj,jk,jpzoo) * (1. - nitrfac(ji,jj,jk)) 
 
                zgrazp    = zgraze  * xprefn * zcompaph  * zdenom2 
@@ -183,9 +185,9 @@ CONTAINS
                !.........................
                !   7 variables
                ! zepsherv = amount of carbon assimilated by zooplankton and becomes biomass (ZOO)
-               ! zgrarem  = amount of carbon assimilated by zooplankton but is excreted as other substances (NH4, DOC)
-               ! zgrapoc  = amount of carbon not assimilated by zooplankton but becomes POC (POC) 
-               ! zgrarsig = amount of carbon assimilated by zooplankton that is excreted as NH4 (NH4)
+               ! zgrarem  = amount of carbon released (assimilated+mortality) by zooplankton as other substances (NH4, DOC)
+               ! zgrapoc  = amount of carbon not assimilated by zooplankton but becomes POC (POC) (sloppy feeding)
+               ! zgrarsig = amount of carbon released (assimilated+mortality) by zooplankton as NH4 (NH4)
                ! ... zgrarem - zgrarsig = carbon assimilated by zooplankton that is excreted as DOM (DOC)
                ! zgrazp   = amount of phytoplankton carbon removed by microzooplankton 
                ! zgrazm   = amount of POC carbon removed by microzooplankton 
@@ -231,10 +233,10 @@ CONTAINS
                tra(ji,jj,jk,jptal) = tra(ji,jj,jk,jptal) + rno3 * zgrarsig
                !
                IF( ln_n15 ) THEN
-                  tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zgrasigex_15 * ( 1. - e15n_ex*1e-3 )   &
+                  tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zgrasigex_15 * ( 1. - e15n_ex/1000.0 )   &
                   &                       + ( zgrasig_15 - zgrasigex_15 )
                   tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) + zgrarem_15 - zgrasig_15
-                  tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) + zgrapoc_15 * ( 1. - e15n_in*1e-3 )
+                  tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) + zgrapoc_15 * ( 1. - e15n_in/1000.0 )
                ENDIF
                IF( ln_c13 ) THEN
                   tra(ji,jj,jk,jp13doc) = tra(ji,jj,jk,jp13doc) + zgrarem_13 - zgrasig_13
@@ -270,8 +272,8 @@ CONTAINS
                !
                IF ( ln_n15 ) THEN
                   tra(ji,jj,jk,jp15zoo) = tra(ji,jj,jk,jp15zoo) - zmortz_15 + zepsherv * zgraztotc15  &
-                  &                       + zgrasigex_15 * e15n_ex*1e-3                               &
-                  &                       + zgrapoc_15 * e15n_in*1e-3
+                  &                       + zgrasigex_15 * (e15n_ex/1000.0)                           &
+                  &                       + zgrapoc_15 * (e15n_in/1000.0)
                   tra(ji,jj,jk,jp15phy) = tra(ji,jj,jk,jp15phy) - zgrazp15
                   tra(ji,jj,jk,jp15dia) = tra(ji,jj,jk,jp15dia) - zgrazsd15
                   tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) + zmortz_15 - zgrazm15

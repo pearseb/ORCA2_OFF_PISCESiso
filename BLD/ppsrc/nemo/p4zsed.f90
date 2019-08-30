@@ -416,7 +416,7 @@ CONTAINS
                   tra(ji,jj,ikt,jp15doc) = tra(ji,jj,ikt,jp15doc) + zwstpoc15 * zrivno3           &
                   &                        - zpdenit * zr15_rain - zolimit * zr15_rain
                   tra(ji,jj,ikt,jp15nh4) = tra(ji,jj,ikt,jp15nh4) + zpdenit * zr15_rain + zolimit * zr15_rain
-                  tra(ji,jj,ikt,jp15no3) = tra(ji,jj,ikt,jp15no3) - rdenit * zpdenit * ( 1.0 - e15n_ben*1e-3 ) * zr15_no3 
+                  tra(ji,jj,ikt,jp15no3) = tra(ji,jj,ikt,jp15no3) - rdenit * zpdenit * ( 1.0 - e15n_ben/1000.0 ) * zr15_no3 
                ENDIF 
                IF ( ln_c13 ) THEN
                   zwstpoc13 = trb(ji,jj,ikt,jp13goc)*zws4 + trb(ji,jj,ikt,jp13poc)*zws3 !POC+GOC hitting sediment 
