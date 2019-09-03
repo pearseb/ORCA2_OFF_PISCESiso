@@ -175,7 +175,7 @@ CONTAINS
                      tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) + (1. + d15n_riv*1e-3)*rivdoc(ji,jj) * rfact2
                   ENDIF 
                   IF ( ln_c13 ) THEN
-                     tra(ji,jj,jk,jp13dic) = tra(ji,jj,jk,jp13dic) + (1. + d13c_rivdic*1e-3)*rivdin(ji,jj) * rfact2
+                     tra(ji,jj,jk,jp13dic) = tra(ji,jj,jk,jp13dic) + (1. + d13c_rivdic*1e-3)*rivdic(ji,jj) * rfact2
                      tra(ji,jj,jk,jp13doc) = tra(ji,jj,jk,jp13doc) + (1. + d13c_rivdoc*1e-3)*rivdoc(ji,jj) * rfact2
                   ENDIF 
 

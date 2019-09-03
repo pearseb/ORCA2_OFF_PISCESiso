@@ -232,7 +232,8 @@ CONTAINS
                ! zdenitnh4 = nitrification of NH4 under anoxic conditions NH4 --> NO3
                !             ... except that this NH4 is removed from the system (NH4 --> N2)
                !             ... nitrifier-denitrification (NH4 --> NO2 --> NO  --> N2O --> N2),
-               !             ... or coupled nitrification-denitrification (NH4
+               !             ... or coupled nitrification-denitrification
+               !             here is where I should add anammox when I add NO2
                ! Update of the tracers trends
                ! ----------------------------
                tra(ji,jj,jk,jpnh4) = tra(ji,jj,jk,jpnh4) - zonitr(ji,jj,jk) - zdenitnh4
