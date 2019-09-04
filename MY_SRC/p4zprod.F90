@@ -15,6 +15,7 @@ MODULE p4zprod
    USE trc             ! passive tracers common variables 
    USE sms_pisces      ! PISCES Source Minus Sink variables
    USE p4zlim          ! Co-limitations of differents nutrients
+   USE p4zche
    USE prtctl_trc      ! print control for debugging
    USE iom             ! I/O manager
 
@@ -75,7 +76,8 @@ CONTAINS
       REAL(wp) ::   zrum, zcodel, zargu, zval, zfeup, chlcnm_n, chlcdm_n
       REAL(wp) ::   zfact
       REAL(wp) ::   zu_15, zun_15, zr15_new, zr15_reg
-      REAL(wp) ::   zr13_dic
+      REAL(wp) ::   zr13_dic, zr13, zr13_2
+      REAL(wp) ::   ztc, zft, zrhop, zfco3, zbot, zdic, zph, zalka, zalk, zah2
       CHARACTER (len=25) :: charout
       REAL(wp), ALLOCATABLE, DIMENSION(:,:) :: zw2d
       REAL(wp), ALLOCATABLE, DIMENSION(:,:,:) :: zw3d
@@ -88,6 +90,8 @@ CONTAINS
       REAL(wp), DIMENSION(jpi,jpj,jpk) :: zmxl_fac, zmxl_chl
       REAL(wp), DIMENSION(jpi,jpj,jpk) :: zpligprod1, zpligprod2
       REAL(wp), DIMENSION(jpi,jpj,jpk) :: ze15nprod1, ze15nprod2
+      REAL(wp), DIMENSION(jpi,jpj,jpk) :: za_g, za_dic, zh2co3, z_co3
+      REAL(wp), DIMENSION(jpi,jpj,jpk) :: z_e13c_prod, z_e13c_prod2
       !!---------------------------------------------------------------------
       !
       IF( ln_timing )   CALL timing_start('p4z_prod')
@@ -275,6 +279,59 @@ CONTAINS
          END DO
       END DO
 
+
+      IF ( ln_c13 ) THEN
+
+!      DO jm = 1,10
+         DO jk = 1,jpkm1
+            DO jj = 1,jpj
+               DO ji = 1,jpi
+
+                  ! DUMMY VARIABLES FOR DIC, H+, AND BORATE
+                  zbot  = borat(ji,jj,jk)
+                  zrhop = rhop(ji,jj,jk) / 1000. + rtrn
+                  zdic  = trb(ji,jj,jk,jpdic) / zrhop
+                  zph   = MAX( hi(ji,jj,jk), 1.e-10 ) / zrhop
+                  zalka = trb(ji,jj,jk,jptal) / zrhop
+
+                  ! CALCULATE [ALK]([CO3--], [HCO3-])
+                  zalk  = zalka - (  akw3(ji,jj,jk) / zph - zph + zbot / ( 1.+ zph / akb3(ji,jj,jk) )  )
+
+                  ! CALCULATE [H+] AND [H2CO3]
+                  zah2   = SQRT(  (zdic-zalk)**2 + 4.* ( zalk * ak23(ji,jj,jk)   &
+                  &                               / ak13(ji,jj,jk) ) * ( 2.*zdic - zalk )  )
+                  zah2   = 0.5 * ak13(ji,jj,jk) / zalk * ( ( zdic - zalk ) + zah2 )
+                  zh2co3(ji,jj,jk) = ( 2.* zdic - zalk ) / ( 2.+ ak13(ji,jj,jk) / zah2) * zrhop
+                  z_co3(ji,jj,jk) = zalk / ( 2. + zah2 / ak23(ji,jj,jk) ) * zrhop
+                  hi(ji,jj,jk)   = zah2 * zrhop
+
+               ENDDO
+            ENDDO
+         ENDDO
+!      ENDDO
+           
+      DO jk = 1,jpkm1
+         DO jj = 1,jpj
+            DO ji = 1,jpi
+
+               ! Compute fractionation factors for C13 from Zhang et al. 1995
+
+               zfco3 = MAX(0.05,(z_co3(ji,jj,jk)/trb(ji,jj,jk,jpdic)+rtrn))
+               zfco3 = MIN(0.2 , zfco3)
+               ztc = MIN( 35., tsn(ji,jj,jk,jp_tem) )
+               zft = MIN(25.,ztc)
+               zft = MAX( 5.,zft)
+               za_g(ji,jj,jk) = 1.   + ( -0.0049 * zft - 1.31 ) / 1000.
+               za_dic(ji,jj,jk) = 1. + ( 0.014 * zft * zfco3 - 0.105 * zft + 10.53 ) / 1000.
+
+
+            ENDDO
+         ENDDO
+      ENDDO
+
+      ENDIF
+
+
       ! Computation of the various production terms 
       DO jk = 1, jpkm1
          DO jj = 1, jpj
@@ -405,10 +462,23 @@ CONTAINS
                  ENDIF
                  IF ( ln_c13 ) THEN
                     zr13_dic = ( (trb(ji,jj,jk,jp13dic)+rtrn) / (trb(ji,jj,jk,jpdic)+rtrn) )
-                    tra(ji,jj,jk,jp13phy) = tra(ji,jj,jk,jp13phy) + zprorcan(ji,jj,jk) * texcretn * zr13_dic
-                    tra(ji,jj,jk,jp13dia) = tra(ji,jj,jk,jp13dia) + zprorcad(ji,jj,jk) * texcretd * zr13_dic
-                    tra(ji,jj,jk,jp13doc) = tra(ji,jj,jk,jp13doc) + zdocprod * zr13_dic
-                    tra(ji,jj,jk,jp13dic) = tra(ji,jj,jk,jp13dic) - (zprorcan(ji,jj,jk) + zprorcad(ji,jj,jk)) * zr13_dic 
+                    
+                    z_e13c_prod(ji,jj,jk) = max(e13c_min, min(e13c_max, (                                    &
+                    &             ( (86400 * zprorcan(ji,jj,jk)) / (trb(ji,jj,jk,jpphy) + rtrn) /            &
+                    &             ( rfact2 * (zh2co3(ji,jj,jk)/1025*1e9 + rtrn)) - 0.371 ) / (-0.015) )))
+                    z_e13c_prod2(ji,jj,jk)= max(e13c_min, min(e13c_max, (                                    &
+                    &             ( (86400 * zprorcad(ji,jj,jk)) / (trb(ji,jj,jk,jpdia) + rtrn) /            &
+                    &             ( rfact2 * (zh2co3(ji,jj,jk)/1025*1e9 + rtrn)) - 0.371 ) / (-0.015) )))
+                
+                    zr13 = ( 1.0 - z_e13c_prod(ji,jj,jk)/1000.0 ) * zr13_dic 
+                    zr13_2 = ( 1.0 - z_e13c_prod2(ji,jj,jk)/1000.0 ) * zr13_dic 
+
+                    tra(ji,jj,jk,jp13phy) = tra(ji,jj,jk,jp13phy) + zprorcan(ji,jj,jk) * texcretn * zr13
+                    tra(ji,jj,jk,jp13dia) = tra(ji,jj,jk,jp13dia) + zprorcad(ji,jj,jk) * texcretd * zr13_2
+                    tra(ji,jj,jk,jp13doc) = tra(ji,jj,jk,jp13doc) + zprorcan(ji,jj,jk) * excretn * zr13      &
+                    &                                             + zprorcad(ji,jj,jk) * excretd * zr13_2
+                    tra(ji,jj,jk,jp13dic) = tra(ji,jj,jk,jp13dic) - zprorcan(ji,jj,jk) * zr13                &
+                    &                                             - zprorcad(ji,jj,jk) * zr13_2 
                  ENDIF
 
               ENDIF
@@ -483,6 +553,14 @@ CONTAINS
           IF( iom_use( "E15Nreg" ) )  THEN
               zw3d(:,:,:) = ze15nprod2(:,:,:) * tmask(:,:,:)
               CALL iom_put( "E15Nreg"  , zw3d )
+          ENDIF
+          IF( iom_use( "E13Cphy" ) )  THEN
+              zw3d(:,:,:) = z_e13c_prod(:,:,:) * tmask(:,:,:)
+              CALL iom_put( "E13Cphy"  , zw3d )
+          ENDIF
+          IF( iom_use( "E13Cdia" ) )  THEN
+              zw3d(:,:,:) = z_e13c_prod2(:,:,:) * tmask(:,:,:)
+              CALL iom_put( "E13Cdia"  , zw3d )
           ENDIF
           IF( iom_use( "Mumax" ) )  THEN
               zw3d(:,:,:) = zprmaxn(:,:,:) * tmask(:,:,:)   ! Maximum growth rate

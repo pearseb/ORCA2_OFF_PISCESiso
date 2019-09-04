@@ -1866,10 +1866,10 @@ p4zpoc.o: $(FCM_PPSRCDIR)/nemo/p4zpoc.f90 FFLAGS__nemo__p4zpoc.flags iom.o oce_t
 FFLAGS__nemo__p4zprod.flags: FFLAGS__nemo.flags
 	touch $(FCM_FLAGSDIR)/$@
 
-p4zprod.done: p4zprod.o iom.done oce_trc.done p4zlim.done prtctl_trc.done sms_pisces.done trc.done
+p4zprod.done: p4zprod.o iom.done oce_trc.done p4zche.done p4zlim.done prtctl_trc.done sms_pisces.done trc.done
 	touch $(FCM_DONEDIR)/$@
 
-p4zprod.o: $(FCM_PPSRCDIR)/nemo/p4zprod.f90 FFLAGS__nemo__p4zprod.flags iom.o oce_trc.o p4zlim.o prtctl_trc.o sms_pisces.o trc.o
+p4zprod.o: $(FCM_PPSRCDIR)/nemo/p4zprod.f90 FFLAGS__nemo__p4zprod.flags iom.o oce_trc.o p4zche.o p4zlim.o prtctl_trc.o sms_pisces.o trc.o
 	fcm_internal compile:F nemo $< $@
 
 FFLAGS__nemo__p4zrem.flags: FFLAGS__nemo.flags

@@ -193,7 +193,7 @@ DEP::nemo__p4zmicro.F90                 p4zmicro::iom::USE::oce_trc::USE::p4zlim
 DEP::nemo__p4zmort.F90                  p4zmort::oce_trc::USE::p4zlim::USE::p4zprod::USE::prtctl_trc::USE::sms_pisces::USE::trc::USE
 DEP::nemo__p4zopt.F90                   p4zopt::fldread::USE::iom::USE::oce_trc::USE::prtctl_trc::USE::sms_pisces::USE::trc::USE
 DEP::nemo__p4zpoc.F90                   p4zpoc::iom::USE::oce_trc::USE::prtctl_trc::USE::sms_pisces::USE::trc::USE
-DEP::nemo__p4zprod.F90                  p4zprod::iom::USE::oce_trc::USE::p4zlim::USE::prtctl_trc::USE::sms_pisces::USE::trc::USE
+DEP::nemo__p4zprod.F90                  p4zprod::iom::USE::oce_trc::USE::p4zche::USE::p4zlim::USE::prtctl_trc::USE::sms_pisces::USE::trc::USE
 DEP::nemo__p4zrem.F90                   p4zrem::iom::USE::oce_trc::USE::p4zche::USE::p4zlim::USE::p4zprod::USE::prtctl_trc::USE::sms_pisces::USE::trc::USE
 DEP::nemo__p4zsbc.F90                   p4zsbc::fldread::USE::iom::USE::oce_trc::USE::sms_pisces::USE::trc::USE
 DEP::nemo__p4zsed.F90                   p4zsed::iom::USE::oce_trc::USE::p4zint::USE::p4zlim::USE::p4zsbc::USE::prtctl_trc::USE::sed::USE::sms_pisces::USE::trc::USE
