@@ -78,9 +78,10 @@ CONTAINS
       REAL(wp) ::   zvapsw, zsal, zfco2, zxc2, xCO2approx, ztkel, zfugcoeff
       REAL(wp) ::   zph, zdic, zsch_o2, zsch_co2
       REAL(wp) ::   zyr_dec, zdco2dt
-      REAL(wp) ::   zr13_dic
+      REAL(wp) ::   zr13_dic, zft, zfco3
       CHARACTER (len=25) ::   charout
       REAL(wp), DIMENSION(jpi,jpj) ::   zkgco2, zkgo2, zh2co3, zoflx,  zpco2atm  
+      REAL(wp), DIMENSION(jpi,jpj) ::   za_dic, za_g, z_co3
       REAL(wp), ALLOCATABLE, DIMENSION(:,:) ::   zw2d
       !!---------------------------------------------------------------------
       !
@@ -143,6 +144,17 @@ CONTAINS
             ! compute gas exchange for CO2 and O2
             zkgco2(ji,jj) = zkgwan * SQRT( 660./ zsch_co2 )
             zkgo2 (ji,jj) = zkgwan * SQRT( 660./ zsch_o2 )
+            
+            IF ( ln_c13 ) THEN
+               ! Compute fractionation factors for C13 from Zhang et al. 1995
+               zfco3 = MAX(0.05,(z_co3(ji,jj)/trb(ji,jj,1,jpdic)+rtrn))
+               zfco3 = MIN(0.2 , zfco3)
+               zft = MIN( 25., ztc )
+               zft = MAX(  5., zft )
+               za_g  (ji,jj) = 1. + ( -0.0049 * zft - 1.31 ) / 1000.
+               za_dic(ji,jj) = 1. + ( 0.014 * zft * zfco3  - 0.105 * zft + 10.53 ) / 1000.
+            ENDIF
+
          END DO
       END DO
 
@@ -164,10 +176,15 @@ CONTAINS
             oce_co2(ji,jj) = ( zfld - zflu ) * rfact2 * e1e2t(ji,jj) * tmask(ji,jj,1) * 1000.
             ! compute the trend
             tra(ji,jj,1,jpdic) = tra(ji,jj,1,jpdic) + ( zfld - zflu ) * rfact2 / e3t_n(ji,jj,1) * tmask(ji,jj,1)
+
             IF ( ln_c13 ) THEN
                zr13_dic = ( (trb(ji,jj,1,jp13dic)+rtrn) / (trb(ji,jj,1,jpdic)+rtrn) )
-               tra(ji,jj,1,jp13dic) = tra(ji,jj,1,jp13dic) + ( zfld * (1.0 + d13c_co2/1000.0)          &
-            &                         - zflu * zr13_dic ) * rfact2 / e3t_n(ji,jj,1) * tmask(ji,jj,1)
+
+               oce_c13(ji,jj) = ( zfld * (1.0 + d13c_co2/1000.0) -                                 &
+               &                  zflu * zr13_dic / (za_dic(ji,jj)+rtrn) )                         &
+               &                 * 0.99919 * za_g(ji,jj) * rfact2 / e3t_n(ji,jj,1) * tmask(ji,jj,1)
+
+               tra(ji,jj,1,jp13dic) = tra(ji,jj,1,jp13dic) + oce_c13(ji,jj)
             ENDIF
 
             ! Compute O2 flux 
@@ -196,6 +213,10 @@ CONTAINS
          IF( iom_use( "Cflx"  ) )  THEN
             zw2d(:,:) = oce_co2(:,:) / e1e2t(:,:) * rfact2r
             CALL iom_put( "Cflx"     , zw2d ) 
+         ENDIF
+         IF( iom_use( "C13flx"  ) )  THEN
+            zw2d(:,:) = oce_c13(:,:) / e1e2t(:,:) * rfact2r
+            CALL iom_put( "C13flx"     , zw2d ) 
          ENDIF
          IF( iom_use( "Oflx"  ) )  THEN
             zw2d(:,:) =  zoflx(:,:) * 1000 * tmask(:,:,1)
@@ -296,6 +317,7 @@ CONTAINS
       ENDIF
       !
       oce_co2(:,:)  = 0._wp                ! Initialization of Flux of Carbon
+      oce_c13(:,:)  = 0._wp                ! Initialization of Flux of Carbon
       t_oce_co2_flx = 0._wp
       t_atm_co2_flx = 0._wp
       !

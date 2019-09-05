@@ -1,1 +1,1 @@
-/users/pearseb/NEMOv4.0/src/OCE/trc_oce.F90
+/users/pearseb/NEMOv4.0/cfgs/ORCA2_OFF_PISCESiso/MY_SRC/trc_oce.F90

@@ -1,7 +1,3 @@
-# 1 "trc_oce.F90"
-# 1 "<built-in>"
-# 1 "<command-line>"
-# 1 "trc_oce.F90"
 MODULE trc_oce
    !!======================================================================
    !!                      ***  MODULE  trc_oce  ***
@@ -36,17 +32,17 @@ MODULE trc_oce
    REAL(wp), PUBLIC, SAVE, ALLOCATABLE, DIMENSION(:,:)   ::   oce_co2   !: ocean carbon flux
    REAL(wp), PUBLIC, SAVE, ALLOCATABLE, DIMENSION(:,:)   ::   oce_c13   !: ocean carbon-13 flux
 
-
+#if defined key_top 
    !!----------------------------------------------------------------------
    !!   'key_top'                                                 bio-model          
    !!----------------------------------------------------------------------
    LOGICAL, PUBLIC, PARAMETER ::   lk_top     = .TRUE.   !: TOP model
-
-
-
-
-
-
+#else
+   !!----------------------------------------------------------------------
+   !! Default option                          No bio-model light absorption      
+   !!----------------------------------------------------------------------
+   LOGICAL, PUBLIC, PARAMETER ::   lk_top     = .FALSE.   !: TOP model
+#endif
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
    !! $Id: trc_oce.F90 10068 2018-08-28 14:09:04Z nicolasmartin $ 
