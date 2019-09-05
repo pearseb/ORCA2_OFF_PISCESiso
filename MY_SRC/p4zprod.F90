@@ -91,7 +91,7 @@ CONTAINS
       REAL(wp), DIMENSION(jpi,jpj,jpk) :: zpligprod1, zpligprod2
       REAL(wp), DIMENSION(jpi,jpj,jpk) :: ze15nprod1, ze15nprod2
       REAL(wp), DIMENSION(jpi,jpj,jpk) :: za_g, za_dic, zh2co3, z_co3
-      REAL(wp), DIMENSION(jpi,jpj,jpk) :: z_e13c_prod, z_e13c_prod2
+      REAL(wp), DIMENSION(jpi,jpj,jpk) :: ze13cprod1, ze13cprod2
       !!---------------------------------------------------------------------
       !
       IF( ln_timing )   CALL timing_start('p4z_prod')
@@ -108,6 +108,9 @@ CONTAINS
       ENDIF
       IF( ln_n15 ) THEN
            ze15nprod1(:,:,:)  = 0.     ;      ze15nprod2(:,:,:) = 0.
+      ENDIF
+      IF( ln_c13 ) THEN
+           ze13cprod1(:,:,:)  = 0.     ;      ze13cprod2(:,:,:) = 0.
       ENDIF
       ! Computation of the optimal production (function of temperature - Eppley curve)
       zprmaxn(:,:,:) = 0.8_wp * r1_rday * tgfunc(:,:,:)
@@ -438,16 +441,14 @@ CONTAINS
                     &                             / (trb(ji,jj,jk,jpno3) + rtrn) ) )
                     zun_15 = MIN(1.0, MAX(0.0, 1.0 - (zproreg + zproreg2 + rtrn)   &
                     &                              / (trb(ji,jj,jk,jpnh4) + rtrn) ) )
-                    ! Second, apply utilisation factors to fractionation factors
-                    ! for new and regenerated production (same for now) and
-                    ! multiply by the current ratio of 15Nno3 to total no3
-                    zr15_new = (1.0 - e15n_prod/1000.0 * zu_15)  &
-                    &          * ( (trb(ji,jj,jk,jp15no3)+rtrn) / (trb(ji,jj,jk,jpno3)+rtrn) )
-                    zr15_reg = (1.0 - e15n_prod/1000.0 * zun_15)  &
-                    &          * ( (trb(ji,jj,jk,jp15nh4)+rtrn) / (trb(ji,jj,jk,jpnh4)+rtrn) )
                     ! save the fractionation factor due to new and regenerated production
-                    ze15nprod1(ji,jj,jk) = (1.0 - e15n_prod/1000.0 * zu_15)
-                    ze15nprod2(ji,jj,jk) = (1.0 - e15n_prod/1000.0 * zun_15)
+                    ze15nprod1(ji,jj,jk) = e15n_prod * zu_15
+                    ze15nprod2(ji,jj,jk) = e15n_prod * zun_15
+                    ! Second, apply utilisation factors to fractionation factors
+                    zr15_new = ( 1.0 - ze15nprod1(ji,jj,jk) / 1000.0 )                                 &
+                    &           * ( (trb(ji,jj,jk,jp15no3)+rtrn) / (trb(ji,jj,jk,jpno3)+rtrn) )
+                    zr15_reg = ( 1.0 - ze15nprod2(ji,jj,jk) / 1000.0 )                                 &
+                    &           * ( (trb(ji,jj,jk,jp15nh4)+rtrn) / (trb(ji,jj,jk,jpnh4)+rtrn) )
                     ! Third, apply the fractionation factors to the state variables
                     tra(ji,jj,jk,jp15phy) = tra(ji,jj,jk,jp15phy) + zr15_new * zpronewn(ji,jj,jk) * texcretn &
                     &                                             + zr15_reg * zproreg * texcretn
@@ -463,15 +464,15 @@ CONTAINS
                  IF ( ln_c13 ) THEN
                     zr13_dic = ( (trb(ji,jj,jk,jp13dic)+rtrn) / (trb(ji,jj,jk,jpdic)+rtrn) )
                     
-                    z_e13c_prod(ji,jj,jk) = max(e13c_min, min(e13c_max, (                                    &
-                    &             ( (86400 * zprorcan(ji,jj,jk)) / (trb(ji,jj,jk,jpphy) + rtrn) /            &
+                    ze13cprod1(ji,jj,jk) = max(e13c_min, min(e13c_max, (                                    &
+                    &             ( (86400 * zprorcan(ji,jj,jk)) / (trb(ji,jj,jk,jpphy) + rtrn) /           &
                     &             ( rfact2 * (zh2co3(ji,jj,jk)/1025*1e9 + rtrn)) - 0.371 ) / (-0.015) )))
-                    z_e13c_prod2(ji,jj,jk)= max(e13c_min, min(e13c_max, (                                    &
-                    &             ( (86400 * zprorcad(ji,jj,jk)) / (trb(ji,jj,jk,jpdia) + rtrn) /            &
+                    ze13cprod2(ji,jj,jk) = max(e13c_min, min(e13c_max, (                                    &
+                    &             ( (86400 * zprorcad(ji,jj,jk)) / (trb(ji,jj,jk,jpdia) + rtrn) /           &
                     &             ( rfact2 * (zh2co3(ji,jj,jk)/1025*1e9 + rtrn)) - 0.371 ) / (-0.015) )))
                 
-                    zr13 = ( 1.0 - z_e13c_prod(ji,jj,jk)/1000.0 ) * zr13_dic 
-                    zr13_2 = ( 1.0 - z_e13c_prod2(ji,jj,jk)/1000.0 ) * zr13_dic 
+                    zr13   = ( 1.0 - ze13cprod1(ji,jj,jk)/1000.0 ) * zr13_dic 
+                    zr13_2 = ( 1.0 - ze13cprod2(ji,jj,jk)/1000.0 ) * zr13_dic 
 
                     tra(ji,jj,jk,jp13phy) = tra(ji,jj,jk,jp13phy) + zprorcan(ji,jj,jk) * texcretn * zr13
                     tra(ji,jj,jk,jp13dia) = tra(ji,jj,jk,jp13dia) + zprorcad(ji,jj,jk) * texcretd * zr13_2
@@ -555,11 +556,11 @@ CONTAINS
               CALL iom_put( "E15Nreg"  , zw3d )
           ENDIF
           IF( iom_use( "E13Cphy" ) )  THEN
-              zw3d(:,:,:) = z_e13c_prod(:,:,:) * tmask(:,:,:)
+              zw3d(:,:,:) = ze13cprod1(:,:,:) * tmask(:,:,:)
               CALL iom_put( "E13Cphy"  , zw3d )
           ENDIF
           IF( iom_use( "E13Cdia" ) )  THEN
-              zw3d(:,:,:) = z_e13c_prod2(:,:,:) * tmask(:,:,:)
+              zw3d(:,:,:) = ze13cprod2(:,:,:) * tmask(:,:,:)
               CALL iom_put( "E13Cdia"  , zw3d )
           ENDIF
           IF( iom_use( "Mumax" ) )  THEN

@@ -123,13 +123,15 @@ STEPS TAKEN...
 		- p4zmicro.F90	(e13c_calz)
 		- p4zmeso.F90	(e13c_cal2)
 ~	3. ensured that riverine fluxes do not bias d13c variables
-	4. added fractionation factors to inner carbon cycling
-~		- p4zprod.F90
-~		- p4zmort.F90
-~		- p4zmicro.F90
-~		- p4zmeso.F90
-	5. added fractionation during air-sea gas exchange (Zhang et al. 1995)
+~	4. added fractionation factors to inner carbon cycling
+		- p4zprod.F90
+		- p4zmort.F90
+		- p4zmicro.F90
+		- p4zmeso.F90
+~	5. added fractionation during air-sea gas exchange (Zhang et al. 1995)
 		- p4zflx.F90
+~	6. added variables to "diad" output that record fractionation of 13C and 15N by phytoplankton
+		- p4zprod.F90
 
 
 
