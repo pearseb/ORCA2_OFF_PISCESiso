@@ -151,7 +151,7 @@ CONTAINS
                   tra(ji,jj,jk,jptal) = tra(ji,jj,jk,jptal) + rno3 * ( zolimi(ji,jj,jk) + zoxyremc    &
                   &                     + ( rdenit + 1.) * denitr(ji,jj,jk) )
 
-                  IF( ln_n15) THEN
+                  IF( ln_n15) THEN  ! should add isotope effect to ammonification ( Knapp et al 2011, Mobius 2013)
                      zr15_doc = ( (trb(ji,jj,jk,jp15doc)+rtrn) / (trb(ji,jj,jk,jpdoc)+rtrn) )
                      zr15_no3 = ( (trb(ji,jj,jk,jp15no3)+rtrn) / (trb(ji,jj,jk,jpno3)+rtrn) )
                      tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) +  & 

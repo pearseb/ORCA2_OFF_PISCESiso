@@ -44,6 +44,7 @@ MODULE p4zlim
    REAL(wp), PUBLIC ::  xkdoc       !:  2nd half-sat. of DOC remineralization  
    REAL(wp), PUBLIC ::  concbfe     !:  Fe half saturation for bacteria 
    REAL(wp), PUBLIC ::  oxymin      !:  half saturation constant for anoxia
+   REAL(wp), PUBLIC ::  denmin      !:  oxygen threshold for denitrification
    REAL(wp), PUBLIC ::  qnfelim     !:  optimal Fe quota for nanophyto
    REAL(wp), PUBLIC ::  qdfelim     !:  optimal Fe quota for diatoms
    REAL(wp), PUBLIC ::  caco3r      !:  mean rainratio 
@@ -205,7 +206,7 @@ CONTAINS
          DO jj = 1, jpj
             DO ji = 1, jpi
                ! denitrification factor computed from O2 levels
-               nitrfac(ji,jj,jk) = MAX(  0.e0, 0.4 * ( 6.e-6  - trb(ji,jj,jk,jpoxy) )    &
+               nitrfac(ji,jj,jk) = MAX(  0.e0, 0.4 * ( denmin  - trb(ji,jj,jk,jpoxy) )    &
                   &                                / ( oxymin + trb(ji,jj,jk,jpoxy) )  )
                nitrfac(ji,jj,jk) = MIN( 1., nitrfac(ji,jj,jk) )
                !
@@ -246,7 +247,7 @@ CONTAINS
       !
       NAMELIST/namp4zlim/ concnno3, concdno3, concnnh4, concdnh4, concnfer, concdfer, concbfe,   &
          &                concbno3, concbnh4, xsizedia, xsizephy, xsizern, xsizerd,          & 
-         &                xksi1, xksi2, xkdoc, qnfelim, qdfelim, caco3r, oxymin
+         &                xksi1, xksi2, xkdoc, qnfelim, qdfelim, caco3r, oxymin, denmin
       !!----------------------------------------------------------------------
       !
       IF(lwp) THEN
@@ -283,6 +284,7 @@ CONTAINS
          WRITE(numout,*) '      Minimum size criteria for nanophyto      xsizephy  = ', xsizephy
          WRITE(numout,*) '      Fe half saturation for bacteria          concbfe   = ', concbfe
          WRITE(numout,*) '      halk saturation constant for anoxia       oxymin   =' , oxymin
+         WRITE(numout,*) '      oxygen threshold for denitrification      denmin   =' , denmin
          WRITE(numout,*) '      optimal Fe quota for nano.               qnfelim   = ', qnfelim
          WRITE(numout,*) '      Optimal Fe quota for diatoms             qdfelim   = ', qdfelim
       ENDIF
