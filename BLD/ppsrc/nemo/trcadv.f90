@@ -106,6 +106,14 @@ CONTAINS
          zun(:,:,:) = un(:,:,:)                    ! already in (un,vn,wn)
          zvn(:,:,:) = vn(:,:,:)
          zwn(:,:,:) = wn(:,:,:)
+         !DO jk = 1, jpkm1
+         !   zun(:,:,jk) = e2u  (:,:) * e3u_n(:,:,jk) * un(:,:,jk)
+         !   zvn(:,:,jk) = e1v  (:,:) * e3v_n(:,:,jk) * vn(:,:,jk)
+         !   zwn(:,:,jk) = e1e2t(:,:)                 * wn(:,:,jk)
+         !ENDDO
+         !zun(:,:,jpk) = 0._wp
+         !zvn(:,:,jpk) = 0._wp
+         !zwn(:,:,jpk) = 0._wp
       ELSE                                         ! build the effective transport
          zun(:,:,jpk) = 0._wp
          zvn(:,:,jpk) = 0._wp

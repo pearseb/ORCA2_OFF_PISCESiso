@@ -37,7 +37,7 @@ MODULE p4zsms
    PUBLIC   p4z_sms        ! called in p4zsms.F90
 
    INTEGER ::    numco2, numnut, numnit      ! logical unit for co2 budget
-   REAL(wp) ::   alkbudget, no3budget, silbudget, ferbudget, po4budget
+   REAL(wp) ::   alkbudget, no3budget, silbudget, ferbudget, po4budget, oxybudget
    REAL(wp) ::   xfact1, xfact2, xfact3
 
    REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   xnegtr     ! Array used to indicate negative tracer values
@@ -801,6 +801,14 @@ CONTAINS
          ferbudget = glob_sum( 'p4zsms', zwork(:,:,:) * cvol(:,:,:)  )  
          ferbudget = ferbudget / areatot
          CALL iom_put( "pfertot", ferbudget )
+      ENDIF
+      !
+      IF( iom_use( "poxytot" ) .OR. ( ln_check_mass .AND. kt == nitend )  ) THEN
+         zwork(:,:,:) =  trn(:,:,:,jpoxy) 
+         !
+         oxybudget = glob_sum( 'p4zsms', zwork(:,:,:) * cvol(:,:,:)  )  
+         oxybudget = oxybudget / areatot
+         CALL iom_put( "poxytot", oxybudget )
       ENDIF
       !
       ! Global budget of N SMS : denitrification in the water column and in the sediment

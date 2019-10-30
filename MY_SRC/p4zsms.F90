@@ -33,7 +33,7 @@ MODULE p4zsms
    PUBLIC   p4z_sms        ! called in p4zsms.F90
 
    INTEGER ::    numco2, numnut, numnit      ! logical unit for co2 budget
-   REAL(wp) ::   alkbudget, no3budget, silbudget, ferbudget, po4budget
+   REAL(wp) ::   alkbudget, no3budget, silbudget, ferbudget, po4budget, oxybudget
    REAL(wp) ::   xfact1, xfact2, xfact3
 
    REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   xnegtr     ! Array used to indicate negative tracer values
@@ -737,7 +737,7 @@ CONTAINS
       ENDIF
 
       IF( iom_use( "pno3tot" ) .OR. ( ln_check_mass .AND. kt == nitend )  ) THEN
-         !   Compute the budget of NO3, ALK, Si, Fer
+         !   Compute the budget of NO3, ALK, Si, Fer, O2, d15N and d13C
          IF( ln_p4z ) THEN
             zwork(:,:,:) =    trn(:,:,:,jpno3) + trn(:,:,:,jpnh4)                      &
                &          +   trn(:,:,:,jpphy) + trn(:,:,:,jpdia)                      &
@@ -797,6 +797,28 @@ CONTAINS
          ferbudget = glob_sum( 'p4zsms', zwork(:,:,:) * cvol(:,:,:)  )  
          ferbudget = ferbudget / areatot
          CALL iom_put( "pfertot", ferbudget )
+      ENDIF
+      !
+      IF( iom_use( "poxytot" ) .OR. ( ln_check_mass .AND. kt == nitend )  ) THEN
+         zwork(:,:,:) =  trn(:,:,:,jpoxy) 
+         !
+         oxybudget = glob_sum( 'p4zsms', zwork(:,:,:) * cvol(:,:,:)  )  
+         oxybudget = oxybudget / areatot
+         CALL iom_put( "poxytot", oxybudget )
+      ENDIF
+      IF( iom_use( "pd15no3tot" ) .OR. ( ln_check_mass .AND. kt == nitend )  ) THEN
+         zwork(:,:,:) =  (trn(:,:,:,jp15no3)/trn(:,:,:,jpno3)-1.0)*1000 
+         !
+         d15no3budget = glob_sum( 'p4zsms', zwork(:,:,:) * cvol(:,:,:)  )  
+         d15no3budget = d15no3budget / areatot
+         CALL iom_put( "pd15no3tot", d15no3budget )
+      ENDIF
+      IF( iom_use( "pd13dictot" ) .OR. ( ln_check_mass .AND. kt == nitend )  ) THEN
+         zwork(:,:,:) =  (trn(:,:,:,jp13dic)/trn(:,:,:,jpdic)-1.0)*1000 
+         !
+         d13dicbudget = glob_sum( 'p4zsms', zwork(:,:,:) * cvol(:,:,:)  )  
+         d13dicbudget = d13dicbudget / areatot
+         CALL iom_put( "pd13dictot", d13dicbudget )
       ENDIF
       !
       ! Global budget of N SMS : denitrification in the water column and in the sediment
