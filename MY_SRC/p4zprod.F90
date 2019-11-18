@@ -38,7 +38,8 @@ MODULE p4zprod
    REAL(wp), PUBLIC ::   fecnm        !:
    REAL(wp), PUBLIC ::   fecdm        !:
    REAL(wp), PUBLIC ::   grosip       !:
-   REAL(wp), PUBLIC ::   e15n_prod    !:
+   REAL(wp), PUBLIC ::   e15n_nprod   !:
+   REAL(wp), PUBLIC ::   e15n_rprod   !:
    REAL(wp), PUBLIC ::   e13c_min     !:
    REAL(wp), PUBLIC ::   e13c_max     !:
 
@@ -442,8 +443,8 @@ CONTAINS
                     zun_15 = MIN(1.0, MAX(0.0, 1.0 - (zproreg + zproreg2 + rtrn)   &
                     &                              / (trb(ji,jj,jk,jpnh4) + rtrn) ) )
                     ! save the fractionation factor due to new and regenerated production
-                    ze15nprod1(ji,jj,jk) = e15n_prod * zu_15
-                    ze15nprod2(ji,jj,jk) = e15n_prod * zun_15
+                    ze15nprod1(ji,jj,jk) = e15n_nprod * zu_15
+                    ze15nprod2(ji,jj,jk) = e15n_rprod * zun_15
                     ! Second, apply utilisation factors to fractionation factors
                     zr15_new = ( 1.0 - ze15nprod1(ji,jj,jk) / 1000.0 )                                 &
                     &           * ( (trb(ji,jj,jk,jp15no3)+rtrn) / (trb(ji,jj,jk,jpno3)+rtrn) )
@@ -666,7 +667,7 @@ CONTAINS
       !
       NAMELIST/namp4zprod/ pislopen, pisloped, xadap, bresp, excretn, excretd,  &
          &                 chlcnm, chlcdm, chlcmin, fecnm, fecdm, grosip,       &
-         &                 e15n_prod, e13c_min, e13c_max
+         &                 e15n_nprod, e15n_rprod, e13c_min, e13c_max
       !!----------------------------------------------------------------------
       !
       IF(lwp) THEN                         ! control print
@@ -697,7 +698,8 @@ CONTAINS
          WRITE(numout,*) '      Minimum Chl/C in diatoms                  chlcdm       =', chlcdm
          WRITE(numout,*) '      Maximum Fe/C in nanophytoplankton         fecnm        =', fecnm
          WRITE(numout,*) '      Minimum Fe/C in diatoms                   fecdm        =', fecdm
-         WRITE(numout,*) '      N15 fractionation by assimilation         e15n_prod    =', e15n_prod
+         WRITE(numout,*) '      N15 fractionation by new production       e15n_nprod   =', e15n_nprod
+         WRITE(numout,*) '      N15 fractionation by reg production       e15n_rprod   =', e15n_rprod
          WRITE(numout,*) '      C13 assimilation fractionation min        e13c_min     =', e13c_min
          WRITE(numout,*) '      C13 assimilation fractionation max        e13c_max     =', e13c_max
       ENDIF

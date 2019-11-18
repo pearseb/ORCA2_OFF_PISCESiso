@@ -678,6 +678,9 @@ CONTAINS
 
             IF(lwp) WRITE(numout,*) '       NO3N  mean : ', zno3sumn
             trn(:,:,:,jpno3) = trn(:,:,:,jpno3) * no3mean / zno3sumn
+            IF ( ln_n15 ) THEN
+               trn(:,:,:,jp15no3) = trn(:,:,:,jp15no3) * no3mean / zno3sumn
+            ENDIF
 
             IF(lwp) WRITE(numout,*) '       SiO3N mean : ', zsilsumn
             trn(:,:,:,jpsil) = MIN( 400.e-6,trn(:,:,:,jpsil) * silmean / zsilsumn )
@@ -698,6 +701,9 @@ CONTAINS
 
                IF(lwp) WRITE(numout,*) '       NO3B  mean : ', zno3sumb
                trb(:,:,:,jpno3) = trb(:,:,:,jpno3) * no3mean / zno3sumb
+               IF ( ln_n15 ) THEN
+                  trn(:,:,:,jp15no3) = trn(:,:,:,jp15no3) * no3mean / zno3sumn
+               ENDIF
 
                IF(lwp) WRITE(numout,*) '       SiO3B mean : ', zsilsumb
                trb(:,:,:,jpsil) = MIN( 400.e-6,trb(:,:,:,jpsil) * silmean / zsilsumb )
