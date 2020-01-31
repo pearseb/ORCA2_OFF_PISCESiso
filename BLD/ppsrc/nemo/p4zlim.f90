@@ -127,6 +127,13 @@ CONTAINS
                concnfe(ji,jj,jk) = MAX( concnfer, ( zconcn2 * concnfer + concnfer * xsizern * zconcn ) * z1_trbphy )
                zconc0n           = MAX( concnno3, ( zconcn2 * concnno3 + concnno3 * xsizern * zconcn ) * z1_trbphy )
                zconc0nnh4        = MAX( concnnh4, ( zconcn2 * concnnh4 + concnnh4 * xsizern * zconcn ) * z1_trbphy )
+           
+               !! pjb
+               !IF ( gphit(ji,jj) > -20 .and. gphit(ji,jj) < 20 ) THEN ! select tropical latitudes 
+               !concnfe(ji,jj,jk) = MAX( concnfer*2, ( zconcn2 * concnfer*2 + concnfer*2 * xsizern * zconcn ) * z1_trbphy )
+               !concdfe(ji,jj,jk) = MAX( concdfer*2, ( zconcd2 * concdfer*2 + concdfer*2 * xsizerd * zconcd ) * z1_trbdia )
+               !ENDIF
+               !! pjb
 
                ! Michaelis-Menten Limitation term for nutrients Small bacteria
                ! -------------------------------------------------------------

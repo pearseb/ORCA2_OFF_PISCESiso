@@ -68,14 +68,16 @@ CONTAINS
       REAL(wp) :: zfact   , zfood, zfoodlim, zbeta
       REAL(wp) :: zepsherf, zepshert, zepsherv, zgrarsig, zgraztotc, zgraztotn, zgraztotf
       REAL(wp) :: zgrarem, zgrafer, zgrapoc, zprcaca, zmortz
-      REAL(wp) :: zrespz, ztortz, zgrasrat, zgrasratn
+      REAL(wp) :: zrespz, ztortz, zgrasrat, zgrasratn 
       REAL(wp) :: zgrazp, zgrazm, zgrazsd
       REAL(wp) :: zgrazp15, zgrazm15, zgrazsd15, zgraztotc15
       REAL(wp) :: zgrazp13, zgrazm13, zgrazsd13, zgraztotc13
       REAL(wp) :: zgrarem_15, zgrapoc_15, zgrasig_15, zgrasigex_15, zmortz_15
       REAL(wp) :: zgrarem_13, zgrapoc_13, zgrasig_13, zmortz_13, zr13_dic
       REAL(wp) :: zgrazmf, zgrazsf, zgrazpf
-      REAL(wp), DIMENSION(jpi,jpj,jpk) :: zgrazing, zfezoo
+      REAL(wp), DIMENSION(jpi,jpj,jpk) :: zgrazing, zfezoo 
+      REAL(wp), DIMENSION(jpi,jpj,jpk) :: excretion1, excretion1_15
+      REAL(wp), DIMENSION(jpi,jpj,jpk) :: foodqual1
       REAL(wp), DIMENSION(:,:,:), ALLOCATABLE :: zw3d, zzligprod
       CHARACTER (len=25) :: charout
       !!---------------------------------------------------------------------
@@ -122,6 +124,13 @@ CONTAINS
                zdenom2   = zdenom / ( zfood + rtrn ) ! [0 --> 1], closer to 1 when food availability high
                
                ! get grazing rate (increase with temp and decrease with low O2)
+               !! pjb
+               !IF ( gphit(ji,jj) > -35 .and. gphit(ji,jj) < 35 ) THEN ! select subtropical latitudes 
+               !zgraze    = grazrat*0.5 * xstep * tgfunc2(ji,jj,jk) * trb(ji,jj,jk,jpzoo) * (1. - nitrfac(ji,jj,jk)) 
+               !ELSE
+               !zgraze    = grazrat * xstep * tgfunc2(ji,jj,jk) * trb(ji,jj,jk,jpzoo) * (1. - nitrfac(ji,jj,jk)) 
+               !ENDIF
+               !! pjb
                zgraze    = grazrat * xstep * tgfunc2(ji,jj,jk) * trb(ji,jj,jk,jpzoo) * (1. - nitrfac(ji,jj,jk)) 
 
                zgrazp    = zgraze  * xprefn * zcompaph  * zdenom2 
@@ -163,6 +172,7 @@ CONTAINS
                !    --------------------------------------------
                zgrasrat  = ( zgraztotf + rtrn ) / ( zgraztotc + rtrn )  ! Fe/C ratio [0,>1]
                zgrasratn = ( zgraztotn + rtrn ) / ( zgraztotc + rtrn )  ! N/C ratio [0,1]
+               foodqual1(ji,jj,jk) = zgrasratn
                zepshert  =  MIN( 1., zgrasratn, zgrasrat / ferat3) ! measure of food quality [0,1]
                  ! zgrasratn = quality of food due to N [0,1]
                  ! zgrasrat / ferat3 = Fe/C phy : Fe/C zoo  [0,1]
@@ -212,6 +222,7 @@ CONTAINS
                zgrarsig  = zgrarem * sigma1
                tra(ji,jj,jk,jppo4) = tra(ji,jj,jk,jppo4) + zgrarsig
                tra(ji,jj,jk,jpnh4) = tra(ji,jj,jk,jpnh4) + zgrarsig
+               excretion1(ji,jj,jk) = zgrarsig
                tra(ji,jj,jk,jpdoc) = tra(ji,jj,jk,jpdoc) + zgrarem - zgrarsig
                !
                IF( ln_ligand ) THEN
@@ -229,10 +240,24 @@ CONTAINS
                tra(ji,jj,jk,jptal) = tra(ji,jj,jk,jptal) + rno3 * zgrarsig
                !
                IF( ln_n15 ) THEN
+                  !! pjb
+                  !IF ( gphit(ji,jj) > -35 .and. gphit(ji,jj) < -20 ) THEN ! select subtropical latitudes 
+                  !tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zgrasigex_15 * ( 1. - e15n_ex*2/1000.0 )   &
+                  !&                       + ( zgrasig_15 - zgrasigex_15 )
+                  !ELSEIF ( gphit(ji,jj) > 20 .and. gphit(ji,jj) < 35 ) THEN
+                  !tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zgrasigex_15 * ( 1. - e15n_ex*2/1000.0 )   &
+                  !&                       + ( zgrasig_15 - zgrasigex_15 )
+                  !ELSE
+                  !tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zgrasigex_15 * ( 1. - e15n_ex/1000.0 )   &
+                  !&                       + ( zgrasig_15 - zgrasigex_15 )
+                  !ENDIF
+                  !! pjb
                   tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zgrasigex_15 * ( 1. - e15n_ex/1000.0 )   &
                   &                       + ( zgrasig_15 - zgrasigex_15 )
+                  excretion1_15(ji,jj,jk) = zgrasigex_15 * ( 1. - e15n_ex/1000.0 ) + ( zgrasig_15 - zgrasigex_15 )
                   tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) + zgrarem_15 - zgrasig_15
                   tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) + zgrapoc_15 * ( 1. - e15n_in/1000.0 )
+
                ENDIF
                IF( ln_c13 ) THEN
                   tra(ji,jj,jk,jp13doc) = tra(ji,jj,jk,jp13doc) + zgrarem_13 - zgrasig_13
@@ -267,6 +292,21 @@ CONTAINS
                tra(ji,jj,jk,jpcal) = tra(ji,jj,jk,jpcal) + zprcaca
                !
                IF ( ln_n15 ) THEN
+                  !! pjb
+                  !IF ( gphit(ji,jj) > -35 .and. gphit(ji,jj) < -20 ) THEN ! select subtropical latitudes 
+                  !tra(ji,jj,jk,jp15zoo) = tra(ji,jj,jk,jp15zoo) - zmortz_15 + zepsherv * zgraztotc15  &
+                  !&                       + zgrasigex_15 * (e15n_ex*2/1000.0)                           &
+                  !&                       + zgrapoc_15 * (e15n_in/1000.0)
+                  !ELSEIF ( gphit(ji,jj) > 20 .and. gphit(ji,jj) < 35 ) THEN
+                  !tra(ji,jj,jk,jp15zoo) = tra(ji,jj,jk,jp15zoo) - zmortz_15 + zepsherv * zgraztotc15  &
+                  !&                       + zgrasigex_15 * (e15n_ex*2/1000.0)                           &
+                  !&                       + zgrapoc_15 * (e15n_in/1000.0)
+                  !ELSE
+                  !tra(ji,jj,jk,jp15zoo) = tra(ji,jj,jk,jp15zoo) - zmortz_15 + zepsherv * zgraztotc15  &
+                  !&                       + zgrasigex_15 * (e15n_ex/1000.0)                           &
+                  !&                       + zgrapoc_15 * (e15n_in/1000.0)
+                  !ENDIF
+                  !! pjb
                   tra(ji,jj,jk,jp15zoo) = tra(ji,jj,jk,jp15zoo) - zmortz_15 + zepsherv * zgraztotc15  &
                   &                       + zgrasigex_15 * (e15n_ex/1000.0)                           &
                   &                       + zgrapoc_15 * (e15n_in/1000.0)
@@ -294,6 +334,18 @@ CONTAINS
            IF( iom_use( "GRAZ1" ) ) THEN
               zw3d(:,:,:) = zgrazing(:,:,:) * 1.e+3 * rfact2r * tmask(:,:,:)  !  Total grazing of phyto by zooplankton
               CALL iom_put( "GRAZ1", zw3d )
+           ENDIF
+           IF( iom_use( "FOODQUAL1" ) ) THEN
+              zw3d(:,:,:) = foodqual1(:,:,:) * tmask(:,:,:)  !  Total excretion of NH4 by zooplankton
+              CALL iom_put( "FOODQUAL1", zw3d )
+           ENDIF
+           IF( iom_use( "EXCR1" ) ) THEN
+              zw3d(:,:,:) = excretion1(:,:,:) * 1.e+3 * rfact2r * tmask(:,:,:)  !  Total excretion of NH4 by zooplankton
+              CALL iom_put( "EXCR1", zw3d )
+           ENDIF
+           IF( iom_use( "EXCR1_15ZOO" ) ) THEN
+              zw3d(:,:,:) = excretion1_15(:,:,:) * 1.e+3 * rfact2r * tmask(:,:,:)  !  Total excretion of 15NH4 by zooplankton
+              CALL iom_put( "EXCR1_15ZOO", zw3d )
            ENDIF
            IF( iom_use( "FEZOO" ) ) THEN
               zw3d(:,:,:) = zfezoo(:,:,:) * 1e9 * 1.e+3 * rfact2r * tmask(:,:,:)   !

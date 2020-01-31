@@ -80,13 +80,15 @@ CONTAINS
       REAL(wp) :: zgrarem2_13, zgrapoc2_13, zgrasig2_13, zmortzgoc_13, zr13_dic, zr13_cal
       REAL(wp) :: zgrazfffp, zgrazfffg, zgrazffep, zgrazffeg
       CHARACTER (len=25) :: charout
-      REAL(wp), DIMENSION(jpi,jpj,jpk) :: zgrazing, zfezoo2
+      REAL(wp), DIMENSION(jpi,jpj,jpk) :: zgrazing, zfezoo2, foodqual2
+      REAL(wp), DIMENSION(jpi,jpj,jpk) :: excretion2, excretion2_15 
       REAL(wp), ALLOCATABLE, DIMENSION(:,:,:) ::   zw3d, zz2ligprod
       !!---------------------------------------------------------------------
       !
       IF( ln_timing )   CALL timing_start('p4z_meso')
       !
       zgrazing(:,:,:) = 0._wp
+      foodqual2(:,:,:) = 0._wp
       zfezoo2 (:,:,:) = 0._wp
       !
       IF (ln_ligand) THEN
@@ -127,6 +129,13 @@ CONTAINS
                zdenom2   = zdenom / ( zfood + rtrn )
 
                ! get grazing rate (increase with temperature and decrease with low O2)
+               !! pjb
+               !IF ( gphit(ji,jj) > -35 .and. gphit(ji,jj) < 35 ) THEN ! select subtropical latitudes 
+               !zgraze2   = grazrat2*.5 * xstep * tgfunc2(ji,jj,jk) * trb(ji,jj,jk,jpmes) * (1. - nitrfac(ji,jj,jk)) 
+               !ELSE
+               !zgraze2   = grazrat2 * xstep * tgfunc2(ji,jj,jk) * trb(ji,jj,jk,jpmes) * (1. - nitrfac(ji,jj,jk)) 
+               !ENDIF
+               !! pjb
                zgraze2   = grazrat2 * xstep * tgfunc2(ji,jj,jk) * trb(ji,jj,jk,jpmes) * (1. - nitrfac(ji,jj,jk)) 
 
                zgrazd    = zgraze2  * xpref2d  * zcompadi  * zdenom2 
@@ -230,6 +239,7 @@ CONTAINS
                !    --------------------------
                zgrasrat  =  ( zgraztotf + rtrn )/ ( zgraztotc + rtrn )
                zgrasratn =  ( zgraztotn + rtrn )/ ( zgraztotc + rtrn )
+               foodqual2(ji,jj,jk) = zgrasratn
                zepshert  = MIN( 1., zgrasratn, zgrasrat / ferat3)
                zbeta     = MAX(0., (epsher2 - epsher2min) )
                zepsherf  = epsher2min + zbeta / ( 1.0 + 0.04E6 * 12. * zfood * zbeta ) 
@@ -296,6 +306,7 @@ CONTAINS
                zgrarsig  = zgrarem2 * sigma2 ! 60% of carbon excreted to NH4 [food/mes] --> [NH4] 
                tra(ji,jj,jk,jppo4) = tra(ji,jj,jk,jppo4) + zgrarsig
                tra(ji,jj,jk,jpnh4) = tra(ji,jj,jk,jpnh4) + zgrarsig
+               excretion2(ji,jj,jk) = zgrarsig
                tra(ji,jj,jk,jpdoc) = tra(ji,jj,jk,jpdoc) + zgrarem2 - zgrarsig
                
                IF( ln_ligand ) THEN 
@@ -310,8 +321,21 @@ CONTAINS
                tra(ji,jj,jk,jptal) = tra(ji,jj,jk,jptal) + rno3 * zgrarsig              
                
                IF ( ln_n15 ) THEN
+                  !! pjb
+                  !IF ( gphit(ji,jj) > -35 .and. gphit(ji,jj) < -20 ) THEN ! select subtropical latitudes 
+                  !tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zgrasigex2_15 * ( 1. - e15n_ex2*0.5/1000.0 )  &
+                  !&                       + ( zgrasig2_15 - zgrasigex2_15 )
+                  !ELSEIF ( gphit(ji,jj) > 20 .and. gphit(ji,jj) < 35 ) THEN
+                  !tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zgrasigex2_15 * ( 1. - e15n_ex2*0.5/1000.0 )  &
+                  !&                       + ( zgrasig2_15 - zgrasigex2_15 )
+                  !ELSE
+                  !tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zgrasigex2_15 * ( 1. - e15n_ex2/1000.0 )  &
+                  !&                       + ( zgrasig2_15 - zgrasigex2_15 )
+                  !ENDIF
+                  !! pjb
                   tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zgrasigex2_15 * ( 1. - e15n_ex2/1000.0 )  &
                   &                       + ( zgrasig2_15 - zgrasigex2_15 )
+                  excretion2_15(ji,jj,jk) = zgrasigex2_15 * ( 1. - e15n_ex2/1000.0)  + ( zgrasig2_15 - zgrasigex2_15 )
                   ! zgrasigex2_15 is always less than zgrasig2_15, because:
                   !     (1) it does not include the excretion of NH4 during mortality
                   !     (2) although it assumes maximum efficiency of assimilation (epsher2),
@@ -364,6 +388,21 @@ CONTAINS
 
                IF ( ln_n15 ) THEN
                   zmortz15 = zmortz * ( (trb(ji,jj,jk,jp15mes)+rtrn) / (trb(ji,jj,jk,jpmes)+rtrn) )
+                  !! pjb
+                  !IF ( gphit(ji,jj) > -35 .and. gphit(ji,jj) < -20 ) THEN ! select subtropical latitudes 
+                  !tra(ji,jj,jk,jp15mes) = tra(ji,jj,jk,jp15mes) - zmortz15 + zepsherv * zgraztotc15    &
+                  !&                       + zgrasigex2_15 * (e15n_ex2*0.5/1000.0)                          &
+                  !&                       + zgrapoc2_15 * (e15n_in2/1000.0)
+                  !ELSEIF ( gphit(ji,jj) > 20 .and. gphit(ji,jj) < 35 ) THEN
+                  !tra(ji,jj,jk,jp15mes) = tra(ji,jj,jk,jp15mes) - zmortz15 + zepsherv * zgraztotc15    &
+                  !&                       + zgrasigex2_15 * (e15n_ex2*0.5/1000.0)                          &
+                  !&                       + zgrapoc2_15 * (e15n_in2/1000.0)
+                  !ELSE
+                  !tra(ji,jj,jk,jp15mes) = tra(ji,jj,jk,jp15mes) - zmortz15 + zepsherv * zgraztotc15    &
+                  !&                       + zgrasigex2_15 * (e15n_ex2/1000.0)                          &
+                  !&                       + zgrapoc2_15 * (e15n_in2/1000.0)
+                  !ENDIF
+                  !! pjb
                   tra(ji,jj,jk,jp15mes) = tra(ji,jj,jk,jp15mes) - zmortz15 + zepsherv * zgraztotc15    &
                   &                       + zgrasigex2_15 * (e15n_ex2/1000.0)                          &
                   &                       + zgrapoc2_15 * (e15n_in2/1000.0)
@@ -401,6 +440,18 @@ CONTAINS
          IF( iom_use( "GRAZ2" ) ) THEN
             zw3d(:,:,:) = zgrazing(:,:,:) * 1.e+3 * rfact2r * tmask(:,:,:)  !   Total grazing of phyto by zooplankton
             CALL iom_put( "GRAZ2", zw3d )
+         ENDIF
+         IF( iom_use( "FOODQUAL2" ) ) THEN
+            zw3d(:,:,:) = foodqual2(:,:,:) * tmask(:,:,:)  !  Total excretion of NH4 by zooplankton
+            CALL iom_put( "FOODQUAL2", zw3d )
+         ENDIF
+         IF( iom_use( "EXCR2" ) ) THEN
+            zw3d(:,:,:) = excretion2(:,:,:) * 1.e+3 * rfact2r * tmask(:,:,:)  !  Total excretion of NH4 by zooplankton
+            CALL iom_put( "EXCR2", zw3d )
+         ENDIF
+         IF( iom_use( "EXCR2_15ZOO" ) ) THEN
+            zw3d(:,:,:) = excretion2_15(:,:,:) * 1.e+3 * rfact2r * tmask(:,:,:)  !  Total excretion of 15NH4 by zooplankton
+            CALL iom_put( "EXCR2_15ZOO", zw3d )
          ENDIF
          IF( iom_use( "PCAL" ) ) THEN
             zw3d(:,:,:) = prodcal(:,:,:) * 1.e+3 * rfact2r * tmask(:,:,:)   !  Calcite production

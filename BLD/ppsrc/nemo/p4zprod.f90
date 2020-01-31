@@ -42,7 +42,8 @@ MODULE p4zprod
    REAL(wp), PUBLIC ::   fecnm        !:
    REAL(wp), PUBLIC ::   fecdm        !:
    REAL(wp), PUBLIC ::   grosip       !:
-   REAL(wp), PUBLIC ::   e15n_prod    !:
+   REAL(wp), PUBLIC ::   e15n_nprod   !:
+   REAL(wp), PUBLIC ::   e15n_rprod   !:
    REAL(wp), PUBLIC ::   e13c_min     !:
    REAL(wp), PUBLIC ::   e13c_max     !:
 
@@ -74,7 +75,7 @@ CONTAINS
       INTEGER  ::   ji, jj, jk
       REAL(wp) ::   zsilfac, znanotot, zdiattot, zconctemp, zconctemp2
       REAL(wp) ::   zratio, zmax, zsilim, ztn, zadap, zlim, zsilfac2, zsiborn
-      REAL(wp) ::   zprod, zproreg, zproreg2, zprochln, zprochld
+      REAL(wp) ::   zprod, zprochln, zprochld
       REAL(wp) ::   zmaxday, zdocprod, zpislopen, zpisloped
       REAL(wp) ::   zmxltst, zmxlday
       REAL(wp) ::   zrum, zcodel, zargu, zval, zfeup, chlcnm_n, chlcdm_n
@@ -91,6 +92,9 @@ CONTAINS
       REAL(wp), DIMENSION(jpi,jpj,jpk) :: zprdia, zprbio, zprdch, zprnch   
       REAL(wp), DIMENSION(jpi,jpj,jpk) :: zprorcan, zprorcad, zprofed, zprofen
       REAL(wp), DIMENSION(jpi,jpj,jpk) :: zpronewn, zpronewd
+      REAL(wp), DIMENSION(jpi,jpj,jpk) :: zproregn, zproregd
+      REAL(wp), DIMENSION(jpi,jpj,jpk) :: zpronewn15, zpronewd15
+      REAL(wp), DIMENSION(jpi,jpj,jpk) :: zproregn15, zproregd15
       REAL(wp), DIMENSION(jpi,jpj,jpk) :: zmxl_fac, zmxl_chl
       REAL(wp), DIMENSION(jpi,jpj,jpk) :: zpligprod1, zpligprod2
       REAL(wp), DIMENSION(jpi,jpj,jpk) :: ze15nprod1, ze15nprod2
@@ -105,6 +109,7 @@ CONTAINS
       zprorcan(:,:,:) = 0._wp ; zprorcad(:,:,:) = 0._wp ; zprofed (:,:,:) = 0._wp
       zprofen (:,:,:) = 0._wp ; zysopt  (:,:,:) = 0._wp
       zpronewn(:,:,:) = 0._wp ; zpronewd(:,:,:) = 0._wp ; zprdia  (:,:,:) = 0._wp
+      zproregn(:,:,:) = 0._wp ; zproregd(:,:,:) = 0._wp 
       zprbio  (:,:,:) = 0._wp ; zprdch  (:,:,:) = 0._wp ; zprnch  (:,:,:) = 0._wp 
       zmxl_fac(:,:,:) = 0._wp ; zmxl_chl(:,:,:) = 0._wp 
       IF( ln_ligand ) THEN
@@ -112,6 +117,8 @@ CONTAINS
       ENDIF
       IF( ln_n15 ) THEN
            ze15nprod1(:,:,:)  = 0.     ;      ze15nprod2(:,:,:) = 0.
+           zpronewn15(:,:,:) = 0._wp ; zpronewd15(:,:,:) = 0._wp 
+           zproregn15(:,:,:) = 0._wp ; zproregd15(:,:,:) = 0._wp 
       ENDIF
       IF( ln_c13 ) THEN
            ze13cprod1(:,:,:)  = 0.     ;      ze13cprod2(:,:,:) = 0.
@@ -251,21 +258,21 @@ CONTAINS
                   zlim  = trb(ji,jj,jk,jpsil) / ( trb(ji,jj,jk,jpsil) + xksi1 ) ! Monod lim function for Si
                   zsilim = MIN( zprdia(ji,jj,jk) / ( zprmaxd(ji,jj,jk) + rtrn ), xlimsi(ji,jj,jk) )
                   zsilfac = 4.4 * EXP( -4.23 * zsilim ) * MAX( 0.e0, MIN( 1., 2.2 * ( zlim - 0.5 ) )  ) + 1.e0
-                  ! this value (zsilfac) varies between 1 and 4.4.
+                  ! this value (zsilfac) varies between 1 and 5.4.
                   ! If zlim (si limitation) is less than 0.5, meaning that Si is
                   ! relatively limiting to growth, then zsilfac==1.0
                   ! If zlim is nearer 1.0 and therefore not limiting to growth,
                   ! then the value is dependent on zsilim, which measures
                   ! the limitation of either light or other nutrients (N,P,Fe).
                   ! If light/nutrient limitation is strong, then the value of
-                  ! zsilfac is closer to 4.4.
+                  ! zsilfac is closer to 5.4.
                   zsiborn = trb(ji,jj,jk,jpsil) * trb(ji,jj,jk,jpsil) * trb(ji,jj,jk,jpsil) ! si**3
                   IF (gphit(ji,jj) < -30 ) THEN ! if latitude less than 30S
                     zsilfac2 = 1. + 2. * zsiborn / ( zsiborn + xksi2**3 ) !varies from 1 (si=0) to ~3 (si>40)
                   ELSE
                     zsilfac2 = 1. +      zsiborn / ( zsiborn + xksi2**3 ) !varies from 1 (si=0) to ~2 (si>40)
                   ENDIF
-                  ! Si:C ratio = mean Si:C ratio[0.159] * SiLim[0,1] * LightNutrientFactor[1,4.4] * SiExcessFactor[1,2/3]
+                  ! Si:C ratio = mean Si:C ratio[0.159] * SiLim[0,1] * LightNutrientFactor[1,5.4] * SiExcessFactor[1,2/3]
                   zysopt(ji,jj,jk) = grosip * zlim * zsilfac * zsilfac2
                   ! higher Si:C ratios when light and nutrients (N,P,Fe) are
                   ! strongly limiting and when Si concentrations are very high
@@ -411,25 +418,25 @@ CONTAINS
          DO jj = 1, jpj
            DO ji =1 ,jpi
               IF( etot_ndcy(ji,jj,jk) > 1.E-3 ) THEN
-                 zproreg  = zprorcan(ji,jj,jk) - zpronewn(ji,jj,jk)
-                 zproreg2 = zprorcad(ji,jj,jk) - zpronewd(ji,jj,jk)
+                 zproregn(ji,jj,jk) = zprorcan(ji,jj,jk) - zpronewn(ji,jj,jk)
+                 zproregd(ji,jj,jk) = zprorcad(ji,jj,jk) - zpronewd(ji,jj,jk)
                  zdocprod = excretd * zprorcad(ji,jj,jk) + excretn * zprorcan(ji,jj,jk)
                  ! zprorcan & zprorcad are total DIC taken up by nano & diat
-                 ! zproreg & zproreg2 are total NH4 taken up by nano & diat
+                 ! zproregn & zproregd are total NH4 taken up by nano & diat
                  ! zpronewn & zpronewd are total NO3 taken up by nano & diat
                  ! zprorcan * texcretn = total carbon uptake after excretion [DIC] --> [PHY]
                  ! zprorcad * texcretd = total carbon uptake after excretion [DIC] --> [PHY2]
                  ! zdocprod = total carbon excreted as DOC [DIC] --> [PHY+PHY2] --> [DOC]
                  tra(ji,jj,jk,jppo4) = tra(ji,jj,jk,jppo4) - zprorcan(ji,jj,jk) - zprorcad(ji,jj,jk)
                  tra(ji,jj,jk,jpno3) = tra(ji,jj,jk,jpno3) - zpronewn(ji,jj,jk) - zpronewd(ji,jj,jk)
-                 tra(ji,jj,jk,jpnh4) = tra(ji,jj,jk,jpnh4) - zproreg - zproreg2
+                 tra(ji,jj,jk,jpnh4) = tra(ji,jj,jk,jpnh4) - zproregn(ji,jj,jk) - zproregd(ji,jj,jk)
                  tra(ji,jj,jk,jpphy) = tra(ji,jj,jk,jpphy) + zprorcan(ji,jj,jk) * texcretn
                  tra(ji,jj,jk,jpnfe) = tra(ji,jj,jk,jpnfe) + zprofen(ji,jj,jk) * texcretn
                  tra(ji,jj,jk,jpdia) = tra(ji,jj,jk,jpdia) + zprorcad(ji,jj,jk) * texcretd
                  tra(ji,jj,jk,jpdfe) = tra(ji,jj,jk,jpdfe) + zprofed(ji,jj,jk) * texcretd
                  tra(ji,jj,jk,jpdsi) = tra(ji,jj,jk,jpdsi) + zprorcad(ji,jj,jk) * zysopt(ji,jj,jk) * texcretd
                  tra(ji,jj,jk,jpdoc) = tra(ji,jj,jk,jpdoc) + zdocprod
-                 tra(ji,jj,jk,jpoxy) = tra(ji,jj,jk,jpoxy) + o2ut * ( zproreg + zproreg2) &
+                 tra(ji,jj,jk,jpoxy) = tra(ji,jj,jk,jpoxy) + o2ut * ( zproregn(ji,jj,jk) + zproregd(ji,jj,jk)) &
                  &                   + ( o2ut + o2nit ) * ( zpronewn(ji,jj,jk) + zpronewd(ji,jj,jk) )
                  !
                  zfeup = texcretn * zprofen(ji,jj,jk) + texcretd * zprofed(ji,jj,jk)
@@ -437,17 +444,25 @@ CONTAINS
                  tra(ji,jj,jk,jpsil) = tra(ji,jj,jk,jpsil) - texcretd * zprorcad(ji,jj,jk) * zysopt(ji,jj,jk)
                  tra(ji,jj,jk,jpdic) = tra(ji,jj,jk,jpdic) - zprorcan(ji,jj,jk) - zprorcad(ji,jj,jk)
                  tra(ji,jj,jk,jptal) = tra(ji,jj,jk,jptal) + rno3 * ( zpronewn(ji,jj,jk) + zpronewd(ji,jj,jk) ) &
-                 &                                         - rno3 * ( zproreg + zproreg2 )
+                 &                                         - rno3 * ( zproregn(ji,jj,jk) + zproregd(ji,jj,jk) )
 
                  IF ( ln_n15 ) THEN
                     ! First, calculate utilisation factors for new and regenerated production.
                     zu_15 = MIN(1.0, MAX(0.0, 1.0 - (zpronewn(ji,jj,jk) + zpronewd(ji,jj,jk) + rtrn)   &
                     &                             / (trb(ji,jj,jk,jpno3) + rtrn) ) )
-                    zun_15 = MIN(1.0, MAX(0.0, 1.0 - (zproreg + zproreg2 + rtrn)   &
+                    zun_15 = MIN(1.0, MAX(0.0, 1.0 - (zproregn(ji,jj,jk) + zproregd(ji,jj,jk) + rtrn)   &
                     &                              / (trb(ji,jj,jk,jpnh4) + rtrn) ) )
                     ! save the fractionation factor due to new and regenerated production
-                    ze15nprod1(ji,jj,jk) = e15n_prod * zu_15
-                    ze15nprod2(ji,jj,jk) = e15n_prod * zun_15
+                    ze15nprod1(ji,jj,jk) = e15n_nprod * zu_15
+                    ze15nprod2(ji,jj,jk) = e15n_rprod * zun_15
+                    
+                    !! pjb
+                    !IF ( gphit(ji,jj) > -20 .and. gphit(ji,jj) < 20 ) THEN ! select tropical latitudes 
+                    !  ze15nprod1(ji,jj,jk) = max(e15n_nprod,5.0) * zu_15
+                    !  ze15nprod2(ji,jj,jk) = max(e15n_rprod,5.0) * zun_15
+                    !ENDIF
+                    !! pjb
+
                     ! Second, apply utilisation factors to fractionation factors
                     zr15_new = ( 1.0 - ze15nprod1(ji,jj,jk) / 1000.0 )                                 &
                     &           * ( (trb(ji,jj,jk,jp15no3)+rtrn) / (trb(ji,jj,jk,jpno3)+rtrn) )
@@ -455,15 +470,19 @@ CONTAINS
                     &           * ( (trb(ji,jj,jk,jp15nh4)+rtrn) / (trb(ji,jj,jk,jpnh4)+rtrn) )
                     ! Third, apply the fractionation factors to the state variables
                     tra(ji,jj,jk,jp15phy) = tra(ji,jj,jk,jp15phy) + zr15_new * zpronewn(ji,jj,jk) * texcretn &
-                    &                                             + zr15_reg * zproreg * texcretn
+                    &                                             + zr15_reg * zproregn(ji,jj,jk) * texcretn
                     tra(ji,jj,jk,jp15dia) = tra(ji,jj,jk,jp15dia) + zr15_new * zpronewd(ji,jj,jk) * texcretd &
-                    &                                             + zr15_reg * zproreg2 * texcretd
+                    &                                             + zr15_reg * zproregd(ji,jj,jk) * texcretd
                     tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) + zr15_new * zpronewn(ji,jj,jk) * excretn &
-                    &                                             + zr15_reg * zproreg * excretn &
+                    &                                             + zr15_reg * zproregn(ji,jj,jk) * excretn &
                     &                                             + zr15_new * zpronewd(ji,jj,jk) * excretd &
-                    &                                             + zr15_reg * zproreg2 * excretd 
+                    &                                             + zr15_reg * zproregd(ji,jj,jk) * excretd 
                     tra(ji,jj,jk,jp15no3) = tra(ji,jj,jk,jp15no3) - zr15_new * ( zpronewn(ji,jj,jk) + zpronewd(ji,jj,jk) )
-                    tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) - zr15_reg * ( zproreg + zproreg2 )
+                    tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) - zr15_reg * ( zproregn(ji,jj,jk) + zproregd(ji,jj,jk) )
+                    zpronewn15(ji,jj,jk) = zr15_new * zpronewn(ji,jj,jk)
+                    zpronewd15(ji,jj,jk) = zr15_new * zpronewd(ji,jj,jk) 
+                    zproregn15(ji,jj,jk) = zr15_reg * zproregn(ji,jj,jk)
+                    zproregd15(ji,jj,jk) = zr15_reg * zproregd(ji,jj,jk) 
                  ENDIF
                  IF ( ln_c13 ) THEN
                     zr13_dic = ( (trb(ji,jj,jk,jp13dic)+rtrn) / (trb(ji,jj,jk,jpdic)+rtrn) )
@@ -474,6 +493,12 @@ CONTAINS
                     ze13cprod2(ji,jj,jk) = max(e13c_min, min(e13c_max, (                                    &
                     &             ( (86400 * zprorcad(ji,jj,jk)) / (trb(ji,jj,jk,jpdia) + rtrn) /           &
                     &             ( rfact2 * (zh2co3(ji,jj,jk)/1025*1e9 + rtrn)) - 0.371 ) / (-0.015) )))
+                    !!pjb
+                    !IF ( gphit(ji,jj) > -20 .and. gphit(ji,jj) < 20 ) THEN ! select tropical latitudes 
+                    !  ze13cprod1(ji,jj,jk) = 25.0 
+                    !  ze13cprod2(ji,jj,jk) = 25.0 
+                    !ENDIF
+                    !!pjb
                 
                     zr13   = ( 1.0 - ze13cprod1(ji,jj,jk)/1000.0 ) * zr13_dic 
                     zr13_2 = ( 1.0 - ze13cprod2(ji,jj,jk)/1000.0 ) * zr13_dic 
@@ -531,6 +556,27 @@ CONTAINS
               !
               zw3d(:,:,:) = zpronewd(:,:,:) * zfact * tmask(:,:,:)  ! new primary production by diatomes
               CALL iom_put( "PPNEWD"  , zw3d )
+          ENDIF
+          IF( iom_use( "PPNEWN_15NO3" ) .OR. iom_use( "PPNEWD_15NO3" ) )  THEN
+              zw3d(:,:,:) = zpronewn15(:,:,:) * zfact * tmask(:,:,:)  ! new primary production by nanophyto
+              CALL iom_put( "PPNEWN_15NO3"  , zw3d )
+              !
+              zw3d(:,:,:) = zpronewd15(:,:,:) * zfact * tmask(:,:,:)  ! new primary production by diatomes
+              CALL iom_put( "PPNEWD_15NO3"  , zw3d )
+          ENDIF
+          IF( iom_use( "PPREGN" ) .OR. iom_use( "PPREGD" ) )  THEN
+              zw3d(:,:,:) = zproregn(:,:,:) * zfact * tmask(:,:,:)  ! regenerated primary production by nanophyto
+              CALL iom_put( "PPREGN"  , zw3d )
+              !
+              zw3d(:,:,:) = zproregd(:,:,:) * zfact * tmask(:,:,:)  ! regenerated primary production by diatomes
+              CALL iom_put( "PPREGD"  , zw3d )
+          ENDIF
+          IF( iom_use( "PPREGN_15NH4" ) .OR. iom_use( "PPREGD_15NH4" ) )  THEN
+              zw3d(:,:,:) = zproregn15(:,:,:) *zfact * tmask(:,:,:)  ! regenerated primary production by nanophyto
+              CALL iom_put( "PPREGN_15NH4"  , zw3d )
+              !
+              zw3d(:,:,:) = zproregd15(:,:,:) * zfact * tmask(:,:,:)  ! regenerated primary production by diatomes
+              CALL iom_put( "PPREGD_15NH4"  , zw3d )
           ENDIF
           IF( iom_use( "PBSi" ) )  THEN
               zw3d(:,:,:) = zprorcad(:,:,:) * zfact * tmask(:,:,:) * zysopt(:,:,:) ! biogenic silica production
@@ -670,7 +716,7 @@ CONTAINS
       !
       NAMELIST/namp4zprod/ pislopen, pisloped, xadap, bresp, excretn, excretd,  &
          &                 chlcnm, chlcdm, chlcmin, fecnm, fecdm, grosip,       &
-         &                 e15n_prod, e13c_min, e13c_max
+         &                 e15n_nprod, e15n_rprod, e13c_min, e13c_max
       !!----------------------------------------------------------------------
       !
       IF(lwp) THEN                         ! control print
@@ -701,7 +747,8 @@ CONTAINS
          WRITE(numout,*) '      Minimum Chl/C in diatoms                  chlcdm       =', chlcdm
          WRITE(numout,*) '      Maximum Fe/C in nanophytoplankton         fecnm        =', fecnm
          WRITE(numout,*) '      Minimum Fe/C in diatoms                   fecdm        =', fecdm
-         WRITE(numout,*) '      N15 fractionation by assimilation         e15n_prod    =', e15n_prod
+         WRITE(numout,*) '      N15 fractionation by new production       e15n_nprod   =', e15n_nprod
+         WRITE(numout,*) '      N15 fractionation by reg production       e15n_rprod   =', e15n_rprod
          WRITE(numout,*) '      C13 assimilation fractionation min        e13c_min     =', e13c_min
          WRITE(numout,*) '      C13 assimilation fractionation max        e13c_max     =', e13c_max
       ENDIF

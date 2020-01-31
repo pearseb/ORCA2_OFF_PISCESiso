@@ -436,10 +436,24 @@ CONTAINS
          END DO
          ! Set realistic bounds for nitrogen isotopes
          IF( ln_n15 ) THEN
-            !trb(:,:,:,jp15nh4) = MIN(trb(:,:,:,jp15nh4) , ( (nn_n15max/1000.)  + 1.)*trb(:,:,:,jpnh4) )
-            !trb(:,:,:,jp15nh4) = MAX(trb(:,:,:,jp15nh4) , ( (nn_n15min/1000.)  + 1.)*trb(:,:,:,jpnh4) )
             trb(:,:,:,jp15no3) = MIN(trb(:,:,:,jp15no3) , ( (nn_n15max/1000.)  + 1.)*trb(:,:,:,jpno3) )
             trb(:,:,:,jp15no3) = MAX(trb(:,:,:,jp15no3) , ( (nn_n15min/1000.)  + 1.)*trb(:,:,:,jpno3) )
+            trb(:,:,:,jp15nh4) = MIN(trb(:,:,:,jp15nh4) , ( (nn_n15max/1000.)  + 1.)*trb(:,:,:,jpnh4) )
+            trb(:,:,:,jp15nh4) = MAX(trb(:,:,:,jp15nh4) , ( (nn_n15min/1000.)  + 1.)*trb(:,:,:,jpnh4) )
+            trb(:,:,:,jp15doc) = MIN(trb(:,:,:,jp15doc) , ( (nn_n15max/1000.)  + 1.)*trb(:,:,:,jpdoc) )
+            trb(:,:,:,jp15doc) = MAX(trb(:,:,:,jp15doc) , ( (nn_n15min/1000.)  + 1.)*trb(:,:,:,jpdoc) )
+            trb(:,:,:,jp15poc) = MIN(trb(:,:,:,jp15poc) , ( (nn_n15max/1000.)  + 1.)*trb(:,:,:,jppoc) )
+            trb(:,:,:,jp15poc) = MAX(trb(:,:,:,jp15poc) , ( (nn_n15min/1000.)  + 1.)*trb(:,:,:,jppoc) )
+            trb(:,:,:,jp15goc) = MIN(trb(:,:,:,jp15goc) , ( (nn_n15max/1000.)  + 1.)*trb(:,:,:,jpgoc) )
+            trb(:,:,:,jp15goc) = MAX(trb(:,:,:,jp15goc) , ( (nn_n15min/1000.)  + 1.)*trb(:,:,:,jpgoc) )
+            trb(:,:,:,jp15phy) = MIN(trb(:,:,:,jp15phy) , ( (nn_n15max/1000.)  + 1.)*trb(:,:,:,jpphy) )
+            trb(:,:,:,jp15phy) = MAX(trb(:,:,:,jp15phy) , ( (nn_n15min/1000.)  + 1.)*trb(:,:,:,jpphy) )
+            trb(:,:,:,jp15dia) = MIN(trb(:,:,:,jp15dia) , ( (nn_n15max/1000.)  + 1.)*trb(:,:,:,jpdia) )
+            trb(:,:,:,jp15dia) = MAX(trb(:,:,:,jp15dia) , ( (nn_n15min/1000.)  + 1.)*trb(:,:,:,jpdia) )
+            trb(:,:,:,jp15zoo) = MIN(trb(:,:,:,jp15zoo) , ( (nn_n15max/1000.)  + 1.)*trb(:,:,:,jpzoo) )
+            trb(:,:,:,jp15zoo) = MAX(trb(:,:,:,jp15zoo) , ( (nn_n15min/1000.)  + 1.)*trb(:,:,:,jpzoo) )
+            trb(:,:,:,jp15mes) = MIN(trb(:,:,:,jp15mes) , ( (nn_n15max/1000.)  + 1.)*trb(:,:,:,jpmes) )
+            trb(:,:,:,jp15mes) = MAX(trb(:,:,:,jp15mes) , ( (nn_n15min/1000.)  + 1.)*trb(:,:,:,jpmes) )
          ENDIF
          !
          IF( ln_top_euler ) THEN
@@ -682,6 +696,9 @@ CONTAINS
 
             IF(lwp) WRITE(numout,*) '       NO3N  mean : ', zno3sumn
             trn(:,:,:,jpno3) = trn(:,:,:,jpno3) * no3mean / zno3sumn
+            IF ( ln_n15 ) THEN
+               trn(:,:,:,jp15no3) = trn(:,:,:,jp15no3) * no3mean / zno3sumn
+            ENDIF
 
             IF(lwp) WRITE(numout,*) '       SiO3N mean : ', zsilsumn
             trn(:,:,:,jpsil) = MIN( 400.e-6,trn(:,:,:,jpsil) * silmean / zsilsumn )
@@ -702,6 +719,9 @@ CONTAINS
 
                IF(lwp) WRITE(numout,*) '       NO3B  mean : ', zno3sumb
                trb(:,:,:,jpno3) = trb(:,:,:,jpno3) * no3mean / zno3sumb
+               IF ( ln_n15 ) THEN
+                  trn(:,:,:,jp15no3) = trn(:,:,:,jp15no3) * no3mean / zno3sumn
+               ENDIF
 
                IF(lwp) WRITE(numout,*) '       SiO3B mean : ', zsilsumb
                trb(:,:,:,jpsil) = MIN( 400.e-6,trb(:,:,:,jpsil) * silmean / zsilsumb )

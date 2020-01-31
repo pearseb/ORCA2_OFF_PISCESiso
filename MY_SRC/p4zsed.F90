@@ -28,6 +28,8 @@ MODULE p4zsed
  
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) :: nitrpot    !: Nitrogen fixation 
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:  ) :: sdenit     !: Nitrate reduction in the sediments
+   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) :: zpdenit     !: Nitrate reduction in the sediments
+   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) :: zpdenit15   !: Nitrate reduction in the sediments
    REAL(wp) :: r1_rday                  !: inverse of rday
    LOGICAL, SAVE :: lk_sed
 
@@ -53,7 +55,7 @@ CONTAINS
       INTEGER  ::  ji, jj, jk, ikt
       REAL(wp) ::  zrivalk, zrivsil, zrivno3
       REAL(wp) ::  zwflux, zlim, zfact, zfactcal
-      REAL(wp) ::  zo2, zno3, zflx, zpdenit, z1pdenit, zolimit
+      REAL(wp) ::  zo2, zno3, zflx, z1pdenit 
       REAL(wp) ::  zsiloss, zcaloss, zws3, zws4, zwsc, zdep
       REAL(wp) ::  zwstpoc, zwstpon, zwstpop
       REAL(wp) ::  zwstpoc15, zr15_no3, zr15_rain
@@ -66,6 +68,7 @@ CONTAINS
       REAL(wp), DIMENSION(jpi,jpj    ) :: zwsbio3, zwsbio4
       REAL(wp), DIMENSION(jpi,jpj    ) :: zsedcal, zsedsi, zsedc
       REAL(wp), DIMENSION(jpi,jpj,jpk) :: zsoufer, zlight
+      REAL(wp), DIMENSION(jpi,jpj,jpk) :: zolimit, zolimit15
       REAL(wp), ALLOCATABLE, DIMENSION(:,:,:) :: ztrpo4, ztrdop, zirondep, zpdep
       REAL(wp), ALLOCATABLE, DIMENSION(:,:  ) :: zsidep, zironice
       !!---------------------------------------------------------------------
@@ -371,6 +374,10 @@ CONTAINS
          ! denitrification in the sediments. Not very clever, but simpliest option.
          DO jj = 1, jpj
             DO ji = 1, jpi
+               zpdenit(ji,jj,:) = 0.0 ! set all values in water column to zero
+               zpdenit15(ji,jj,:) = 0.0 ! set all values in water column to zero
+               zolimit(ji,jj,:) = 0.0 ! set all values in water column to zero
+               zolimit15(ji,jj,:) = 0.0 ! set all values in water column to zero
                ikt  = mbkt(ji,jj) ! we are in deepest grid cell of ocean
                zdep = xstep / e3t_n(ji,jj,ikt) ! s/m (timestep/thickness) 
                zws4 = zwsbio4(ji,jj) * zdep ! proportion of large particles in last depth level hitting sediment
@@ -378,35 +385,35 @@ CONTAINS
                zrivno3 = 1. - zbureff(ji,jj) ! proportion of sedimenting particles not buried
                zwstpoc = trb(ji,jj,ikt,jpgoc) * zws4 + trb(ji,jj,ikt,jppoc) * zws3 !molC/L 
                  ! zwstpoc = OM * proportion POC/GOC sedimented = molC/L of GOC+POC hitting sediment
-               zpdenit  = MIN( 0.5 * ( trb(ji,jj,ikt,jpno3) - rtrn ) / rdenit, zdenit2d(ji,jj) * zwstpoc * zrivno3 )
-               z1pdenit = zwstpoc * zrivno3 - zpdenit
+               zpdenit(ji,jj,ikt)  = MIN( 0.5 * ( trb(ji,jj,ikt,jpno3) - rtrn ) / rdenit, zdenit2d(ji,jj) * zwstpoc * zrivno3 )
+               z1pdenit = zwstpoc * zrivno3 - zpdenit(ji,jj,ikt)
                  ! zrivno3 = proportion of particulate carbon that isn't buried and must be remineralised 
                  ! zpdenit = amount of material (POC+GOC) that is denitrified (molC/L)
                  ! z1pdenit = amount of material (POC+GOC) that is remineralised without denitrification (molC/L)
-               zolimit = MIN( ( trb(ji,jj,ikt,jpoxy) - rtrn ) / o2ut, z1pdenit * ( 1.- nitrfac(ji,jj,ikt) ) )
+               zolimit(ji,jj,ikt) = MIN( ( trb(ji,jj,ikt,jpoxy) - rtrn ) / o2ut, z1pdenit * ( 1.- nitrfac(ji,jj,ikt) ) )
                  ! zolimit = adjusted z1pdenit that occurs through oxic remineralisation
 
                ! zpdenit + zolimit + (z1pdenit-zolimit) = zwstpoc * zrivno3
                ! OM_denit + OM_oxy + OM_other_remin     = OM_total_hitting_sed_that_is_not_buried
 
-               tra(ji,jj,ikt,jpdoc) = tra(ji,jj,ikt,jpdoc) + z1pdenit - zolimit
+               tra(ji,jj,ikt,jpdoc) = tra(ji,jj,ikt,jpdoc) + z1pdenit - zolimit(ji,jj,ikt)
                  ! z1pdenit (non-nitrogeneous remineralisation) - zolimit (oxic remineralisation)
                  !  thus... the component of remineralisation that cannot be accommodated by N or O2 goes to DOC
-               tra(ji,jj,ikt,jppo4) = tra(ji,jj,ikt,jppo4) + zpdenit + zolimit
-               tra(ji,jj,ikt,jpnh4) = tra(ji,jj,ikt,jpnh4) + zpdenit + zolimit
-               tra(ji,jj,ikt,jpno3) = tra(ji,jj,ikt,jpno3) - rdenit * zpdenit
+               tra(ji,jj,ikt,jppo4) = tra(ji,jj,ikt,jppo4) + zpdenit(ji,jj,ikt) + zolimit(ji,jj,ikt)
+               tra(ji,jj,ikt,jpnh4) = tra(ji,jj,ikt,jpnh4) + zpdenit(ji,jj,ikt) + zolimit(ji,jj,ikt)
+               tra(ji,jj,ikt,jpno3) = tra(ji,jj,ikt,jpno3) - rdenit * zpdenit(ji,jj,ikt)
           
-               tra(ji,jj,ikt,jpoxy) = tra(ji,jj,ikt,jpoxy) - zolimit * o2ut
-               tra(ji,jj,ikt,jptal) = tra(ji,jj,ikt,jptal) + rno3 * (zolimit + (1.+rdenit) * zpdenit )
-               tra(ji,jj,ikt,jpdic) = tra(ji,jj,ikt,jpdic) + zpdenit + zolimit 
-               sdenit(ji,jj) = rdenit * zpdenit * e3t_n(ji,jj,ikt)
+               tra(ji,jj,ikt,jpoxy) = tra(ji,jj,ikt,jpoxy) - zolimit(ji,jj,ikt) * o2ut
+               tra(ji,jj,ikt,jptal) = tra(ji,jj,ikt,jptal) + rno3 * (zolimit(ji,jj,ikt) + (1.+rdenit) * zpdenit(ji,jj,ikt) )
+               tra(ji,jj,ikt,jpdic) = tra(ji,jj,ikt,jpdic) + zpdenit(ji,jj,ikt) + zolimit(ji,jj,ikt) 
+               sdenit(ji,jj) = rdenit * zpdenit(ji,jj,ikt) * e3t_n(ji,jj,ikt)
                zsedc(ji,jj)   = (1. - zrivno3) * zwstpoc * e3t_n(ji,jj,ikt)
 
                IF( ln_p5z ) THEN
                   zwstpop              = trb(ji,jj,ikt,jpgop) * zws4 + trb(ji,jj,ikt,jppop) * zws3
                   zwstpon              = trb(ji,jj,ikt,jpgon) * zws4 + trb(ji,jj,ikt,jppon) * zws3
-                  tra(ji,jj,ikt,jpdon) = tra(ji,jj,ikt,jpdon) + ( z1pdenit - zolimit ) * zwstpon / (zwstpoc + rtrn)
-                  tra(ji,jj,ikt,jpdop) = tra(ji,jj,ikt,jpdop) + ( z1pdenit - zolimit ) * zwstpop / (zwstpoc + rtrn)
+                  tra(ji,jj,ikt,jpdon) = tra(ji,jj,ikt,jpdon) + ( z1pdenit - zolimit(ji,jj,ikt) ) * zwstpon / (zwstpoc + rtrn)
+                  tra(ji,jj,ikt,jpdop) = tra(ji,jj,ikt,jpdop) + ( z1pdenit - zolimit(ji,jj,ikt) ) * zwstpop / (zwstpoc + rtrn)
                ENDIF
 
                IF ( ln_n15 ) THEN
@@ -414,16 +421,18 @@ CONTAINS
                   zwstpoc15 = trb(ji,jj,ikt,jp15goc)*zws4 + trb(ji,jj,ikt,jp15poc)*zws3 !POC+GOC hitting sediment 
                   zr15_rain = ( (zwstpoc15+rtrn) / (zwstpoc+rtrn) )
                   tra(ji,jj,ikt,jp15doc) = tra(ji,jj,ikt,jp15doc) + zwstpoc15 * zrivno3           &
-                  &                        - zpdenit * zr15_rain - zolimit * zr15_rain
-                  tra(ji,jj,ikt,jp15nh4) = tra(ji,jj,ikt,jp15nh4) + zpdenit * zr15_rain + zolimit * zr15_rain
-                  tra(ji,jj,ikt,jp15no3) = tra(ji,jj,ikt,jp15no3) - rdenit * zpdenit * ( 1.0 - e15n_ben/1000.0 ) * zr15_no3 
+                  &                        - zpdenit(ji,jj,ikt) * zr15_rain - zolimit(ji,jj,ikt) * zr15_rain
+                  tra(ji,jj,ikt,jp15nh4) = tra(ji,jj,ikt,jp15nh4) + zpdenit(ji,jj,ikt) * zr15_rain + zolimit(ji,jj,ikt) * zr15_rain
+                  tra(ji,jj,ikt,jp15no3) = tra(ji,jj,ikt,jp15no3) - rdenit * zpdenit(ji,jj,ikt) * ( 1.0 - e15n_ben/1000.0 ) * zr15_no3 
+                  zpdenit15(ji,jj,ikt) = zpdenit(ji,jj,ikt) * ( 1.0 - e15n_ben/1000.0 ) * zr15_no3 
+                  zolimit15(ji,jj,ikt) = zolimit(ji,jj,ikt) * zr15_rain
                ENDIF 
                IF ( ln_c13 ) THEN
                   zwstpoc13 = trb(ji,jj,ikt,jp13goc)*zws4 + trb(ji,jj,ikt,jp13poc)*zws3 !POC+GOC hitting sediment 
                   zr13_rain = ( (zwstpoc13+rtrn) / (zwstpoc+rtrn) )
                   tra(ji,jj,ikt,jp13doc) = tra(ji,jj,ikt,jp13doc) + zwstpoc13 * zrivno3           &
-                  &                        - zpdenit * zr13_rain - zolimit * zr13_rain
-                  tra(ji,jj,ikt,jp13dic) = tra(ji,jj,ikt,jp13dic) + zpdenit * zr13_rain + zolimit * zr13_rain
+                  &                        - zpdenit(ji,jj,ikt) * zr13_rain - zolimit(ji,jj,ikt) * zr13_rain
+                  tra(ji,jj,ikt,jp13dic) = tra(ji,jj,ikt,jp13dic) + zpdenit(ji,jj,ikt) * zr13_rain + zolimit(ji,jj,ikt) * zr13_rain
                ENDIF 
 
             END DO
@@ -565,8 +574,9 @@ CONTAINS
 
       IF( lk_iomput ) THEN
          IF( knt == nrdttrc ) THEN
-            zfact = 1.e+3 * rfact2r !  conversion from molC/l/kt  to molN/m3/s
+            zfact = 1.e+3 * rfact2r !  conversion from molC/l/kt  to molC/m3/s
             IF( iom_use("Nfix"   ) ) CALL iom_put( "Nfix", nitrpot(:,:,:) * nitrfix * rno3 * zfact * tmask(:,:,:) )  ! nitrogen fixation 
+            IF( iom_use("Nfix_15NH4"   ) ) CALL iom_put( "Nfix_15NH4", nitrpot(:,:,:) * nitrfix * rno3 * zfact * tmask(:,:,:) * (1. + d15n_fix*1e-3) * 1./3. )  ! nitrogen fixation to 15NH4
             IF( iom_use("INTNFIX") ) THEN   ! nitrogen fixation rate in ocean ( vertically integrated )
                zwork(:,:) = 0.
                DO jk = 1, jpkm1
@@ -578,6 +588,14 @@ CONTAINS
             IF( iom_use("SedSi" ) )  CALL iom_put( "SedSi",  zsedsi (:,:) * zfact )
             IF( iom_use("SedC" ) )   CALL iom_put( "SedC",   zsedc  (:,:) * zfact )
             IF( iom_use("Sdenit" ) ) CALL iom_put( "Sdenit", sdenit (:,:) * zfact * rno3 )
+            IF( iom_use("SDEN3D" ) ) CALL iom_put( "SDEN3D", zpdenit(:,:,:) * rdenit * zfact * rno3 * tmask(:,:,:) )
+            IF( iom_use("SDEN3D_15NO3" ) ) CALL iom_put( "SDEN3D_15NO3", zpdenit15(:,:,:) * rdenit * zfact * rno3 * tmask(:,:,:) )
+            IF( iom_use("SREM3D" ) ) CALL iom_put( "SREM3D", zolimit(:,:,:) * zfact * tmask(:,:,:) )
+            IF( iom_use("SREM3D_15DOC" ) ) CALL iom_put( "SREM3D_15DOC", zolimit15(:,:,:) * zfact * tmask(:,:,:) )
+            IF( iom_use("River_NO3" ) ) CALL iom_put( "River_NO3", rivdin(:,:) * zfact )
+            IF( iom_use("River_15NO3" ) ) CALL iom_put( "River_15NO3", rivdin (:,:) * zfact * ( 1.0 + d15n_riv/1000.0 ) )
+            IF( iom_use("Ndep_NO3" ) ) CALL iom_put( "Ndep_NO3", nitdep(:,:) * zfact )
+            IF( iom_use("Ndep_15NO3" ) ) CALL iom_put( "Ndep_15NO3", nitdep (:,:) * zfact * ( 1.0 + d15n_dep/1000.0 ) )
          ENDIF
       ENDIF
       !
@@ -598,7 +616,7 @@ CONTAINS
       !!----------------------------------------------------------------------
       !!                     ***  ROUTINE p4z_sed_alloc  ***
       !!----------------------------------------------------------------------
-      ALLOCATE( nitrpot(jpi,jpj,jpk), sdenit(jpi,jpj), STAT=p4z_sed_alloc )
+      ALLOCATE( nitrpot(jpi,jpj,jpk), sdenit(jpi,jpj), zpdenit(jpi,jpj,jpk), zpdenit15(jpi,jpj,jpk), STAT=p4z_sed_alloc )
       !
       IF( p4z_sed_alloc /= 0 )   CALL ctl_stop( 'STOP', 'p4z_sed_alloc: failed to allocate arrays' )
       !
