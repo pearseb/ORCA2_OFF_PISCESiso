@@ -151,8 +151,8 @@ CONTAINS
                zfco3 = MIN(0.2 , zfco3)
                zft = MIN( 25., ztc )
                zft = MAX(  5., zft )
-               za_g  (ji,jj) = 1. + ( -0.0049 * zft - 1.31 ) / 1000.
-               za_dic(ji,jj) = 1. + ( 0.014 * zft * zfco3  - 0.105 * zft + 10.53 ) / 1000.
+               za_g  (ji,jj) = 1. + ( 0.0049 * zft - 1.31 ) / 1000.
+               za_dic(ji,jj) = 1. + ( 0.0144 * zft * zfco3  - 0.107 * zft + 10.53 ) / 1000.
             ENDIF
 
          END DO
@@ -182,9 +182,9 @@ CONTAINS
 
                oce_c13(ji,jj) = ( zfld * (1.0 + d13c_co2/1000.0) -                                 &
                &                  zflu * zr13_dic / (za_dic(ji,jj)+rtrn) )                         &
-               &                 * 0.99919 * za_g(ji,jj) * rfact2 / e3t_n(ji,jj,1) * tmask(ji,jj,1)
+               &                 * 0.99912 * za_g(ji,jj) * rfact2 * tmask(ji,jj,1) 
 
-               tra(ji,jj,1,jp13dic) = tra(ji,jj,1,jp13dic) + oce_c13(ji,jj)
+               tra(ji,jj,1,jp13dic) = tra(ji,jj,1,jp13dic) + oce_c13(ji,jj) / e3t_n(ji,jj,1)
             ENDIF
 
             ! Compute O2 flux 
@@ -215,7 +215,7 @@ CONTAINS
             CALL iom_put( "Cflx"     , zw2d ) 
          ENDIF
          IF( iom_use( "C13flx"  ) )  THEN
-            zw2d(:,:) = oce_c13(:,:) / e1e2t(:,:) * rfact2r
+            zw2d(:,:) = oce_c13(:,:) * 1000 * rfact2r
             CALL iom_put( "C13flx"     , zw2d ) 
          ENDIF
          IF( iom_use( "Oflx"  ) )  THEN

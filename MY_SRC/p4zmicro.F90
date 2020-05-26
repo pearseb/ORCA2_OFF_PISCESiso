@@ -172,6 +172,11 @@ CONTAINS
                !    --------------------------------------------
                zgrasrat  = ( zgraztotf + rtrn ) / ( zgraztotc + rtrn )  ! Fe/C ratio [0,>1]
                zgrasratn = ( zgraztotn + rtrn ) / ( zgraztotc + rtrn )  ! N/C ratio [0,1]
+               !! pjb
+               ! IF ( gphit(ji,jj) > -35 .and. gphit(ji,jj) < 35 ) THEN ! select subtropical latitudes 
+               !   zgrasratn = 0.5  ! N/C ratio [0,1]
+               ! ENDIF
+               !! pjb
                foodqual1(ji,jj,jk) = zgrasratn
                zepshert  =  MIN( 1., zgrasratn, zgrasrat / ferat3) ! measure of food quality [0,1]
                  ! zgrasratn = quality of food due to N [0,1]
@@ -339,12 +344,20 @@ CONTAINS
               zw3d(:,:,:) = foodqual1(:,:,:) * tmask(:,:,:)  !  Total excretion of NH4 by zooplankton
               CALL iom_put( "FOODQUAL1", zw3d )
            ENDIF
+           IF( iom_use( "NANO_NC" ) ) THEN
+              zw3d(:,:,:) = quotan(:,:,:) * tmask(:,:,:)  !  N:C proxy of nanophytoplankton
+              CALL iom_put( "NANO_NC", zw3d )
+           ENDIF
+           IF( iom_use( "DIATOM_NC" ) ) THEN
+              zw3d(:,:,:) = quotad(:,:,:) * tmask(:,:,:)  !  N:C proxy of diatoms
+              CALL iom_put( "DIATOM_NC", zw3d )
+           ENDIF
            IF( iom_use( "EXCR1" ) ) THEN
-              zw3d(:,:,:) = excretion1(:,:,:) * 1.e+3 * rfact2r * tmask(:,:,:)  !  Total excretion of NH4 by zooplankton
+              zw3d(:,:,:) = excretion1(:,:,:) * 1.e+3 * rfact2r * rno3 * tmask(:,:,:)  !  Total excretion of NH4 by zooplankton
               CALL iom_put( "EXCR1", zw3d )
            ENDIF
            IF( iom_use( "EXCR1_15ZOO" ) ) THEN
-              zw3d(:,:,:) = excretion1_15(:,:,:) * 1.e+3 * rfact2r * tmask(:,:,:)  !  Total excretion of 15NH4 by zooplankton
+              zw3d(:,:,:) = excretion1_15(:,:,:) * 1.e+3 * rfact2r * rno3 * tmask(:,:,:)  !  Total excretion of 15NH4 by zooplankton
               CALL iom_put( "EXCR1_15ZOO", zw3d )
            ENDIF
            IF( iom_use( "FEZOO" ) ) THEN
