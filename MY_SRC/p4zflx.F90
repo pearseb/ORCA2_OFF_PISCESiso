@@ -80,7 +80,7 @@ CONTAINS
       REAL(wp) ::   zyr_dec, zdco2dt
       REAL(wp) ::   zr13_dic, zft, zfco3
       CHARACTER (len=25) ::   charout
-      REAL(wp), DIMENSION(jpi,jpj) ::   zkgco2, zkgo2, zh2co3, zoflx,  zpco2atm  
+      REAL(wp), DIMENSION(jpi,jpj) ::   zkgco2, zkgo2, zh2co3, zoflx, zoflx2, zpco2atm  
       REAL(wp), DIMENSION(jpi,jpj) ::   za_dic, za_g, z_co3
       REAL(wp), ALLOCATABLE, DIMENSION(:,:) ::   zw2d
       !!---------------------------------------------------------------------
@@ -192,6 +192,12 @@ CONTAINS
             zflu16 = trb(ji,jj,1,jpoxy) * zkgo2(ji,jj)
             zoflx(ji,jj) = ( zfld16 - zflu16 ) * tmask(ji,jj,1)
             tra(ji,jj,1,jpoxy) = tra(ji,jj,1,jpoxy) + zoflx(ji,jj) * rfact2 / e3t_n(ji,jj,1)
+            
+            !! pjb
+            zflu16 = trb(ji,jj,1,jpao2) * zkgo2(ji,jj)
+            zoflx2(ji,jj) = ( zfld16 - zflu16 ) * tmask(ji,jj,1)
+            tra(ji,jj,1,jpao2) = tra(ji,jj,1,jpao2) + zoflx2(ji,jj) * rfact2 / e3t_n(ji,jj,1)
+            !! pjb
          END DO
       END DO
 

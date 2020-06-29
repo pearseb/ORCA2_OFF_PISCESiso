@@ -18,6 +18,7 @@ MODULE par_pisces
    INTEGER, PUBLIC ::   jpdic     !: dissolved inoganic carbon concentration 
    INTEGER, PUBLIC ::   jptal     !: total alkalinity 
    INTEGER, PUBLIC ::   jpoxy     !: oxygen carbon concentration 
+   INTEGER, PUBLIC ::   jpao2     !: oxygen carbon concentration 
    INTEGER, PUBLIC ::   jpcal     !: calcite  concentration 
    INTEGER, PUBLIC ::   jppo4     !: phosphate concentration 
    INTEGER, PUBLIC ::   jppoc     !: small particulate organic phosphate concentration
