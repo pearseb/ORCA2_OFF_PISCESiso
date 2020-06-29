@@ -38,7 +38,7 @@ MODULE p4zsms
 
    INTEGER ::    numco2, numnut, numnit      ! logical unit for co2 budget
    REAL(wp) ::   alkbudget, no3budget, silbudget, ferbudget, po4budget, &
-     &           oxybudget, d15no3budget, d13dicbudget
+     &           dicbudget, oxybudget, d15no3budget, d13dicbudget
    REAL(wp) ::   xfact1, xfact2, xfact3
 
    REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   xnegtr     ! Array used to indicate negative tracer values
@@ -812,6 +812,13 @@ CONTAINS
          alkbudget = glob_sum( 'p4zsms', zwork(:,:,:) * cvol(:,:,:)  )         !
          alkbudget = alkbudget / areatot
          CALL iom_put( "palktot", alkbudget )
+      ENDIF
+      IF( iom_use( "pdictot" ) .OR. ( ln_check_mass .AND. kt == nitend )  ) THEN
+         zwork(:,:,:) =  trn(:,:,:,jpdic)              
+         !
+         dicbudget = glob_sum( 'p4zsms', zwork(:,:,:) * cvol(:,:,:)  )         !
+         dicbudget = dicbudget / areatot
+         CALL iom_put( "pdictot", dicbudget )
       ENDIF
       !
       IF( iom_use( "pfertot" ) .OR. ( ln_check_mass .AND. kt == nitend )  ) THEN

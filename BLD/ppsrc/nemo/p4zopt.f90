@@ -161,14 +161,16 @@ CONTAINS
       ENDIF
       !                                        !* Euphotic depth and level
       neln   (:,:) = 1                            !  ------------------------
-      heup   (:,:) = gdepw_n(:,:,2)
+      heup   (:,:) = gdepw_n(:,:,2)  ! sets min euphotic zone depth at 20 metres
       heup_01(:,:) = gdepw_n(:,:,2)
 
       DO jk = 2, nksrp
          DO jj = 1, jpj
            DO ji = 1, jpi
+              ! etot_ndcy = total PAR over 24 hr
+              ! zqsr100 = 1% of incident light
               IF( etot_ndcy(ji,jj,jk) * tmask(ji,jj,jk) >=  zqsr100(ji,jj) )  THEN
-                 neln(ji,jj) = jk+1                    ! Euphotic level : 1rst T-level strictly below Euphotic layer
+                 neln(ji,jj) = jk+1                    ! Euphotic level : 1st T-level strictly below Euphotic layer
                  !                                     ! nb: ensure the compatibility with nmld_trc definition in trd_mld_trc_zint
                  heup(ji,jj) = gdepw_n(ji,jj,jk+1)     ! Euphotic layer depth
               ENDIF

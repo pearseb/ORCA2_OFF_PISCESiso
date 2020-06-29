@@ -243,6 +243,11 @@ CONTAINS
                !    --------------------------
                zgrasrat  =  ( zgraztotf + rtrn )/ ( zgraztotc + rtrn )
                zgrasratn =  ( zgraztotn + rtrn )/ ( zgraztotc + rtrn )
+               !! pjb
+               ! IF ( gphit(ji,jj) > -35 .and. gphit(ji,jj) < 35 ) THEN ! select subtropical latitudes 
+               !   zgrasratn = 0.5  ! N/C ratio [0,1]
+               ! ENDIF
+               !! pjb
                foodqual2(ji,jj,jk) = zgrasratn
                zepshert  = MIN( 1., zgrasratn, zgrasrat / ferat3)
                zbeta     = MAX(0., (epsher2 - epsher2min) )

@@ -243,8 +243,11 @@ CONTAINS
                ! ----------------------------------------------------------
                zonitr(ji,jj,jk)  = nitrif * xstep * trb(ji,jj,jk,jpnh4) * ( 1.- nitrfac(ji,jj,jk) )  &
                &         / ( 1.+ emoy(ji,jj,jk) ) * ( 1. + fr_i(ji,jj) * emoy(ji,jj,jk) )
-               zonitr(ji,jj,jk) = zonitr(ji,jj,jk) * MIN(1.2, MAX(0.0,                               &
-               &          ( 10**( (-1.0*LOG10( MAX(hi(ji,jj,jk),rtrn) ) ) - 9.3) / 10**(8.1-9.3) ) ))
+               !! pjb
+               !! Nitrification dependent on chemical equilibrium of NH3-NH4, which is dependent on pH.
+               !zonitr(ji,jj,jk) = zonitr(ji,jj,jk) * MIN(1.2, MAX(0.0,                               &
+               !&          ( 10**( (-1.0*LOG10( MAX(hi(ji,jj,jk),rtrn) ) ) - 9.3) / 10**(8.1-9.3) ) ))
+               !! pjb
                zdenitnh4(ji,jj,jk) = nitrif * xstep * trb(ji,jj,jk,jpnh4) * nitrfac(ji,jj,jk)
                zdenitnh4(ji,jj,jk) = MIN(  ( trb(ji,jj,jk,jpno3) - rtrn ) / rdenita, zdenitnh4(ji,jj,jk) ) 
 

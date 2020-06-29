@@ -54,9 +54,9 @@ CONTAINS
       !
       IF( ln_timing )   CALL timing_start('trc_sms_age')
       !
-      IF(lwp) WRITE(numout,*)
-      IF(lwp) WRITE(numout,*) ' trc_sms_age:  AGE model'
-      IF(lwp) WRITE(numout,*) ' ~~~~~~~~~~~~~~'
+      !IF(lwp) WRITE(numout,*)
+      !IF(lwp) WRITE(numout,*) ' trc_sms_age:  AGE model'
+      !IF(lwp) WRITE(numout,*) ' ~~~~~~~~~~~~~~'
 
 
       DO jk = 1, nla_age

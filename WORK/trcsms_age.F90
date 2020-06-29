@@ -1,1 +1,1 @@
-/users/pearseb/NEMOv4.0/src/TOP/AGE/trcsms_age.F90
+/users/pearseb/NEMOv4.0/cfgs/ORCA2_OFF_PISCESiso/MY_SRC/trcsms_age.F90
