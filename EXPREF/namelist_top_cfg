@@ -4,21 +4,23 @@
 !-----------------------------------------------------------------------
 &namtrc_run      !   run information
 !-----------------------------------------------------------------------
+   ln_rsttr      = .true.   !  start from a restart file (T) or not (F)
    ln_top_euler  = .true.
+   cn_trcrst_out = "restart.trc"   !  suffix of pass. sn_tracer restart name (output)
 /
 !-----------------------------------------------------------------------
 &namtrc          !   tracers definition
 !-----------------------------------------------------------------------
-   jp_bgc        =  24
+   jp_bgc        =  44
 !
    ln_pisces     =  .true.
    ln_my_trc     =  .false.
-   ln_age        =  .false.
+   ln_age        =  .true.
    ln_cfc11      =  .false.
    ln_cfc12      =  .false.
    ln_c14        =  .false.
 !
-   ln_trcdta     =  .true.  !  Initialisation from data input file (T) or not (F)
+   ln_trcdta     =  .false.  !  Initialisation from data input file (T) or not (F)
 !                !           !                                         !            !                               !
 !                !    name   !           title of the field            !   units    ! initial data from file or not ! 
    sn_tracer(1)   = 'DIC     ' , 'Dissolved inorganic Concentration      ',  'mol-C/L' ,  .true.
@@ -45,6 +47,26 @@
    sn_tracer(22)  = 'DCHL    ' , 'Diatoms chlorophyl Concentration       ',  'mol-C/L' ,  .false.
    sn_tracer(23)  = 'NO3     ' , 'Nitrates Concentration                 ',  'mol-C/L' ,  .true.
    sn_tracer(24)  = 'NH4     ' , 'Ammonium Concentration                 ',  'mol-C/L' ,  .false.
+   sn_tracer(25)  = 'LGW     ' , 'Ligand Concentration                   ',  'mol-C/L' ,  .false.    ,  .true.
+   sn_tracer(26)  = 'PHY_15  ' , '15N Nanophytoplankton Concentration    ',  'mol-C/L' ,  .false.
+   sn_tracer(27)  = 'ZOO_15  ' , '15N Microzooplankton Concentration     ',  'mol-C/L' ,  .false.
+   sn_tracer(28)  = 'DOC_15  ' , '15N Dissolved organic Concentration    ',  'mol-C/L' ,  .false.
+   sn_tracer(29)  = 'PHY2_15 ' , '15N Diatoms Concentration              ',  'mol-C/L' ,  .false.
+   sn_tracer(30)  = 'ZOO2_15 ' , '15N Mesozooplankton Concentration      ',  'mol-C/L' ,  .false.
+   sn_tracer(31)  = 'POC_15  ' , '15N Small organic carbon Concentration ',  'mol-C/L' ,  .false.
+   sn_tracer(32)  = 'GOC_15  ' , '15N Big organic carbon Concentration   ',  'mol-C/L' ,  .false.
+   sn_tracer(33)  = 'NO3_15  ' , '15N Nitrate Concentration              ',  'mol-C/L' ,  .false.
+   sn_tracer(34)  = 'NH4_15  ' , '15N Ammonium Concentration             ',  'mol-C/L' ,  .false.
+   sn_tracer(35)  = 'PHY_13  ' , '13C Nanophytoplankton Concentration    ',  'mol-C/L' ,  .false.
+   sn_tracer(36)  = 'ZOO_13  ' , '13C Microzooplankton Concentration     ',  'mol-C/L' ,  .false.
+   sn_tracer(37)  = 'DOC_13  ' , '13C Dissolved organic Concentration    ',  'mol-C/L' ,  .false.
+   sn_tracer(38)  = 'PHY2_13 ' , '13C Diatoms Concentration              ',  'mol-C/L' ,  .false.
+   sn_tracer(39)  = 'ZOO2_13 ' , '13C Mesozooplankton Concentration      ',  'mol-C/L' ,  .false.
+   sn_tracer(40)  = 'POC_13  ' , '13C Small organic carbon Concentration ',  'mol-C/L' ,  .false.
+   sn_tracer(41)  = 'GOC_13  ' , '13C Big organic carbon Concentration   ',  'mol-C/L' ,  .false.
+   sn_tracer(42)  = 'DIC_13  ' , '13C Dissolved inorganic Concentration  ',  'mol-C/L' ,  .false.
+   sn_tracer(43)  = 'CaCO3_13' , '13C Calcite Concentration              ',  'mol-C/L' ,  .false.
+   sn_tracer(44)  = 'abioO2  ' , 'Abiotic Dissolved Oxygen Concentration ',  'mol-C/L' ,  .true.
 /
 !-----------------------------------------------------------------------
 &namage          !   AGE 

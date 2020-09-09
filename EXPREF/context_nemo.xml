@@ -7,6 +7,7 @@
 <!-- $id$ -->
 <!-- Fields definition -->
     <field_definition src="./field_def_nemo-oce.xml"/>   <!--  Ocean biology                     -->
+    <field_definition src="./field_def_nemo-innerttrc.xml"/>   <!--  Ocean biology                     -->
     <field_definition src="./field_def_nemo-pisces.xml"/>   <!--  Ocean biology                     -->
 
 <!-- Files definition -->
