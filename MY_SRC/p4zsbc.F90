@@ -34,6 +34,7 @@ MODULE p4zsbc
    REAL(wp), PUBLIC ::   nitrfix      !: Nitrogen fixation rate   
    REAL(wp), PUBLIC ::   diazolight   !: Nitrogen fixation sensitivty to light 
    REAL(wp), PUBLIC ::   concfediaz   !: Fe half-saturation Cste for diazotrophs 
+   REAL(wp), PUBLIC ::   concphdiaz   !: PO4 half-saturation Cste for diazotrophs 
    REAL(wp)         ::   hratio       !: Fe:3He ratio assumed for vent iron supply
    REAL(wp)         ::   distcoast    !: Distance off the coast for Iron from sediments
    REAL(wp), PUBLIC ::   lgw_rath     !: Weak ligand ratio from hydro sources
@@ -229,7 +230,8 @@ CONTAINS
         &                sn_riverdip, sn_riverdop, sn_riverdsi, sn_ndepo, sn_ironsed, sn_hydrofe, &
         &                ln_dust, ln_solub, ln_river, ln_ndepo, ln_ironsed, ln_ironice, ln_hydrofe,    &
         &                sedfeinput, distcoast, dustsolub, icefeinput, wdust, mfrac, nitrfix, diazolight, concfediaz, &
-        &                hratio, lgw_rath, e15n_ben, d15n_fix, d15n_riv, d15n_dep, d13c_rivdic, d13c_rivdoc, d13c_fix
+        &                hratio, lgw_rath, e15n_ben, d15n_fix, d15n_riv, d15n_dep, d13c_rivdic, d13c_rivdoc, d13c_fix,&
+        &                concphdiaz
       !!----------------------------------------------------------------------
       !
       IF(lwp) THEN
@@ -264,6 +266,7 @@ CONTAINS
          WRITE(numout,*) '      nitrogen fixation rate                   nitrfix     = ', nitrfix
          WRITE(numout,*) '      nitrogen fixation sensitivty to light    diazolight  = ', diazolight
          WRITE(numout,*) '      Fe half-saturation cste for diazotrophs  concfediaz  = ', concfediaz
+         WRITE(numout,*) '      PO4 half-saturation cste for diazotrophs concphdiaz  = ', concphdiaz
          WRITE(numout,*) '      Fe to 3He ratio assumed for vent iron supply hratio  = ', hratio
          IF( ln_ligand ) THEN
             WRITE(numout,*) '      Weak ligand ratio from sed hydro sources  lgw_rath   = ', lgw_rath
@@ -287,10 +290,10 @@ CONTAINS
 
       ! set the number of level over which river runoffs are applied 
       ! online configuration : computed in sbcrnf
-      IF( l_offline ) THEN
-        nk_rnf(:,:) = 1
-        h_rnf (:,:) = gdept_n(:,:,1)
-      ENDIF
+      !IF( l_offline ) THEN
+      !  nk_rnf(:,:) = 1
+      !  h_rnf (:,:) = gdept_n(:,:,1)
+      !ENDIF
 
       ! dust input from the atmosphere
       ! ------------------------------

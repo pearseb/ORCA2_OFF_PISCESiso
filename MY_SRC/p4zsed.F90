@@ -213,6 +213,14 @@ CONTAINS
          tra(:,:,1,jptal) = tra(:,:,1,jptal) - rno3 * nitdep(:,:) * rfact2
 
          IF ( ln_n15 ) THEN
+            !! pjb
+            !DO jj = 1, jpj
+            !   DO ji = 1, jpi
+            !      d15n_dep = ( (trb(ji,jj,1,jp15no3)+rtrn) / (trb(ji,jj,1,jpno3)+rtrn)-1.0 )*1e3
+            !      tra(ji,jj,1,jp15no3) = tra(ji,jj,1,jp15no3) + (1. + d15n_dep*1e-3)*nitdep(ji,jj) * rfact2
+            !   ENDDO
+            !ENDDO
+            !! pjb
             tra(:,:,1,jp15no3) = tra(:,:,1,jp15no3) + (1. + d15n_dep*1e-3)*nitdep(:,:) * rfact2
          ENDIF
 
@@ -452,7 +460,7 @@ CONTAINS
             DO jj = 1, jpj
                DO ji = 1, jpi
                   ! Potential nitrogen fixation dependant on temperature and iron
-                  ztemp = tsn(ji,jj,jk,jp_tem) ! in situ temperature
+                  ztemp = tsn(ji,jj,jk,jp_tem) ! in situ temperature !pjb
                   zmudia = MAX( 0.,-0.001096*ztemp**2 + 0.057*ztemp -0.637 ) * 7.625 ! growth rate (T)
                   ! Potential nitrogen fixation dependant on temperature and iron
                   xdianh4 = trb(ji,jj,jk,jpnh4) / ( concnnh4 + trb(ji,jj,jk,jpnh4) )
@@ -464,7 +472,7 @@ CONTAINS
                     ! zlim = limitation of N2 fixation [0,1] (zlim --> when NO3 and NH4 are very low )
                   ztrfer = biron(ji,jj,jk) / ( concfediaz + biron(ji,jj,jk) )
                     ! biron = bioavailble iron
-                  ztrpo4(ji,jj,jk) = trb(ji,jj,jk,jppo4) / ( 1E-6 + trb(ji,jj,jk,jppo4) )
+                  ztrpo4(ji,jj,jk) = trb(ji,jj,jk,jppo4) / ( concphdiaz + trb(ji,jj,jk,jppo4) )
                   ztrdp = ztrpo4(ji,jj,jk)
                   nitrpot(ji,jj,jk) =  zmudia * r1_rday * zfact * MIN( ztrfer, ztrdp ) * zlight(ji,jj,jk)
                     ! r1_rday = seconds per day (1/86400)
@@ -523,16 +531,22 @@ CONTAINS
                     ! different pools:
                     !   one third to NH4, 
                     !   one third to DOC, 
-                    !   two sixths to POC,
-                    !   one sixths to GOC 
+                    !   two ninths to POC,
+                    !   one ninths to GOC 
 
                   IF ( ln_n15 ) THEN
+                     !! pjb
+                     !d15n_fix = ( (trb(ji,jj,jk,jp15no3)+rtrn) / (trb(ji,jj,jk,jpno3)+rtrn) - 1.0 )*1e3
+                     !! pjb
                      tra(ji,jj,jk,jp15nh4) = tra(ji,jj,jk,jp15nh4) + zfact * (1. + d15n_fix*1e-3) * 1./3.  
                      tra(ji,jj,jk,jp15doc) = tra(ji,jj,jk,jp15doc) + zfact * (1. + d15n_fix*1e-3) * 1./3.
                      tra(ji,jj,jk,jp15poc) = tra(ji,jj,jk,jp15poc) + zfact * (1. + d15n_fix*1e-3) * 2./9.
                      tra(ji,jj,jk,jp15goc) = tra(ji,jj,jk,jp15goc) + zfact * (1. + d15n_fix*1e-3) * 1./9.
                   ENDIF
                   IF ( ln_c13 ) THEN
+                     !! pjb
+                     !d13c_fix = ( (trb(ji,jj,jk,jp13dic)+rtrn) / (trb(ji,jj,jk,jpdic)+rtrn) - 1.0 )*1e3
+                     !! pjb
                      tra(ji,jj,jk,jp13doc) = tra(ji,jj,jk,jp13doc) + zfact * (1. + d13c_fix*1e-3) * 1./3.
                      tra(ji,jj,jk,jp13poc) = tra(ji,jj,jk,jp13poc) + zfact * (1. + d13c_fix*1e-3) * 2./9.
                      tra(ji,jj,jk,jp13goc) = tra(ji,jj,jk,jp13goc) + zfact * (1. + d13c_fix*1e-3) * 1./9.

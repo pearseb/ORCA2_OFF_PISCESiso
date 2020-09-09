@@ -42,6 +42,7 @@ MODULE p4zprod
    REAL(wp), PUBLIC ::   e15n_rprod   !:
    REAL(wp), PUBLIC ::   e13c_min     !:
    REAL(wp), PUBLIC ::   e13c_max     !:
+   REAL(wp), PUBLIC ::   xxprod       !: pjb - factor increase in NPP
 
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   quotan   !: proxy of N quota in Nanophyto
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   quotad   !: proxy of N quota in diatomee
@@ -120,7 +121,7 @@ CONTAINS
            ze13cprod1(:,:,:)  = 0.     ;      ze13cprod2(:,:,:) = 0.
       ENDIF
       ! Computation of the optimal production (function of temperature - Eppley curve)
-      zprmaxn(:,:,:) = 0.8_wp * r1_rday * tgfunc(:,:,:)
+      zprmaxn(:,:,:) = 0.8_wp * r1_rday * tgfunc(:,:,:) * xxprod
       zprmaxd(:,:,:) = zprmaxn(:,:,:)
 
       ! compute the day length depending on latitude and the day
@@ -326,7 +327,7 @@ CONTAINS
 
                ! Compute fractionation factors for C13 from Zhang et al. 1995
 
-               zfco3 = MAX(0.05,(z_co3(ji,jj,jk)/trb(ji,jj,jk,jpdic)+rtrn))
+               zfco3 = MAX(0.05,( (z_co3(ji,jj,jk)+rtrn) / (trb(ji,jj,jk,jpdic)+rtrn) ))
                zfco3 = MIN(0.2 , zfco3)
                ztc = MIN( 35., tsn(ji,jj,jk,jp_tem) )
                zft = MIN(25.,ztc)
@@ -712,7 +713,7 @@ CONTAINS
       !
       NAMELIST/namp4zprod/ pislopen, pisloped, xadap, bresp, excretn, excretd,  &
          &                 chlcnm, chlcdm, chlcmin, fecnm, fecdm, grosip,       &
-         &                 e15n_nprod, e15n_rprod, e13c_min, e13c_max
+         &                 e15n_nprod, e15n_rprod, e13c_min, e13c_max, xxprod
       !!----------------------------------------------------------------------
       !
       IF(lwp) THEN                         ! control print
@@ -747,6 +748,7 @@ CONTAINS
          WRITE(numout,*) '      N15 fractionation by reg production       e15n_rprod   =', e15n_rprod
          WRITE(numout,*) '      C13 assimilation fractionation min        e13c_min     =', e13c_min
          WRITE(numout,*) '      C13 assimilation fractionation max        e13c_max     =', e13c_max
+         WRITE(numout,*) '      pjb - factor increase in NPP              xxprod       =', xxprod
       ENDIF
       !
       r1_rday   = 1._wp / rday 

@@ -147,7 +147,7 @@ CONTAINS
             
             IF ( ln_c13 ) THEN
                ! Compute fractionation factors for C13 from Zhang et al. 1995
-               zfco3 = MAX(0.05,(z_co3(ji,jj)/trb(ji,jj,1,jpdic)+rtrn))
+               zfco3 = MAX(0.05, ( (z_co3(ji,jj)+rtrn) / (trb(ji,jj,1,jpdic)+rtrn) ) )
                zfco3 = MIN(0.2 , zfco3)
                zft = MIN( 25., ztc )
                zft = MAX(  5., zft )
@@ -179,6 +179,7 @@ CONTAINS
 
             IF ( ln_c13 ) THEN
                zr13_dic = ( (trb(ji,jj,1,jp13dic)+rtrn) / (trb(ji,jj,1,jpdic)+rtrn) )
+               !print*, zr13_dic, za_dic(ji,jj), za_g(ji,jj), oce_c13(ji,jj)
 
                oce_c13(ji,jj) = ( zfld * (1.0 + d13c_co2/1000.0) -                                 &
                &                  zflu * zr13_dic / (za_dic(ji,jj)+rtrn) )                         &
