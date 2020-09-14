@@ -355,7 +355,7 @@ CONTAINS
               CALL iom_put( "DIATOM_NC", zw3d )
            ENDIF
            IF( iom_use( "EXCR1" ) ) THEN
-              zw3d(:,:,:) = excretion1(:,:,:) * 1.e+3 * rfact2r * rno3 * tmask(:,:,:)  !  Total excretion of NH4 by zooplankton
+              zw3d(:,:,:) = excretion1(:,:,:) * 1.e+3 * rfact2r * tmask(:,:,:)  !  Total excretion of NH4 by zooplankton
               CALL iom_put( "EXCR1", zw3d )
            ENDIF
            IF( iom_use( "EXCR1_13ZOO" ) ) THEN
@@ -363,7 +363,7 @@ CONTAINS
               CALL iom_put( "EXCR1_13ZOO", zw3d )
            ENDIF
            IF( iom_use( "EXCR1_15ZOO" ) ) THEN
-              zw3d(:,:,:) = excretion1_15(:,:,:) * 1.e+3 * rfact2r * rno3 * tmask(:,:,:)  !  Total excretion of 15NH4 by zooplankton
+              zw3d(:,:,:) = excretion1_15(:,:,:) * 1.e+3 * rfact2r * tmask(:,:,:)  !  Total excretion of 15NH4 by zooplankton
               CALL iom_put( "EXCR1_15ZOO", zw3d )
            ENDIF
            IF( iom_use( "FEZOO" ) ) THEN

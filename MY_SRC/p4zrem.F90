@@ -360,13 +360,13 @@ CONTAINS
           ALLOCATE( zw3d(jpi,jpj,jpk) )
           zfact = 1.e+3 * rfact2r  !  conversion from mol/l/kt to  mol/m3/s
           !
-          IF( iom_use( "REMINN" ) )  THEN
+          IF( iom_use( "REMIN" ) )  THEN
               zw3d(:,:,:) = zolimi(:,:,:) * tmask(:,:,:) * zfact !  Remineralisation rate
-              CALL iom_put( "REMINN"  , zw3d )
+              CALL iom_put( "REMIN"  , zw3d )
           ENDIF
-          IF( iom_use( "REMINN_15DOC" ) )  THEN
+          IF( iom_use( "REMIN_15DOC" ) )  THEN
               zw3d(:,:,:) = zolimi15(:,:,:) * tmask(:,:,:) * zfact !  Remineralisation rate
-              CALL iom_put( "REMINN_15DOC"  , zw3d ) 
+              CALL iom_put( "REMIN_15DOC"  , zw3d ) 
           ENDIF
           IF( iom_use( "REMINC" ) )  THEN
               zw3d(:,:,:) = zremindic(:,:,:) * tmask(:,:,:) * zfact !  Remineralisation rate
