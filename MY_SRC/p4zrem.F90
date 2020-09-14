@@ -81,6 +81,7 @@ CONTAINS
       REAL(wp), DIMENSION(jpi,jpj    ) :: ztempbac
       REAL(wp), DIMENSION(jpi,jpj,jpk) :: zdepbac, zolimi, zdepprod, zfacsi, zfacsib, zdepeff, zfebact
       REAL(wp), DIMENSION(jpi,jpj,jpk) :: zolimi15
+      REAL(wp), DIMENSION(jpi,jpj,jpk) :: zremindic, zremindic13
       REAL(wp), ALLOCATABLE, DIMENSION(:,:,:) :: zw3d
       !!---------------------------------------------------------------------
       !
@@ -92,7 +93,15 @@ CONTAINS
       ztempbac(:,:)   = 0._wp
       zfacsib(:,:,:)  = xsilab / ( 1.0 - xsilab )
       zfebact(:,:,:)  = 0._wp
+      zremindic(:,:,:)  = 0._wp
       zfacsi(:,:,:)   = xsilab
+
+      IF ( ln_c13 ) THEN
+         zremindic13(:,:,:)  = 0._wp
+      ENDIF
+      IF ( ln_n15 ) THEN
+         zolimi15(:,:,:)  = 0._wp
+      ENDIF
 
       ! Computation of the mean phytoplankton concentration as
       ! a crude estimate of the bacterial biomass
@@ -153,6 +162,7 @@ CONTAINS
                   tra(ji,jj,jk,jpdoc) = tra(ji,jj,jk,jpdoc) - zolimi(ji,jj,jk) - denitr(ji,jj,jk) - zoxyremc(ji,jj,jk)
                   tra(ji,jj,jk,jpoxy) = tra(ji,jj,jk,jpoxy) - zolimi(ji,jj,jk) * o2ut
                   tra(ji,jj,jk,jpdic) = tra(ji,jj,jk,jpdic) + zolimi(ji,jj,jk) + denitr(ji,jj,jk) + zoxyremc(ji,jj,jk)
+                  zremindic(ji,jj,jk) = zolimi(ji,jj,jk) + denitr(ji,jj,jk) + zoxyremc(ji,jj,jk) 
                   tra(ji,jj,jk,jptal) = tra(ji,jj,jk,jptal) + rno3 * ( zolimi(ji,jj,jk) + zoxyremc(ji,jj,jk)    &
                   &                     + ( rdenit + 1.) * denitr(ji,jj,jk) )
 
@@ -177,6 +187,7 @@ CONTAINS
                      &                       ( zolimi(ji,jj,jk) + denitr(ji,jj,jk) + zoxyremc(ji,jj,jk) ) * zr13_doc 
                      tra(ji,jj,jk,jp13dic) = tra(ji,jj,jk,jp13dic) +  &
                      &                       ( zolimi(ji,jj,jk) + denitr(ji,jj,jk) + zoxyremc(ji,jj,jk) ) * zr13_doc 
+                     zremindic13(ji,jj,jk) = ( zolimi(ji,jj,jk) + denitr(ji,jj,jk) + zoxyremc(ji,jj,jk) ) * zr13_doc
                   ENDIF
 
                END DO
@@ -349,13 +360,21 @@ CONTAINS
           ALLOCATE( zw3d(jpi,jpj,jpk) )
           zfact = 1.e+3 * rfact2r  !  conversion from mol/l/kt to  mol/m3/s
           !
-          IF( iom_use( "REMIN" ) )  THEN
+          IF( iom_use( "REMINN" ) )  THEN
               zw3d(:,:,:) = zolimi(:,:,:) * tmask(:,:,:) * zfact !  Remineralisation rate
-              CALL iom_put( "REMIN"  , zw3d )
+              CALL iom_put( "REMINN"  , zw3d )
           ENDIF
-          IF( iom_use( "REMIN_15DOC" ) )  THEN
+          IF( iom_use( "REMINN_15DOC" ) )  THEN
               zw3d(:,:,:) = zolimi15(:,:,:) * tmask(:,:,:) * zfact !  Remineralisation rate
-              CALL iom_put( "REMIN_15DOC"  , zw3d )
+              CALL iom_put( "REMINN_15DOC"  , zw3d ) 
+          ENDIF
+          IF( iom_use( "REMINC" ) )  THEN
+              zw3d(:,:,:) = zremindic(:,:,:) * tmask(:,:,:) * zfact !  Remineralisation rate
+              CALL iom_put( "REMINC"  , zw3d )
+          ENDIF
+          IF( iom_use( "REMINC_13DOC" ) )  THEN
+              zw3d(:,:,:) = zremindic13(:,:,:) * tmask(:,:,:) * zfact !  Remineralisation rate
+              CALL iom_put( "REMINC_13DOC"  , zw3d )
           ENDIF
           IF( iom_use( "NITR" ) )  THEN
               zw3d(:,:,:) = zonitr(:,:,:) * rno3 * tmask(:,:,:) * zfact !

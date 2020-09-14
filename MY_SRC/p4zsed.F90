@@ -69,6 +69,8 @@ CONTAINS
       REAL(wp), DIMENSION(jpi,jpj    ) :: zsedcal, zsedsi, zsedc
       REAL(wp), DIMENSION(jpi,jpj,jpk) :: zsoufer, zlight
       REAL(wp), DIMENSION(jpi,jpj,jpk) :: zolimit, zolimit15
+      REAL(wp), DIMENSION(jpi,jpj,jpk) :: zseddiss, zseddiss13
+      REAL(wp), DIMENSION(jpi,jpj,jpk) :: zsedremin, zsedremin13
       REAL(wp), ALLOCATABLE, DIMENSION(:,:,:) :: ztrpo4, ztrdop, zirondep, zpdep
       REAL(wp), ALLOCATABLE, DIMENSION(:,:  ) :: zsidep, zironice
       !!---------------------------------------------------------------------
@@ -96,6 +98,11 @@ CONTAINS
       zsedsi  (:,:) = 0.e0
       zsedcal (:,:) = 0.e0
       zsedc   (:,:) = 0.e0
+      
+      zseddiss(:,:,:) = 0.e0
+      zseddiss13(:,:,:) = 0.e0
+      zsedremin(:,:,:) = 0.e0
+      zsedremin13(:,:,:) = 0.e0
 
       ! Iron input/uptake due to sea ice : Crude parameterization based on Lancelot et al.
       ! ----------------------------------------------------
@@ -331,9 +338,11 @@ CONTAINS
                tra(ji,jj,ikt,jpdic) =  tra(ji,jj,ikt,jpdic) + zcaloss * zrivalk
                zsedcal(ji,jj) = (1.0 - zrivalk) * zcaloss * e3t_n(ji,jj,ikt) 
                zsedsi (ji,jj) = (1.0 - zrivsil) * zsiloss * e3t_n(ji,jj,ikt) 
+               zseddiss(ji,jj,ikt) = zrivalk * zcaloss 
                IF ( ln_c13 ) THEN
                   zr13_cal = ( (trb(ji,jj,ikt,jp13cal)+rtrn) / (trb(ji,jj,ikt,jpcal)+rtrn) )
                   tra(ji,jj,ikt,jp13dic) =  tra(ji,jj,ikt,jp13dic) + zcaloss * zrivalk * zr13_cal
+                  zseddiss13(ji,jj,ikt) = zcaloss * zrivalk * zr13_cal
                ENDIF
             END DO
          END DO
@@ -414,6 +423,7 @@ CONTAINS
                tra(ji,jj,ikt,jpoxy) = tra(ji,jj,ikt,jpoxy) - zolimit(ji,jj,ikt) * o2ut
                tra(ji,jj,ikt,jptal) = tra(ji,jj,ikt,jptal) + rno3 * (zolimit(ji,jj,ikt) + (1.+rdenit) * zpdenit(ji,jj,ikt) )
                tra(ji,jj,ikt,jpdic) = tra(ji,jj,ikt,jpdic) + zpdenit(ji,jj,ikt) + zolimit(ji,jj,ikt) 
+               zsedremin(ji,jj,ikt) = zpdenit(ji,jj,ikt) + zolimit(ji,jj,ikt)
                sdenit(ji,jj) = rdenit * zpdenit(ji,jj,ikt) * e3t_n(ji,jj,ikt)
                zsedc(ji,jj)   = (1. - zrivno3) * zwstpoc * e3t_n(ji,jj,ikt)
 
@@ -441,6 +451,7 @@ CONTAINS
                   tra(ji,jj,ikt,jp13doc) = tra(ji,jj,ikt,jp13doc) + zwstpoc13 * zrivno3           &
                   &                        - zpdenit(ji,jj,ikt) * zr13_rain - zolimit(ji,jj,ikt) * zr13_rain
                   tra(ji,jj,ikt,jp13dic) = tra(ji,jj,ikt,jp13dic) + zpdenit(ji,jj,ikt) * zr13_rain + zolimit(ji,jj,ikt) * zr13_rain
+                  zsedremin13(ji,jj,ikt) = zpdenit(ji,jj,ikt) * zr13_rain + zolimit(ji,jj,ikt) * zr13_rain
                ENDIF 
 
             END DO
@@ -602,10 +613,16 @@ CONTAINS
             IF( iom_use("SedSi" ) )  CALL iom_put( "SedSi",  zsedsi (:,:) * zfact )
             IF( iom_use("SedC" ) )   CALL iom_put( "SedC",   zsedc  (:,:) * zfact )
             IF( iom_use("Sdenit" ) ) CALL iom_put( "Sdenit", sdenit (:,:) * zfact * rno3 )
+            IF( iom_use("SedDiss" ) ) CALL iom_put( "SedDiss", zseddiss(:,:,:) * zfact * tmask(:,:,:) )
+            IF( iom_use("SedDiss_13CAL" ) ) CALL iom_put( "SedDiss_13CAL", zseddiss13(:,:,:) * zfact * tmask(:,:,:) )
+            IF( iom_use("SedReminC" ) ) CALL iom_put( "SedReminC", zsedremin(:,:,:) * zfact * tmask(:,:,:) )
+            IF( iom_use("SedReminC_13POM" ) ) CALL iom_put( "SedReminC_13POM", zsedremin13(:,:,:) * zfact * tmask(:,:,:) )
             IF( iom_use("SDEN3D" ) ) CALL iom_put( "SDEN3D", zpdenit(:,:,:) * rdenit * zfact * rno3 * tmask(:,:,:) )
             IF( iom_use("SDEN3D_15NO3" ) ) CALL iom_put( "SDEN3D_15NO3", zpdenit15(:,:,:) * rdenit * zfact * rno3 * tmask(:,:,:) )
             IF( iom_use("SREM3D" ) ) CALL iom_put( "SREM3D", zolimit(:,:,:) * zfact * tmask(:,:,:) )
             IF( iom_use("SREM3D_15DOC" ) ) CALL iom_put( "SREM3D_15DOC", zolimit15(:,:,:) * zfact * tmask(:,:,:) )
+            IF( iom_use("River_DIC" ) ) CALL iom_put( "River_DIC", rivdic(:,:) * zfact )
+            IF( iom_use("River_13DIC" ) ) CALL iom_put( "River_13DIC", rivdic (:,:) * zfact * ( 1.0 + d13c_rivdic/1000.0 ) )
             IF( iom_use("River_NO3" ) ) CALL iom_put( "River_NO3", rivdin(:,:) * zfact )
             IF( iom_use("River_15NO3" ) ) CALL iom_put( "River_15NO3", rivdin (:,:) * zfact * ( 1.0 + d15n_riv/1000.0 ) )
             IF( iom_use("Ndep_NO3" ) ) CALL iom_put( "Ndep_NO3", nitdep(:,:) * zfact )

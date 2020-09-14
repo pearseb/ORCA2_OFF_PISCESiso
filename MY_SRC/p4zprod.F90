@@ -88,6 +88,7 @@ CONTAINS
       REAL(wp), DIMENSION(jpi,jpj,jpk) :: zpislopeadn, zpislopeadd, zysopt  
       REAL(wp), DIMENSION(jpi,jpj,jpk) :: zprdia, zprbio, zprdch, zprnch   
       REAL(wp), DIMENSION(jpi,jpj,jpk) :: zprorcan, zprorcad, zprofed, zprofen
+      REAL(wp), DIMENSION(jpi,jpj,jpk) :: zprorcan13, zprorcad13
       REAL(wp), DIMENSION(jpi,jpj,jpk) :: zpronewn, zpronewd
       REAL(wp), DIMENSION(jpi,jpj,jpk) :: zproregn, zproregd
       REAL(wp), DIMENSION(jpi,jpj,jpk) :: zpronewn15, zpronewd15
@@ -119,6 +120,7 @@ CONTAINS
       ENDIF
       IF( ln_c13 ) THEN
            ze13cprod1(:,:,:)  = 0.     ;      ze13cprod2(:,:,:) = 0.
+           zprorcan13(:,:,:)  = 0.     ;      zprorcad13(:,:,:) = 0.
       ENDIF
       ! Computation of the optimal production (function of temperature - Eppley curve)
       zprmaxn(:,:,:) = 0.8_wp * r1_rday * tgfunc(:,:,:) * xxprod
@@ -506,6 +508,8 @@ CONTAINS
                     &                                             + zprorcad(ji,jj,jk) * excretd * zr13_2
                     tra(ji,jj,jk,jp13dic) = tra(ji,jj,jk,jp13dic) - zprorcan(ji,jj,jk) * zr13                &
                     &                                             - zprorcad(ji,jj,jk) * zr13_2 
+                    zprorcan13(ji,jj,jk) = zprorcan(ji,jj,jk) * zr13
+                    zprorcad13(ji,jj,jk) = zprorcad(ji,jj,jk) * zr13_2
                  ENDIF
 
               ENDIF
@@ -546,6 +550,13 @@ CONTAINS
               !
               zw3d(:,:,:) = zprorcad(:,:,:) * zfact * tmask(:,:,:)  ! primary production by diatomes
               CALL iom_put( "PPPHYD"  , zw3d )
+          ENDIF
+          IF( iom_use( "PPPHYN_13DIC" ) .OR. iom_use( "PPPHYD_13DIC" ) )  THEN
+              zw3d(:,:,:) = zprorcan13(:,:,:) * zfact * tmask(:,:,:)  ! primary production by nanophyto
+              CALL iom_put( "PPPHYN_13DIC"  , zw3d )
+              !
+              zw3d(:,:,:) = zprorcad13(:,:,:) * zfact * tmask(:,:,:)  ! primary production by diatomes
+              CALL iom_put( "PPPHYD_13DIC"  , zw3d )
           ENDIF
           IF( iom_use( "PPNEWN" ) .OR. iom_use( "PPNEWD" ) )  THEN
               zw3d(:,:,:) = zpronewn(:,:,:) * zfact * tmask(:,:,:)  ! new primary production by nanophyto

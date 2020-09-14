@@ -75,8 +75,8 @@ CONTAINS
       REAL(wp) :: zgrarem_15, zgrapoc_15, zgrasig_15, zgrasigex_15, zmortz_15
       REAL(wp) :: zgrarem_13, zgrapoc_13, zgrasig_13, zmortz_13, zr13_dic
       REAL(wp) :: zgrazmf, zgrazsf, zgrazpf
-      REAL(wp), DIMENSION(jpi,jpj,jpk) :: zgrazing, zfezoo 
-      REAL(wp), DIMENSION(jpi,jpj,jpk) :: excretion1, excretion1_15
+      REAL(wp), DIMENSION(jpi,jpj,jpk) :: zgrazing1, zfezoo 
+      REAL(wp), DIMENSION(jpi,jpj,jpk) :: excretion1, excretion1_13, excretion1_15
       REAL(wp), DIMENSION(jpi,jpj,jpk) :: foodqual1
       REAL(wp), DIMENSION(:,:,:), ALLOCATABLE :: zw3d, zzligprod
       CHARACTER (len=25) :: charout
@@ -166,7 +166,7 @@ CONTAINS
                ! such that zgraztotn <= zgraztotc
 
                ! Grazing by microzooplankton
-               zgrazing(ji,jj,jk) = zgraztotc
+               zgrazing1(ji,jj,jk) = zgraztotc
 
                !    Various remineralization and excretion terms
                !    --------------------------------------------
@@ -268,6 +268,7 @@ CONTAINS
                   tra(ji,jj,jk,jp13doc) = tra(ji,jj,jk,jp13doc) + zgrarem_13 - zgrasig_13
                   tra(ji,jj,jk,jp13poc) = tra(ji,jj,jk,jp13poc) + zgrapoc_13 
                   tra(ji,jj,jk,jp13dic) = tra(ji,jj,jk,jp13dic) + zgrasig_13
+                  excretion1_13(ji,jj,jk) = zgrasig_13
                ENDIF
                !
                !   Update the arrays TRA which contain the biological sources and sinks
@@ -327,6 +328,7 @@ CONTAINS
                   tra(ji,jj,jk,jp13poc) = tra(ji,jj,jk,jp13poc) + zmortz_13 - zgrazm13
                   tra(ji,jj,jk,jp13dic) = tra(ji,jj,jk,jp13dic) - zprcaca * zr13_dic * (1. - e13c_calz/1000.)
                   tra(ji,jj,jk,jp13cal) = tra(ji,jj,jk,jp13cal) + zprcaca * zr13_dic * (1. - e13c_calz/1000.)
+                  prodcal13(ji,jj,jk) = prodcal13(ji,jj,jk) + zprcaca * zr13_dic * (1. - e13c_calz/1000.)
                ENDIF
                !
             END DO
@@ -337,7 +339,7 @@ CONTAINS
          IF( knt == nrdttrc ) THEN
            ALLOCATE( zw3d(jpi,jpj,jpk) )
            IF( iom_use( "GRAZ1" ) ) THEN
-              zw3d(:,:,:) = zgrazing(:,:,:) * 1.e+3 * rfact2r * tmask(:,:,:)  !  Total grazing of phyto by zooplankton
+              zw3d(:,:,:) = zgrazing1(:,:,:) * 1.e+3 * rfact2r * tmask(:,:,:)  !  Total grazing of phyto by zooplankton
               CALL iom_put( "GRAZ1", zw3d )
            ENDIF
            IF( iom_use( "FOODQUAL1" ) ) THEN
@@ -355,6 +357,10 @@ CONTAINS
            IF( iom_use( "EXCR1" ) ) THEN
               zw3d(:,:,:) = excretion1(:,:,:) * 1.e+3 * rfact2r * rno3 * tmask(:,:,:)  !  Total excretion of NH4 by zooplankton
               CALL iom_put( "EXCR1", zw3d )
+           ENDIF
+           IF( iom_use( "EXCR1_13ZOO" ) ) THEN
+              zw3d(:,:,:) = excretion1_13(:,:,:) * 1.e+3 * rfact2r * tmask(:,:,:)  !  Total excretion of DIC by zooplankton
+              CALL iom_put( "EXCR1_13ZOO", zw3d )
            ENDIF
            IF( iom_use( "EXCR1_15ZOO" ) ) THEN
               zw3d(:,:,:) = excretion1_15(:,:,:) * 1.e+3 * rfact2r * rno3 * tmask(:,:,:)  !  Total excretion of 15NH4 by zooplankton

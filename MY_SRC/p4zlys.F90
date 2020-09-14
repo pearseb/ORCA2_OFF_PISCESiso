@@ -59,13 +59,16 @@ CONTAINS
       REAL(wp) ::   zomegaca, zexcess, zexcess0
       REAL(wp) ::   zr13_cal
       CHARACTER (len=25) ::   charout
-      REAL(wp), DIMENSION(jpi,jpj,jpk) ::   zco3, zcaldiss, zhinit, zhi, zco3sat
+      REAL(wp), DIMENSION(jpi,jpj,jpk) ::   zco3, zcaldiss, zcaldiss13, zhinit, zhi, zco3sat
       !!---------------------------------------------------------------------
       !
       IF( ln_timing )  CALL timing_start('p4z_lys')
       !
       zco3    (:,:,:) = 0.
       zcaldiss(:,:,:) = 0.
+      IF ( ln_c13 ) THEN
+         zcaldiss13(:,:,:) = 0.
+      ENDIF
       zhinit  (:,:,:) = hi(:,:,:) * 1000. / ( rhop(:,:,:) + rtrn )
       !
       !     -------------------------------------------
@@ -121,6 +124,7 @@ CONTAINS
                  zr13_cal = ( (trb(ji,jj,jk,jp13cal)+rtrn) / (trb(ji,jj,jk,jpcal)+rtrn) )
                  tra(ji,jj,jk,jp13cal) = tra(ji,jj,jk,jp13cal) - zcaldiss(ji,jj,jk) * zr13_cal
                  tra(ji,jj,jk,jp13dic) = tra(ji,jj,jk,jp13dic) + zcaldiss(ji,jj,jk) * zr13_cal
+                 zcaldiss13(ji,jj,jk) = zcaldiss(ji,jj,jk) * zr13_cal
               ENDIF
             END DO
          END DO
@@ -132,6 +136,7 @@ CONTAINS
          IF( iom_use( "CO3"    ) ) CALL iom_put( "CO3"   , zco3(:,:,:)     * 1.e+3               * tmask(:,:,:) )
          IF( iom_use( "CO3sat" ) ) CALL iom_put( "CO3sat", zco3sat(:,:,:)  * 1.e+3               * tmask(:,:,:) )
          IF( iom_use( "DCAL"   ) ) CALL iom_put( "DCAL"  , zcaldiss(:,:,:) * 1.e+3 * rfact2r     * tmask(:,:,:) )
+         IF( iom_use( "DCAL_13CAL"   ) ) CALL iom_put( "DCAL_13CAL"  , zcaldiss13(:,:,:) * 1.e+3 * rfact2r * tmask(:,:,:) )
       ENDIF
       !
       IF(ln_ctl)   THEN  ! print mean trends (used for debugging)

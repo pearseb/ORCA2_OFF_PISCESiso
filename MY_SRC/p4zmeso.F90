@@ -80,14 +80,14 @@ CONTAINS
       REAL(wp) :: zgrarem2_13, zgrapoc2_13, zgrasig2_13, zmortzgoc_13, zr13_dic, zr13_cal
       REAL(wp) :: zgrazfffp, zgrazfffg, zgrazffep, zgrazffeg
       CHARACTER (len=25) :: charout
-      REAL(wp), DIMENSION(jpi,jpj,jpk) :: zgrazing, zfezoo2, foodqual2
-      REAL(wp), DIMENSION(jpi,jpj,jpk) :: excretion2, excretion2_15 
+      REAL(wp), DIMENSION(jpi,jpj,jpk) :: zgrazing2, zfezoo2, foodqual2
+      REAL(wp), DIMENSION(jpi,jpj,jpk) :: excretion2, excretion2_15, excretion2_13 
       REAL(wp), ALLOCATABLE, DIMENSION(:,:,:) ::   zw3d, zz2ligprod
       !!---------------------------------------------------------------------
       !
       IF( ln_timing )   CALL timing_start('p4z_meso')
       !
-      zgrazing(:,:,:) = 0._wp
+      zgrazing2(:,:,:) = 0._wp
       foodqual2(:,:,:) = 0._wp
       zfezoo2 (:,:,:) = 0._wp
       !
@@ -233,7 +233,7 @@ CONTAINS
                ENDIF
 
                ! Total grazing ( grazing by microzoo is already computed in p4zmicro )
-               zgrazing(ji,jj,jk) = zgraztotc
+               zgrazing2(ji,jj,jk) = zgraztotc
 
                !    Mesozooplankton efficiency
                !    --------------------------
@@ -352,6 +352,7 @@ CONTAINS
                IF ( ln_c13 ) THEN
                   tra(ji,jj,jk,jp13doc) = tra(ji,jj,jk,jp13doc) + zgrarem2_13 - zgrasig2_13
                   tra(ji,jj,jk,jp13dic) = tra(ji,jj,jk,jp13dic) + zgrasig2_13
+                  excretion2_13(ji,jj,jk) = zgrasig2_13
                ENDIF
 
                zmortz = ztortz + zrespz
@@ -434,6 +435,7 @@ CONTAINS
                   &                       - zprcaca * zr13_dic * (1. - e13c_cal2/1000.)
                   tra(ji,jj,jk,jp13cal) = tra(ji,jj,jk,jp13cal) - zgrazcal * zr13_cal                  &
                   &                       + zprcaca * zr13_dic * (1. - e13c_cal2/1000.)
+                  prodcal13(ji,jj,jk) = prodcal13(ji,jj,jk) + zprcaca * zr13_dic * (1. - e13c_cal2/1000.)
                ENDIF
 
             END DO
@@ -443,7 +445,7 @@ CONTAINS
       IF( lk_iomput .AND. knt == nrdttrc ) THEN
          ALLOCATE( zw3d(jpi,jpj,jpk) )
          IF( iom_use( "GRAZ2" ) ) THEN
-            zw3d(:,:,:) = zgrazing(:,:,:) * 1.e+3 * rfact2r * tmask(:,:,:)  !   Total grazing of phyto by zooplankton
+            zw3d(:,:,:) = zgrazing2(:,:,:) * 1.e+3 * rfact2r * tmask(:,:,:)  !   Total grazing of phyto by zooplankton
             CALL iom_put( "GRAZ2", zw3d )
          ENDIF
          IF( iom_use( "FOODQUAL2" ) ) THEN
@@ -458,9 +460,17 @@ CONTAINS
             zw3d(:,:,:) = excretion2_15(:,:,:) * 1.e+3 * rfact2r * tmask(:,:,:)  !  Total excretion of 15NH4 by zooplankton
             CALL iom_put( "EXCR2_15ZOO", zw3d )
          ENDIF
+         IF( iom_use( "EXCR2_13ZOO" ) ) THEN
+            zw3d(:,:,:) = excretion2_13(:,:,:) * 1.e+3 * rfact2r * tmask(:,:,:)  !  Total excretion of 15NH4 by zooplankton
+            CALL iom_put( "EXCR2_13ZOO", zw3d )
+         ENDIF
          IF( iom_use( "PCAL" ) ) THEN
             zw3d(:,:,:) = prodcal(:,:,:) * 1.e+3 * rfact2r * tmask(:,:,:)   !  Calcite production
             CALL iom_put( "PCAL", zw3d )  
+         ENDIF
+         IF( iom_use( "PCAL_13DIC" ) ) THEN
+            zw3d(:,:,:) = prodcal13(:,:,:) * 1.e+3 * rfact2r * tmask(:,:,:)   !  Calcite C13 production
+            CALL iom_put( "PCAL_13DIC", zw3d )  
          ENDIF
          IF( iom_use( "FEZOO2" ) ) THEN
             zw3d(:,:,:) = zfezoo2(:,:,:) * 1e9 * 1.e+3 * rfact2r * tmask(:,:,:)   !

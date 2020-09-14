@@ -101,6 +101,7 @@ MODULE sms_pisces
    REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   orem       !: ??
    REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   xdiss      !: ??
    REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   prodcal    !: Calcite production
+   REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   prodcal13  !: Calcite C13 production
    REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   prodpoc    !: Calcite production
    REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   conspoc    !: Calcite production
    REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   prodgoc    !: Calcite production
@@ -174,18 +175,21 @@ CONTAINS
          ALLOCATE( wsbio3 (jpi,jpj,jpk) , wsbio4 (jpi,jpj,jpk),     &
             &                             STAT=ierr(7) )   
          ! 
+         IF( ln_c13 ) THEN
+           ALLOCATE( prodcal13(jpi,jpj,jpk)  ,                    STAT=ierr(8) )
+         ENDIF
          IF( ln_ligand ) THEN
-           ALLOCATE( plig(jpi,jpj,jpk)  ,                         STAT=ierr(8) )
+           ALLOCATE( plig(jpi,jpj,jpk)  ,                         STAT=ierr(9) )
          ENDIF
       ENDIF
       !
       IF( ln_p5z ) THEN
          !       
-         ALLOCATE( epico(jpi,jpj,jpk)   , epicom(jpi,jpj,jpk) ,   STAT=ierr(9) ) 
+         ALLOCATE( epico(jpi,jpj,jpk)   , epicom(jpi,jpj,jpk) ,   STAT=ierr(10) ) 
 
          !*  Size of phytoplankton cells
          ALLOCATE( sizen(jpi,jpj,jpk), sizep(jpi,jpj,jpk),         &
-           &       sized(jpi,jpj,jpk),                            STAT=ierr(10) )
+           &       sized(jpi,jpj,jpk),                            STAT=ierr(11) )
       ENDIF
       !
       sms_pisces_alloc = MAXVAL( ierr )

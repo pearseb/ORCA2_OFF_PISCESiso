@@ -75,6 +75,9 @@ CONTAINS
       IF( ln_timing )   CALL timing_start('p4z_nano')
       !
       prodcal(:,:,:) = 0._wp   ! calcite production variable set to zero
+      IF ( ln_c13 ) THEN
+         prodcal13(:,:,:) = 0._wp   ! calcite production variable set to zero
+      ENDIF
       DO jk = 1, jpkm1
          DO jj = 1, jpj
             DO ji = 1, jpi
@@ -131,6 +134,7 @@ CONTAINS
                   tra(ji,jj,jk,jp13poc) = tra(ji,jj,jk,jp13poc) + ( 1. - zfracal ) * zmortp * zr13_phy 
                   tra(ji,jj,jk,jp13dic) = tra(ji,jj,jk,jp13dic) - zprcaca * zr13_dic * (1. - e13c_cal/1000.)
                   tra(ji,jj,jk,jp13cal) = tra(ji,jj,jk,jp13cal) + zprcaca * zr13_dic * (1. - e13c_cal/1000.)
+                  prodcal13(ji,jj,jk) = prodcal13(ji,jj,jk) + zprcaca * zr13_dic * (1. - e13c_cal/1000.)
                ENDIF
 
             END DO
